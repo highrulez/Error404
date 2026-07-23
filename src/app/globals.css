@@ -1,0 +1,105 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-hris: "Source Sans 3", sans-serif;
+  --font-flow: "IBM Plex Sans", sans-serif;
+  --font-display: "Fraunces", serif;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@keyframes oneflow-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes oneflow-progress-line {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes landing-flow-pulse-x {
+  0% {
+    left: 0%;
+    opacity: 0.35;
+  }
+  8% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    left: calc(100% - 6px);
+    opacity: 0.35;
+  }
+}
+
+@keyframes landing-flow-pulse-y {
+  0% {
+    top: 0%;
+    opacity: 0.35;
+  }
+  8% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    top: calc(100% - 6px);
+    opacity: 0.35;
+  }
+}
+
+.landing-flow-pulse {
+  animation: landing-flow-pulse-x 3.6s ease-in-out infinite;
+}
+
+.landing-flow-pulse-v {
+  animation: landing-flow-pulse-y 3.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-flow-pulse,
+  .landing-flow-pulse-v {
+    animation: none;
+  }
+}
+
+@media print {
+  body {
+    background: white !important;
+  }
+  .form-toolbar,
+  .print\:hidden {
+    display: none !important;
+  }
+  .paper-form-document {
+    box-shadow: none !important;
+    border: none !important;
+  }
+}
