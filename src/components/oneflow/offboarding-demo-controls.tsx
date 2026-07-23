@@ -301,7 +301,7 @@ export function OffboardingDemoControls({
           className="rounded-md border border-amber-400 bg-white px-3 py-1.5 text-xs font-semibold disabled:opacity-50"
           onClick={() =>
             run("Switched to Administration", () =>
-              loginAs("administration@ppg-demo.com", "/oneflow/my-tasks")
+              loginAs("admin@ppg-demo.com", "/oneflow/my-tasks")
             )
           }
         >
@@ -551,7 +551,7 @@ export function OffboardingDemoControls({
               return;
             }
             loginAs(
-              "administration@ppg-demo.com",
+              "admin@ppg-demo.com",
               `/oneflow/my-forms/access-card/${id}`
             );
           }}

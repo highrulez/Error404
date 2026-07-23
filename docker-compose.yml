@@ -1,0 +1,19 @@
+services:
+  oneflow:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+    ports:
+      - "3000:3000"
+    environment:
+      EMAIL_MODE: ${EMAIL_MODE:-mock}
+      AWS_REGION: ${AWS_REGION:-ap-southeast-1}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+      SES_FROM_EMAIL: ${SES_FROM_EMAIL:-}
+      SES_FROM_NAME: ${SES_FROM_NAME:-OneFlow}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+      EMAIL_RECIPIENT_MAP: ${EMAIL_RECIPIENT_MAP:-}
+    # Secrets stay in env / Synology secrets — never committed.
+    restart: unless-stopped

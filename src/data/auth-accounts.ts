@@ -43,7 +43,7 @@ export const TEAM_INBOX_EMAIL: Record<ResponsibleTeam, string> = {
   "Hiring Manager": "manager@ppg-demo.com",
   "Finance / Administration": "finance@ppg-demo.com",
   "Corporate Card Admin": "corporatecard@ppg-demo.com",
-  Administration: "administration@ppg-demo.com",
+  Administration: "admin@ppg-demo.com",
   Quality: "quality@ppg-demo.com",
   "Product Stewardship": "productstewardship@ppg-demo.com",
 };

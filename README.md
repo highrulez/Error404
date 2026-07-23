@@ -38,6 +38,34 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+## Email delivery (Mock Inbox + optional AWS SES)
+
+Workflow notifications always write to the **Mock Inbox** (audit channel).
+
+Optional real delivery uses server-side **AWS SES v2** (`EMAIL_MODE=mock|ses|both`).
+
+| Mode | Behavior |
+| --- | --- |
+| `mock` (default) | Mock Inbox only |
+| `ses` | SES send + delivery metadata |
+| `both` | Mock Inbox + SES |
+
+Configure via `.env.example` / Synology container env. Secrets never use `NEXT_PUBLIC_*`.
+
+Admin UI: **Settings → Email Delivery (SES)** (`/oneflow/email-delivery`)
+
+```bash
+npm run test:email
+```
+
+Docker (Synology-friendly):
+
+```bash
+docker compose up --build
+```
+
+Outbound HTTPS to AWS SES is required; no inbound AWS ports.
+
 ## How to test the New Hire workflow
 
 1. Open **PPG Workday** (`/workday`).
@@ -112,7 +140,7 @@ Generated only once per employee when status becomes **New Hire**.
 | Hiring Manager | manager@ppg-demo.com |
 | Finance | finance@ppg-demo.com |
 | Corporate Card Admin | corporatecard@ppg-demo.com |
-| Administration | administration@ppg-demo.com |
+| Administration (Access Card / exit clearance) | admin@ppg-demo.com |
 | Offboarding Employee (Daniel Lim) | daniel.lim@ppg-demo.com |
 
 Reset demo: Admin Overview → **Reset demo data** (clears cases/tasks/emails/runs; restores seed employees and Daniel exit form).

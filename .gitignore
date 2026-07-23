@@ -26,14 +26,12 @@ yarn-debug.log*
 yarn-error.log*
 
 # Env
-.env*.local
+.env
+.env.local
+.env.production
 
 .tools/
 next-env.d.ts
 *.tsbuildinfo
 
-
-.env
-.env.local
-.env.production
 *.log

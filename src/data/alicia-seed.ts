@@ -676,7 +676,7 @@ export function buildAliciaDemoPackage(args: {
   const accessMail: MockEmail = {
     id: "mail-alicia-access",
     automationRunId: "",
-    from: "administration@ppg-demo.com",
+    from: "admin@ppg-demo.com",
     to: employee.email,
     cc: [],
     subject: "Action Required: Complete Your UOA Security Access Card Application",

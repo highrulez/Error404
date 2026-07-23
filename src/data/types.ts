@@ -423,9 +423,71 @@ export interface DataService {
   retryAutomationRun(
     runId: string
   ): Promise<{ ok: boolean; message: string; runId?: string }>;
+  setNotificationSession(
+    session: import("./auth-types").UserSession | null
+  ): void;
   markEmailRead(emailId: string, read: boolean): void;
   deleteEmail(emailId: string): void;
   resetDemoEmails(): void;
+  retryFailedEmail(
+    session: import("./auth-types").UserSession,
+    emailId: string
+  ): Promise<
+    | { ok: true; message: string; email: import("./auth-types").MockEmail }
+    | { ok: false; error: string; email?: import("./auth-types").MockEmail }
+  >;
+  resendWorkflowEmail(
+    session: import("./auth-types").UserSession,
+    emailId: string
+  ): Promise<
+    | { ok: true; message: string; email: import("./auth-types").MockEmail }
+    | { ok: false; error: string; email?: import("./auth-types").MockEmail }
+  >;
+  repairAdministrationEmails(
+    session: import("./auth-types").UserSession
+  ): Promise<
+    | {
+        ok: true;
+        message: string;
+        emailsRepaired: number;
+        tasksRepaired: number;
+        duplicatesRemoved: number;
+      }
+    | { ok: false; error: string }
+  >;
+  deliverWorkflowEmailNow(
+    session: import("./auth-types").UserSession,
+    emailId: string,
+    action?: import("./auth-types").WorkflowEmailAction
+  ): Promise<{
+    ok: boolean;
+    error?: string;
+    email?: import("./auth-types").MockEmail;
+  }>;
+  getEmailDeliveryDetails(
+    session: import("./auth-types").UserSession,
+    emailId: string
+  ):
+    | {
+        ok: true;
+        details: {
+          id: string;
+          subject: string;
+          simulatedRecipient: string;
+          mappedRecipientMasked: string;
+          provider: string;
+          deliveryMode: string;
+          deliveryStatus: string;
+          providerMessageId: string | null;
+          sentAt: string;
+          failedAt: string | null;
+          failureReason: string | null;
+          attemptCount: number;
+          lastAttemptAt: string | null;
+          notificationType: string | null;
+        };
+      }
+    | { ok: false; error: string };
   resetToSeed(options?: {
     resetTemplates?: boolean;
     preserveCases?: boolean;

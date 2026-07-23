@@ -142,7 +142,7 @@ export function defaultFixedEmailForTeam(team: ResponsibleTeam): string {
     "Hiring Manager": "",
     "Finance / Administration": "finance@ppg-demo.com",
     "Corporate Card Admin": "corporatecard@ppg-demo.com",
-    Administration: "administration@ppg-demo.com",
+    Administration: "admin@ppg-demo.com",
     Quality: "quality@ppg-demo.com",
     "Product Stewardship": "productstewardship@ppg-demo.com",
   };

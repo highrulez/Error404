@@ -285,17 +285,17 @@ export function OnboardingDemoControls({
           busy={busy}
           disabled={!access}
           onClick={() =>
-            run("Review Access Card as Administration", () => {
+            run("Review Access Card as Admin", () => {
               if (!access) throw new Error("No access card form");
               const r = service.reviewAccessCardForm(session, access.id, {
                 action: "Approve",
-                remarks: "Demo Administration review approved",
+                remarks: "Demo Admin review approved",
               });
               if (!r.ok) throw new Error(r.error);
             })
           }
         >
-          Review Access Card as Administration
+          Review Access Card as Admin
         </Btn>
         <Btn
           busy={busy}

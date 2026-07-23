@@ -35,10 +35,10 @@ export const INDUCTION_SECTION_DEFINITIONS: InductionSectionDefinition[] = [
   {
     id: INDUCTION_SECTION_IDS.hr,
     sectionName: INDUCTION_SECTION_NAMES[INDUCTION_SECTION_IDS.hr],
-    responsibleRole: "HR Operations",
-    assignedEmail: "hr@ppg-demo.com",
-    presenterName: "Amanda Lee",
-    responsibleTeam: "HR Operations",
+    responsibleRole: "Admin",
+    assignedEmail: "admin@ppg-demo.com",
+    presenterName: "Admin",
+    responsibleTeam: "Administration",
     required: true,
     sortOrder: 1,
     labels: [
@@ -62,10 +62,10 @@ export const INDUCTION_SECTION_DEFINITIONS: InductionSectionDefinition[] = [
   {
     id: INDUCTION_SECTION_IDS.ethics,
     sectionName: INDUCTION_SECTION_NAMES[INDUCTION_SECTION_IDS.ethics],
-    responsibleRole: "HR Operations",
-    assignedEmail: "hr@ppg-demo.com",
-    presenterName: "Amanda Lee",
-    responsibleTeam: "HR Operations",
+    responsibleRole: "Admin",
+    assignedEmail: "admin@ppg-demo.com",
+    presenterName: "Admin",
+    responsibleTeam: "Administration",
     required: true,
     sortOrder: 2,
     labels: ["Briefing on Global Code of Ethics"],
@@ -73,10 +73,10 @@ export const INDUCTION_SECTION_DEFINITIONS: InductionSectionDefinition[] = [
   {
     id: INDUCTION_SECTION_IDS.it,
     sectionName: INDUCTION_SECTION_NAMES[INDUCTION_SECTION_IDS.it],
-    responsibleRole: "IT Security",
+    responsibleRole: "Onsite IT Support",
     assignedEmail: "itsecurity@ppg-demo.com",
-    presenterName: "Kelvin Ong",
-    responsibleTeam: "IT Security",
+    presenterName: "Onsite IT Support",
+    responsibleTeam: "Onsite IT Support",
     required: true,
     sortOrder: 3,
     labels: [
@@ -87,10 +87,10 @@ export const INDUCTION_SECTION_DEFINITIONS: InductionSectionDefinition[] = [
   {
     id: INDUCTION_SECTION_IDS.ehs,
     sectionName: INDUCTION_SECTION_NAMES[INDUCTION_SECTION_IDS.ehs],
-    responsibleRole: "Facilities / EHS",
-    assignedEmail: "facilities@ppg-demo.com",
-    presenterName: "Nur Aisyah",
-    responsibleTeam: "Facilities / Building Management",
+    responsibleRole: "Admin",
+    assignedEmail: "admin@ppg-demo.com",
+    presenterName: "Admin",
+    responsibleTeam: "Administration",
     required: true,
     sortOrder: 4,
     labels: [
@@ -103,10 +103,10 @@ export const INDUCTION_SECTION_DEFINITIONS: InductionSectionDefinition[] = [
   {
     id: INDUCTION_SECTION_IDS.finance,
     sectionName: INDUCTION_SECTION_NAMES[INDUCTION_SECTION_IDS.finance],
-    responsibleRole: "Finance / Concur Team",
-    assignedEmail: "finance@ppg-demo.com",
-    presenterName: "Farah Ahmad",
-    responsibleTeam: "Finance / Administration",
+    responsibleRole: "Admin",
+    assignedEmail: "admin@ppg-demo.com",
+    presenterName: "Admin",
+    responsibleTeam: "Administration",
     required: true,
     sortOrder: 5,
     labels: [
@@ -117,10 +117,10 @@ export const INDUCTION_SECTION_DEFINITIONS: InductionSectionDefinition[] = [
   {
     id: INDUCTION_SECTION_IDS.quality,
     sectionName: INDUCTION_SECTION_NAMES[INDUCTION_SECTION_IDS.quality],
-    responsibleRole: "Quality",
-    assignedEmail: "quality@ppg-demo.com",
-    presenterName: "Quality Representative",
-    responsibleTeam: "Quality",
+    responsibleRole: "Admin",
+    assignedEmail: "admin@ppg-demo.com",
+    presenterName: "Admin",
+    responsibleTeam: "Administration",
     required: true,
     sortOrder: 6,
     labels: [
@@ -132,10 +132,10 @@ export const INDUCTION_SECTION_DEFINITIONS: InductionSectionDefinition[] = [
     id: INDUCTION_SECTION_IDS.productStewardship,
     sectionName:
       INDUCTION_SECTION_NAMES[INDUCTION_SECTION_IDS.productStewardship],
-    responsibleRole: "Product Stewardship",
-    assignedEmail: "productstewardship@ppg-demo.com",
-    presenterName: "Product Stewardship Representative",
-    responsibleTeam: "Product Stewardship",
+    responsibleRole: "Admin",
+    assignedEmail: "admin@ppg-demo.com",
+    presenterName: "Admin",
+    responsibleTeam: "Administration",
     required: true,
     sortOrder: 7,
     labels: [

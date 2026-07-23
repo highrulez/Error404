@@ -686,34 +686,49 @@ export function populateInductionDemo(
 
   const presenters: Record<
     string,
-    { name: string; initials: string; daysAgo: number }
+    { name: string; initials: string; daysAgo: number; email: string }
   > = {
     "Human Resources Induction": {
-      name: "Amanda Lee",
-      initials: "AL",
+      name: "Admin",
+      initials: "OA",
       daysAgo: 8,
+      email: "admin@ppg-demo.com",
     },
     "Ethics and Compliance Induction": {
-      name: "Amanda Lee",
-      initials: "AL",
+      name: "Admin",
+      initials: "OA",
       daysAgo: 7,
+      email: "admin@ppg-demo.com",
     },
-    "IT Induction": { name: "Kelvin Ong", initials: "KO", daysAgo: 6 },
-    "EHS Induction": { name: "Nur Aisyah", initials: "NA", daysAgo: 5 },
+    "IT Induction": {
+      name: "Onsite IT Support",
+      initials: "IT",
+      daysAgo: 6,
+      email: "itsecurity@ppg-demo.com",
+    },
+    "EHS Induction": {
+      name: "Admin",
+      initials: "OA",
+      daysAgo: 5,
+      email: "admin@ppg-demo.com",
+    },
     "Finance and CONCUR Induction": {
-      name: "Farah Ahmad",
-      initials: "FA",
+      name: "Admin",
+      initials: "OA",
       daysAgo: 4,
+      email: "admin@ppg-demo.com",
     },
     "Quality Induction": {
-      name: "Quality Representative",
-      initials: "QR",
+      name: "Admin",
+      initials: "OA",
       daysAgo: 3,
+      email: "admin@ppg-demo.com",
     },
     "Product Stewardship Induction": {
-      name: "Product Stewardship Representative",
-      initials: "PS",
+      name: "Admin",
+      initials: "OA",
       daysAgo: 2,
+      email: "admin@ppg-demo.com",
     },
   };
 
@@ -722,9 +737,10 @@ export function populateInductionDemo(
     ...form,
     inductionSections: form.inductionSections.map((s) => {
       const p = presenters[s.sectionName] || {
-        name: "Amanda Lee",
-        initials: "AL",
+        name: "Admin",
+        initials: "OA",
         daysAgo: 1,
+        email: "admin@ppg-demo.com",
       };
       const d = new Date(today);
       d.setDate(d.getDate() - p.daysAgo);
@@ -734,19 +750,10 @@ export function populateInductionDemo(
         completedOn: d.toISOString().slice(0, 10),
         confirmedAt: d.toISOString(),
         presenterName: p.name,
-        presenterEmail:
-          s.assignedEmail ||
-          (s.sectionName.includes("IT")
-            ? "itsecurity@ppg-demo.com"
-            : s.sectionName.includes("EHS")
-              ? "facilities@ppg-demo.com"
-              : s.sectionName.includes("Finance")
-                ? "finance@ppg-demo.com"
-                : s.sectionName.includes("Quality")
-                  ? "quality@ppg-demo.com"
-                  : s.sectionName.includes("Stewardship")
-                    ? "productstewardship@ppg-demo.com"
-                    : "hr@ppg-demo.com"),
+        presenterEmail: p.email,
+        assignedEmail: p.email,
+        responsibleRole:
+          s.sectionName === "IT Induction" ? "Onsite IT Support" : "Admin",
         presenterInitials: p.initials,
         presenterSignatureStatus: "Signed" as const,
         status: "Completed" as const,

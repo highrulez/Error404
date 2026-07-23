@@ -290,7 +290,7 @@ export function getEmployeeOnboardingSummary(
     safeActivities: activity,
     contacts: [
       { label: "HR", email: "hr@ppg-demo.com" },
-      { label: "Administration", email: "administration@ppg-demo.com" },
+      { label: "Administration", email: "admin@ppg-demo.com" },
     ],
     firstDay: getAliciaFirstDayContent(employee),
     equipmentStatus: getEmployeeSafeLaptopStatus(uow, caseId).status,

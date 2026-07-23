@@ -30,6 +30,7 @@ export default function SettingsPage() {
           { href: "/oneflow/checklist-templates", label: "Checklist Template Management" },
           { href: "/oneflow/exit-clearance-templates", label: "Exit Clearance Templates" },
           { href: "/oneflow/inbox", label: "Mock Inbox" },
+          { href: "/oneflow/email-delivery", label: "Email Delivery (SES)" },
           { href: "/oneflow/automation-runs", label: "Mock Automation History" },
           { href: "/oneflow/offboarding", label: "Offboarding / Demo Controls" },
         ].map((item) => (

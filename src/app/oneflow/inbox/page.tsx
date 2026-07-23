@@ -101,7 +101,7 @@ function MockInboxContent() {
   return (
     <OneFlowShell
       title="Mock Inbox"
-      subtitle="Local Outlook-inspired inbox — no external email is sent"
+      subtitle="Audit channel for workflow notifications — SES delivery is optional via Admin → Email Delivery"
     >
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm text-slate-500">
@@ -192,8 +192,11 @@ function MockInboxContent() {
                   <p className="mt-0.5 truncate text-xs text-slate-700">
                     {e.subject}
                   </p>
-                  <div className="mt-1">
+                  <div className="mt-1 flex flex-wrap gap-1">
                     <StatusChip status={e.status} />
+                    {e.deliveryStatus && (
+                      <StatusChip status={e.deliveryStatus} />
+                    )}
                   </div>
                 </button>
               </li>
@@ -215,6 +218,12 @@ function MockInboxContent() {
                 <p className="mt-1 text-xs text-slate-500">
                   From {selected.from} · To {selected.to}
                   {selected.cc.length ? ` · Cc ${selected.cc.join(", ")}` : ""}
+                  {selected.mappedRecipientMasked
+                    ? ` · SES ${selected.mappedRecipientMasked}`
+                    : ""}
+                  {selected.providerMessageId
+                    ? ` · Msg ${selected.providerMessageId}`
+                    : ""}
                 </p>
                 <p className="text-xs text-slate-400">
                   {formatDateTime(selected.sentAt)} · {selected.responsibleTeam}

@@ -124,7 +124,7 @@ export function createDefaultExitClearanceTemplates(): ExitClearanceTemplateItem
       confirmationDepartment: "Administration",
       confirmationRole: "Administration",
       assignmentEmailRule: "Fixed Email",
-      fixedAssignedEmail: "administration@ppg-demo.com",
+      fixedAssignedEmail: "admin@ppg-demo.com",
       conditionalFields: [
         { key: "mobilePhoneModel", label: "Mobile phone model", type: "text", required: true },
         { key: "assetTag", label: "Asset tag", type: "text", required: true },
@@ -149,7 +149,7 @@ export function createDefaultExitClearanceTemplates(): ExitClearanceTemplateItem
       confirmationDepartment: "Administration",
       confirmationRole: "Administration",
       assignmentEmailRule: "Fixed Email",
-      fixedAssignedEmail: "administration@ppg-demo.com",
+      fixedAssignedEmail: "admin@ppg-demo.com",
       conditionalFields: [
         { key: "mobileNumber", label: "Mobile number", type: "text", required: true },
         { key: "simSerialNumber", label: "SIM serial number", type: "text", required: false },
@@ -173,7 +173,7 @@ export function createDefaultExitClearanceTemplates(): ExitClearanceTemplateItem
       confirmationDepartment: "Administration",
       confirmationRole: "Administration",
       assignmentEmailRule: "Fixed Email",
-      fixedAssignedEmail: "administration@ppg-demo.com",
+      fixedAssignedEmail: "admin@ppg-demo.com",
       conditionalFields: [
         { key: "doorKeys", label: "Total number of door keys", type: "number", required: true },
         { key: "cabinetKeys", label: "Total number of cabinet keys", type: "number", required: true },
@@ -193,7 +193,7 @@ export function createDefaultExitClearanceTemplates(): ExitClearanceTemplateItem
       confirmationDepartment: "Administration",
       confirmationRole: "Administration",
       assignmentEmailRule: "Fixed Email",
-      fixedAssignedEmail: "administration@ppg-demo.com",
+      fixedAssignedEmail: "admin@ppg-demo.com",
       conditionalFields: [
         { key: "accessCardNumber", label: "Access card number", type: "text", required: true },
         { key: "returnDate", label: "Return date", type: "date", required: true },

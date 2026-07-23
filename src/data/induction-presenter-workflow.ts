@@ -61,7 +61,7 @@ function buildPresenterTask(args: {
       maximumReminderCount: 5,
       escalationAfterWorkingDays: 3,
       escalationEmailRule: "Admin",
-      fixedEscalationEmail: "hr@ppg-demo.com",
+      fixedEscalationEmail: "admin@ppg-demo.com",
     },
     assignedAt,
     false
@@ -71,9 +71,9 @@ function buildPresenterTask(args: {
     addWorkingDays(args.employee.startDate || new Date().toISOString().slice(0, 10), -2)
       .toISOString()
       .slice(0, 10);
-  const email = args.section.assignedEmail || def?.assignedEmail || "";
-  const team = def?.responsibleTeam || "HR Operations";
-  const profile = profileByEmail(email);
+  const email = def?.assignedEmail || args.section.assignedEmail || "";
+  const team = def?.responsibleTeam || "Administration";
+  const ownerLabel = def?.presenterName || "Admin";
 
   return {
     id: presenterTaskId(args.form.id, args.section.id),
@@ -89,11 +89,11 @@ function buildPresenterTask(args: {
       "Review the section items, mark the session completed, and confirm your name and initials. Completed On is set automatically.",
     status: "Pending",
     priority: "High",
-    assignedOwner: profile?.name || def?.presenterName || email,
+    assignedOwner: ownerLabel,
     responsibleTeam: team,
-    assignedPersonName: profile?.name || def?.presenterName || "",
+    assignedPersonName: ownerLabel,
     assignedEmail: email,
-    assignedUserName: profile?.name || def?.presenterName || "",
+    assignedUserName: ownerLabel,
     employeeName: args.employee.fullName,
     employeeEmail: args.employee.email,
     department: args.employee.department,
@@ -123,7 +123,7 @@ function buildPresenterTask(args: {
     relatedFormId: args.form.id,
     relatedSectionId: args.section.id,
     isInductionPresenterTask: true,
-    responsibleRole: args.section.responsibleRole || def?.responsibleRole,
+    responsibleRole: def?.responsibleRole || args.section.responsibleRole,
     ...reminder,
   };
 }
@@ -148,7 +148,7 @@ function ensurePresenterEmails(
         ? `${group[0].title.replace(/^Complete /, "").replace(/ – .*$/, "")} Assigned – ${form.employeeName}`
         : `Induction Sessions Assigned – ${form.employeeName}`;
     const subject =
-      group.length > 1 && emailEq(email, "hr@ppg-demo.com")
+      group.length > 1 && emailEq(email, "admin@ppg-demo.com")
         ? `Induction Sessions Assigned – ${form.employeeName}`
         : group.length === 1
           ? subjectBase.replace("Complete ", "")
@@ -181,11 +181,11 @@ function ensurePresenterEmails(
       {
         id: uid("mail-ind-presenter"),
         automationRunId: "",
-        from: "hr@ppg-demo.com",
+        from: "oneflow@ppg-demo.com",
         to: email,
         cc: [],
         subject:
-          emailEq(email, "hr@ppg-demo.com") && group.length >= 2
+          emailEq(email, "admin@ppg-demo.com") && group.length >= 2
             ? `Induction Sessions Assigned – ${form.employeeName}`
             : group.length === 1
               ? `${group[0].relatedSectionId === "induction-section-it" ? "IT Induction Assigned" : group[0].title.replace(/^Complete /, "").replace(/ – .*$/, "") + " Assigned"} – ${form.employeeName}`
@@ -227,6 +227,7 @@ export function ensureInductionPresenterWorkflow(
   removedDuplicates: number;
   tasksCreated: number;
   tasksRepaired: number;
+  tasksReassigned: number;
   emailsCreated: number;
   messages: string[];
 } {
@@ -243,18 +244,69 @@ export function ensureInductionPresenterWorkflow(
   const { sections, removed } = dedupeInductionSections(form.inductionSections);
   let tasksCreated = 0;
   let tasksRepaired = 0;
+  let tasksReassigned = 0;
   const newTasks: ChecklistTask[] = [];
+  const reassignmentNotes: string[] = [];
+
+  // Drop duplicate presenter tasks for the same form+section (keep canonical id)
+  const presenterTasks = uow.tasks
+    .list()
+    .filter(
+      (t) =>
+        t.isInductionPresenterTask &&
+        (t.relatedFormId === form.id || t.linkedInductionFormId === form.id)
+    );
+  const seenSectionKeys = new Set<string>();
+  const duplicateTaskIds: string[] = [];
+  for (const t of presenterTasks) {
+    const sid = t.relatedSectionId || "";
+    const key = `${form.id}::${sid}`;
+    const canonicalId = sid ? presenterTaskId(form.id, sid) : t.id;
+    if (sid && seenSectionKeys.has(key) && t.id !== canonicalId) {
+      duplicateTaskIds.push(t.id);
+      continue;
+    }
+    if (sid) seenSectionKeys.add(key);
+    if (sid && t.id !== canonicalId) {
+      // Prefer keeping canonical; mark non-canonical as duplicate if another exists
+      const hasCanonical = presenterTasks.some((x) => x.id === canonicalId);
+      if (hasCanonical && t.id !== canonicalId) {
+        duplicateTaskIds.push(t.id);
+      }
+    }
+  }
+  if (duplicateTaskIds.length) {
+    uow.tasks.replaceAll(
+      uow.tasks.list().filter((t) => !duplicateTaskIds.includes(t.id))
+    );
+    messages.push(
+      `${duplicateTaskIds.length} duplicate presenter task(s) removed`
+    );
+  }
+
+  // Remove obsolete Facilities (and other non-canonical) induction tasks by wrong email
+  const obsoleteEmails = new Set([
+    "facilities@ppg-demo.com",
+    "hr@ppg-demo.com",
+    "finance@ppg-demo.com",
+    "quality@ppg-demo.com",
+    "productstewardship@ppg-demo.com",
+  ]);
 
   const nextSections = sections.map((s) => {
     const id = resolveInductionSectionId(s);
     const def = getInductionSectionDefinition(id);
+    const ownerEmail = def?.assignedEmail || "admin@ppg-demo.com";
+    const ownerRole = def?.responsibleRole || "Admin";
+    const ownerTeam = def?.responsibleTeam || "Administration";
+    const ownerLabel = def?.presenterName || "Admin";
     const required = isSectionRequired({ ...s, id });
     if (!required || s.status === "Not Required") {
       return {
         ...s,
         id,
-        assignedEmail: s.assignedEmail || def?.assignedEmail,
-        responsibleRole: s.responsibleRole || def?.responsibleRole,
+        assignedEmail: ownerEmail,
+        responsibleRole: ownerRole,
         linkedTaskId: null,
       };
     }
@@ -267,7 +319,8 @@ export function ensureInductionPresenterWorkflow(
         .find(
           (t) =>
             t.isInductionPresenterTask &&
-            t.relatedFormId === form.id &&
+            (t.relatedFormId === form.id ||
+              t.linkedInductionFormId === form.id) &&
             t.relatedSectionId === id
         );
 
@@ -275,9 +328,13 @@ export function ensureInductionPresenterWorkflow(
       task = buildPresenterTask({
         form,
         employee,
-        section: { ...s, id, assignedEmail: s.assignedEmail || def?.assignedEmail },
+        section: {
+          ...s,
+          id,
+          assignedEmail: ownerEmail,
+          responsibleRole: ownerRole,
+        },
       });
-      // Don't create if section already completed
       if (isSectionCleared(s)) {
         task = {
           ...task,
@@ -290,10 +347,22 @@ export function ensureInductionPresenterWorkflow(
       newTasks.push(task);
       tasksCreated += 1;
     } else {
+      const prevEmail = (task.assignedEmail || "").toLowerCase();
+      const nextEmail = ownerEmail.toLowerCase();
+      const ownershipChanged =
+        prevEmail !== nextEmail ||
+        task.responsibleTeam !== ownerTeam ||
+        task.assignedOwner !== ownerLabel;
+
       const patched = {
         ...task,
         id: taskId,
-        assignedEmail: s.assignedEmail || def?.assignedEmail || task.assignedEmail,
+        assignedEmail: ownerEmail,
+        assignedOwner: ownerLabel,
+        assignedPersonName: ownerLabel,
+        assignedUserName: ownerLabel,
+        responsibleTeam: ownerTeam,
+        responsibleRole: ownerRole,
         linkedInductionFormId: form.id,
         relatedFormId: form.id,
         relatedFormType: "Induction Checklist",
@@ -303,6 +372,7 @@ export function ensureInductionPresenterWorkflow(
         sourceRecordId: `${form.id}::${id}`,
         onboardingCaseId: form.lifecycleCaseId,
         lifecycleCaseId: form.lifecycleCaseId,
+        title: `Complete ${def?.sectionName || s.sectionName} – ${employee.fullName}`,
       };
       if (patched.id !== task.id) {
         uow.tasks.replaceAll([
@@ -314,33 +384,47 @@ export function ensureInductionPresenterWorkflow(
       }
       task = patched;
       tasksRepaired += 1;
+      if (ownershipChanged) {
+        tasksReassigned += 1;
+        reassignmentNotes.push(
+          `${def?.sectionName || s.sectionName}: ${prevEmail || "—"} → ${nextEmail}`
+        );
+      }
     }
 
     return {
       ...s,
       id,
-      assignedEmail: s.assignedEmail || def?.assignedEmail,
-      responsibleRole: s.responsibleRole || def?.responsibleRole,
+      assignedEmail: ownerEmail,
+      responsibleRole: ownerRole,
       linkedTaskId: task.id,
       sortOrder: s.sortOrder ?? def?.sortOrder,
     };
   });
 
-  // Remove orphan presenter tasks for this form that don't match current required sections
+  // Remove orphan / obsolete presenter tasks (wrong section, Facilities, etc.)
   const validTaskIds = new Set(
     nextSections.map((s) => s.linkedTaskId).filter(Boolean) as string[]
   );
-  const orphans = uow.tasks.list().filter(
-    (t) =>
-      t.isInductionPresenterTask &&
-      t.relatedFormId === form.id &&
-      !validTaskIds.has(t.id)
-  );
+  const orphans = uow.tasks.list().filter((t) => {
+    if (!t.isInductionPresenterTask) return false;
+    if (t.relatedFormId !== form.id && t.linkedInductionFormId !== form.id) {
+      return false;
+    }
+    if (!validTaskIds.has(t.id)) return true;
+    if (obsoleteEmails.has((t.assignedEmail || "").toLowerCase())) {
+      // Still valid if canonical ownership somehow still points there — should not
+      const sid = t.relatedSectionId || "";
+      const def = getInductionSectionDefinition(sid);
+      return def?.assignedEmail.toLowerCase() !== t.assignedEmail.toLowerCase();
+    }
+    return false;
+  });
   if (orphans.length) {
     uow.tasks.replaceAll(
       uow.tasks.list().filter((t) => !orphans.some((o) => o.id === t.id))
     );
-    messages.push(`${orphans.length} orphan presenter task(s) removed`);
+    messages.push(`${orphans.length} obsolete/orphan presenter task(s) removed`);
   }
 
   let nextForm: InductionChecklistForm = {
@@ -355,17 +439,65 @@ export function ensureInductionPresenterWorkflow(
   uow.inductionForms.update(nextForm);
 
   let emailsCreated = 0;
-  if (options?.sendEmails !== false && newTasks.length) {
-    const openNew = newTasks.filter((t) => t.status !== "Completed");
-    if (openNew.length) {
-      emailsCreated = ensurePresenterEmails(uow, nextForm, openNew).length;
-    }
+  const openPresenterTasks = uow.tasks.list().filter(
+    (t) =>
+      t.isInductionPresenterTask &&
+      (t.relatedFormId === form.id || t.linkedInductionFormId === form.id) &&
+      t.status !== "Completed" &&
+      t.status !== "Cancelled"
+  );
+
+  // Drop obsolete induction presenter assignment emails (Facilities / HR / Finance / …)
+  const obsoletePresenterMailRemoved = uow.mockEmails.list().filter(
+    (e) =>
+      e.relatedFormId === form.id &&
+      e.notificationType === "Induction Presenter Assignment" &&
+      obsoleteEmails.has((e.to || "").toLowerCase())
+  );
+  if (obsoletePresenterMailRemoved.length) {
+    uow.mockEmails.replaceAll(
+      uow.mockEmails
+        .list()
+        .filter((e) => !obsoletePresenterMailRemoved.some((o) => o.id === e.id))
+    );
+    messages.push(
+      `${obsoletePresenterMailRemoved.length} obsolete Facilities/dept induction email(s) removed`
+    );
+  }
+
+  if (
+    options?.sendEmails !== false &&
+    (newTasks.length || tasksReassigned > 0)
+  ) {
+    // Clear prior assignment mails for this form so Admin / Onsite IT get fresh grouped mail
+    uow.mockEmails.replaceAll(
+      uow.mockEmails
+        .list()
+        .filter(
+          (e) =>
+            !(
+              e.relatedFormId === form.id &&
+              e.notificationType === "Induction Presenter Assignment"
+            )
+        )
+    );
+    emailsCreated = ensurePresenterEmails(
+      uow,
+      nextForm,
+      openPresenterTasks.length ? openPresenterTasks : newTasks
+    ).length;
   }
 
   if (removed) messages.push(`${removed} duplicate sections removed`);
   messages.push(`${nextSections.length} unique sections retained`);
   if (tasksCreated) messages.push(`${tasksCreated} missing presenter tasks created`);
   if (tasksRepaired) messages.push(`${tasksRepaired} existing task links repaired`);
+  if (tasksReassigned) {
+    messages.push(`${tasksReassigned} presenter task(s) reassigned to Admin / Onsite IT`);
+    for (const note of reassignmentNotes.slice(0, 8)) {
+      messages.push(`Reassigned: ${note}`);
+    }
+  }
   if (emailsCreated) messages.push(`${emailsCreated} presenter notification email(s) created`);
   messages.push("Induction progress recalculated");
 
@@ -382,7 +514,7 @@ export function ensureInductionPresenterWorkflow(
       );
       const already = uow.mockEmails.list().some(
         (e) =>
-          emailEq(e.to, "hr@ppg-demo.com") &&
+          emailEq(e.to, "admin@ppg-demo.com") &&
           e.relatedFormId === form.id &&
           e.notificationType === "Induction Needs Attention"
       );
@@ -392,7 +524,7 @@ export function ensureInductionPresenterWorkflow(
             id: uid("mail-ind-attn"),
             automationRunId: "",
             from: "oneflow@ppg-demo.com",
-            to: "hr@ppg-demo.com",
+            to: "admin@ppg-demo.com",
             cc: [],
             subject: `Needs Attention: Induction incomplete – ${form.employeeName}`,
             htmlBody: `<p>Required induction sessions remain incomplete for <strong>${form.employeeName}</strong> (start ${start}).</p><p><a href="/oneflow/my-tasks">Open My Tasks</a></p>`,
@@ -401,7 +533,7 @@ export function ensureInductionPresenterWorkflow(
             status: "Unread",
             employeeId: form.employeeId,
             onboardingCaseId: form.lifecycleCaseId,
-            responsibleTeam: "HR Operations",
+            responsibleTeam: "Administration",
             relatedFormId: form.id,
             notificationType: "Induction Needs Attention",
           },
@@ -416,6 +548,7 @@ export function ensureInductionPresenterWorkflow(
     removedDuplicates: removed,
     tasksCreated,
     tasksRepaired,
+    tasksReassigned,
     emailsCreated,
     messages,
   };

@@ -606,7 +606,20 @@ export class LocalStorageRepository implements UnitOfWork {
       list: () => [...self.store.mockEmails],
       getById: (id) => self.store.mockEmails.find((e) => e.id === id),
       createMany: (emails) => {
-        self.store.mockEmails = [...emails, ...self.store.mockEmails];
+        const stamped = emails.map((e) => ({
+          ...e,
+          deliveryMode: e.deliveryMode ?? null,
+          provider: e.provider ?? "none",
+          providerMessageId: e.providerMessageId ?? null,
+          deliveryStatus: e.deliveryStatus ?? "Pending",
+          deliveryAttemptCount: e.deliveryAttemptCount ?? 0,
+          deliveredAt: e.deliveredAt ?? null,
+          failedAt: e.failedAt ?? null,
+          failureReason: e.failureReason ?? null,
+          lastAttemptAt: e.lastAttemptAt ?? null,
+          mappedRecipientMasked: e.mappedRecipientMasked ?? null,
+        }));
+        self.store.mockEmails = [...stamped, ...self.store.mockEmails];
       },
       update: (email) => {
         self.store.mockEmails = self.store.mockEmails.map((e) =>

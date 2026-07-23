@@ -65,6 +65,31 @@ export interface AutomationRun {
 
 export type MockEmailStatus = "Unread" | "Read" | "Deleted";
 
+/** External delivery lifecycle for Mock Inbox + SES dual-write */
+export type EmailDeliveryStatus =
+  | "Pending"
+  | "Sent"
+  | "Failed"
+  | "Mock Only";
+
+export type EmailDeliveryMode = "mock" | "ses" | "both";
+
+export type EmailDeliveryProvider = "mock" | "ses" | "none";
+
+export type WorkflowEmailAction =
+  | "sendLaptopDecisionEmail"
+  | "sendLaptopPurchaseOrderEmail"
+  | "sendInductionPresenterAssignmentEmail"
+  | "sendInductionReviewEmail"
+  | "sendAccessCardReviewEmail"
+  | "sendExitClearanceEmail"
+  | "sendTaskReminderEmail"
+  | "sendEscalationEmail"
+  | "sendWorkflowCompletionEmail"
+  | "sendTestSesEmail"
+  | "retryFailedEmail"
+  | "resendWorkflowEmail";
+
 export interface MockEmail {
   id: string;
   automationRunId: string;
@@ -87,4 +112,16 @@ export interface MockEmail {
   relatedFormType?: string | null;
   relatedFormId?: string | null;
   notificationType?: string | null;
+  /** SES / dual-delivery metadata */
+  deliveryMode?: EmailDeliveryMode | null;
+  provider?: EmailDeliveryProvider | null;
+  providerMessageId?: string | null;
+  deliveryStatus?: EmailDeliveryStatus | null;
+  deliveryAttemptCount?: number;
+  deliveredAt?: string | null;
+  failedAt?: string | null;
+  failureReason?: string | null;
+  lastAttemptAt?: string | null;
+  /** Masked real recipient used for SES (never full address in UI if preferred) */
+  mappedRecipientMasked?: string | null;
 }

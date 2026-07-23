@@ -68,13 +68,6 @@ export const DEMO_PROFILES: DemoUserProfile[] = [
     role: "CORPORATE_CARD",
   },
   {
-    userId: "user-administration",
-    name: "Priya Nair",
-    email: "administration@ppg-demo.com",
-    initials: "PN",
-    role: "ADMINISTRATION",
-  },
-  {
     userId: "user-quality",
     name: "Quality Representative",
     email: "quality@ppg-demo.com",

@@ -1,0 +1,28 @@
+
+> oneflow-phase1-prototype@0.1.0 lint
+> next lint
+
+`next lint` is deprecated and will be removed in Next.js 16.
+For new projects, use create-next-app to choose your preferred linter.
+For existing projects, migrate to the ESLint CLI:
+npx @next/codemod@canary next-lint-to-eslint-cli .
+
+
+./src/app/oneflow/checklist-templates/page.tsx
+75:6  Warning: React Hook useMemo has an unnecessary dependency: 'store.checklistTemplates'. Either exclude it or remove the dependency array.  react-hooks/exhaustive-deps
+80:6  Warning: React Hook useMemo has an unnecessary dependency: 'store.checklistTemplateAudits'. Either exclude it or remove the dependency array.  react-hooks/exhaustive-deps
+103:5  Warning: React Hook useMemo has an unnecessary dependency: 'store.checklistTemplates'. Either exclude it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/oneflow/inbox/page.tsx
+84:6  Warning: React Hook useMemo has an unnecessary dependency: 'store.mockEmails'. Either exclude it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/oneflow/my-tasks/page.tsx
+88:6  Warning: React Hook useMemo has an unnecessary dependency: 'store'. Either exclude it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/components/oneflow/offboarding-case-view.tsx
+103:5  Warning: React Hook useMemo has an unnecessary dependency: 'store.tasks'. Either exclude it or remove the dependency array.  react-hooks/exhaustive-deps
+107:5  Warning: React Hook useMemo has an unnecessary dependency: 'store.activity'. Either exclude it or remove the dependency array.  react-hooks/exhaustive-deps
+111:5  Warning: React Hook useMemo has an unnecessary dependency: 'store.mockEmails'. Either exclude it or remove the dependency array.  react-hooks/exhaustive-deps
+115:5  Warning: React Hook useMemo has an unnecessary dependency: 'store.exitClearanceForms'. Either exclude it or remove the dependency array.  react-hooks/exhaustive-deps
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules

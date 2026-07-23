@@ -174,11 +174,11 @@ function buildReviewTask(args: {
       "Verify details, enter office-use fields, approve or issue card.",
     status: "Pending",
     priority: "High",
-    assignedOwner: "Priya Nair",
+    assignedOwner: "Admin",
     responsibleTeam: "Administration",
-    assignedPersonName: "Priya Nair",
-    assignedEmail: "administration@ppg-demo.com",
-    assignedUserName: "Priya Nair",
+    assignedPersonName: "OneFlow Admin",
+    assignedEmail: "admin@ppg-demo.com",
+    assignedUserName: "Admin",
     employeeName: args.employee.fullName,
     employeeEmail: args.employee.email,
     department: args.employee.department,
@@ -308,7 +308,7 @@ export function buildAccessCardEmployeeEmail(
   return {
     id: uid("mail-acc"),
     automationRunId: "",
-    from: "administration@ppg-demo.com",
+    from: "admin@ppg-demo.com",
     to: form.employeeEmail,
     cc: [],
     subject:
@@ -513,7 +513,7 @@ export function submitAccessCardForm(
       id: uid("mail-acc-admin"),
       automationRunId: "",
       from: "oneflow@ppg-demo.com",
-      to: "administration@ppg-demo.com",
+      to: "admin@ppg-demo.com",
       cc: [],
       subject: `Security Access Card Application Submitted – ${form.employeeName}`,
       htmlBody: `<p>${form.employeeName} submitted a Security Access Card Application.</p>
@@ -526,6 +526,12 @@ export function submitAccessCardForm(
       employeeId: form.employeeId,
       onboardingCaseId: form.lifecycleCaseId,
       responsibleTeam: "Administration",
+      relatedFormType: "Access Card Application",
+      relatedFormId: form.id,
+      relatedTaskId: reviewTask.id,
+      notificationType: "Access Card Review",
+      sourceType: "Access Card Application",
+      sourceRecordId: form.id,
       attachments: [attachmentFor(form)],
     },
   ]);
@@ -535,7 +541,7 @@ export function submitAccessCardForm(
       form.lifecycleCaseId,
       session.name,
       "Access Card Application submitted",
-      "Submitted · Review task created for Administration"
+      "Submitted · Review task created for Admin"
     )
   );
   uow.persist();
@@ -590,7 +596,7 @@ export function reviewAccessCardForm(
       {
         id: uid("mail-acc-corr"),
         automationRunId: "",
-        from: "administration@ppg-demo.com",
+        from: "admin@ppg-demo.com",
         to: form.employeeEmail,
         cc: [],
         subject:
@@ -640,7 +646,7 @@ export function reviewAccessCardForm(
       {
         id: uid("mail-acc-issued"),
         automationRunId: "",
-        from: "administration@ppg-demo.com",
+        from: "admin@ppg-demo.com",
         to: form.employeeEmail,
         cc: [],
         subject: "Your UOA Security Access Card has been issued",

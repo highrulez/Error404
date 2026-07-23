@@ -8,11 +8,19 @@
 const OLD_DOMAIN_SUFFIX = "@oneflow.local";
 const NEW_DOMAIN = "@ppg-demo.com";
 
+/** Canonical Admin simulated mailbox (Administration team + Access Card review). */
+export const ADMIN_MOCK_EMAIL = "admin@ppg-demo.com";
+
+/** Legacy Administration mailbox — alias of admin@ only (do not create new records with this). */
+export const LEGACY_ADMINISTRATION_EMAIL = "administration@ppg-demo.com";
+
 /** Local-part renames applied after domain migration. */
 const LOCAL_PART_RENAMES: Record<string, string> = {
   "security@ppg-demo.com": "itsecurity@ppg-demo.com",
   // guard against accidental double-prefix from older migrations
   "ititsecurity@ppg-demo.com": "itsecurity@ppg-demo.com",
+  // Administration team consolidated onto Admin
+  [LEGACY_ADMINISTRATION_EMAIL]: ADMIN_MOCK_EMAIL,
 };
 
 export function migrateEmailAddress(email: string): string {
@@ -48,6 +56,10 @@ function rewriteEmailsInText(text: string): string {
     /(?<![A-Za-z0-9._%+-])ititsecurity@ppg-demo\.com/gi,
     "itsecurity@ppg-demo.com"
   );
+  next = next.replace(
+    /(?<![A-Za-z0-9._%+-])administration@ppg-demo\.com/gi,
+    ADMIN_MOCK_EMAIL
+  );
   return next;
 }
 
@@ -80,6 +92,7 @@ export function emailNeedsMigration(email: string): boolean {
     lower.endsWith(OLD_DOMAIN_SUFFIX) ||
     lower === "security@ppg-demo.com" ||
     lower === "ititsecurity@ppg-demo.com" ||
+    lower === LEGACY_ADMINISTRATION_EMAIL ||
     lower.includes(OLD_DOMAIN_SUFFIX)
   );
 }
@@ -90,7 +103,8 @@ export function storeNeedsEmailMigration(raw: unknown): boolean {
     return (
       text.toLowerCase().includes(OLD_DOMAIN_SUFFIX) ||
       /(?<![A-Za-z0-9._%+-])security@ppg-demo\.com/i.test(text) ||
-      /ititsecurity@ppg-demo\.com/i.test(text)
+      /ititsecurity@ppg-demo\.com/i.test(text) ||
+      /(?<![A-Za-z0-9._%+-])administration@ppg-demo\.com/i.test(text)
     );
   } catch {
     return false;

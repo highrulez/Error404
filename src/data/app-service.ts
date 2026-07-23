@@ -95,6 +95,8 @@ import {
   type ExecuteTaskInput,
 } from "./task-workflow-service";
 import { repairExitConfirmationData } from "./repair-exit-confirmation";
+import { repairAdministrationRecipientRecords } from "./repair-admin-email";
+import { ADMIN_MOCK_EMAIL } from "./email-domain";
 import { normalizeUnifiedTask } from "./task-normalize";
 import { getEmployeeSafeOffboardingCase } from "./employee-safe-ops";
 import {
@@ -165,6 +167,12 @@ import {
   submitLaptopRequired,
   updateEquipmentPreparationStatus,
 } from "./laptop-request-workflow";
+import {
+  deliverMockEmailWithProvider,
+  installNotificationDelivery,
+  setNotificationActor,
+} from "./email-delivery";
+import type { WorkflowEmailAction } from "./auth-types";
 import { LAPTOP_DEMO } from "./laptop-request-types";
 import {
   DANIEL_EMPLOYEE_ID,
@@ -296,12 +304,19 @@ export class AppDataService implements DataService {
 
   constructor(uow?: LocalStorageRepository) {
     this.uow = uow ?? new LocalStorageRepository();
+    // Route every mockEmails.createMany through NotificationService → SES API
+    installNotificationDelivery(this.uow);
     this.automation = new LocalAutomationService(this.uow);
     this.mockEngine = new LocalMockAutomationEngine(this.uow, (caseId) => {
       const summary = this.automation.recalculateProgress(caseId);
       return summary.overallProgress;
     });
     this.reminderEngine = new LocalReminderEngine(this.uow);
+  }
+
+  /** Bind the logged-in user as the notification delivery actor. */
+  setNotificationSession(session: import("./auth-types").UserSession | null) {
+    setNotificationActor(session);
   }
 
   private workflow() {
@@ -319,6 +334,79 @@ export class AppDataService implements DataService {
     } catch {
       // Non-fatal — leave store as-is
     }
+    try {
+      repairAdministrationRecipientRecords(this.uow);
+      this.uow.persist();
+    } catch {
+      // Non-fatal
+    }
+  }
+
+  /**
+   * Rewrite administration@ → admin@ on stored notifications/tasks (no SES resend).
+   * Optionally refreshes mappedRecipientMasked from /api/email/settings.
+   */
+  async repairAdministrationEmails(session: UserSession) {
+    this.reload();
+    if (session.role !== "Admin") {
+      return { ok: false as const, error: "Admin only." };
+    }
+    const result = repairAdministrationRecipientRecords(this.uow);
+
+    // Populate masked destinations without sending mail
+    try {
+      const res = await fetch("/api/email/settings");
+      const data = (await res.json()) as {
+        ok?: boolean;
+        settings?: {
+          mappings?: Array<{
+            simulated: string;
+            mappedMasked: string;
+            configured: boolean;
+          }>;
+        };
+      };
+      const byMock = new Map(
+        (data.settings?.mappings || []).map((m) => [m.simulated.toLowerCase(), m])
+      );
+      let masksUpdated = 0;
+      for (const email of this.uow.mockEmails.list()) {
+        const mock = (email.to || "").toLowerCase();
+        const mapping = byMock.get(mock);
+        if (!mapping?.configured) continue;
+        if (email.mappedRecipientMasked === mapping.mappedMasked) continue;
+        this.uow.mockEmails.update({
+          ...email,
+          mappedRecipientMasked: mapping.mappedMasked,
+        });
+        masksUpdated += 1;
+      }
+      if (masksUpdated) {
+        result.messages.push(
+          `${masksUpdated} mappedRecipientMasked value(s) refreshed`
+        );
+      }
+    } catch {
+      result.messages.push(
+        "Mapped destinations not refreshed (settings API unavailable)"
+      );
+    }
+
+    this.uow.activity.create({
+      id: uid("act-admin-email-repair"),
+      employeeId: "",
+      onboardingCaseId: "",
+      timestamp: nowIso(),
+      actor: session.name,
+      action: "Repair Administration Email Recipients",
+      detail: result.messages.join(" · "),
+    });
+    this.uow.persist();
+    return {
+      ok: true as const,
+      message: result.messages.join("\n"),
+      ...result,
+    };
   }
 
   private reload() {
@@ -1507,6 +1595,128 @@ export class AppDataService implements DataService {
     this.uow.persist();
   }
 
+  /**
+   * Deliver / re-deliver a Mock Inbox notification through SES when enabled.
+   * Never rolls back workflow state on SES failure.
+   */
+  async retryFailedEmail(session: UserSession, emailId: string) {
+    this.reload();
+    if (session.role !== "Admin") {
+      return { ok: false as const, error: "Admin only." };
+    }
+    // Ensure legacy administration@ is rewritten before SES resolve
+    repairAdministrationRecipientRecords(this.uow);
+    this.uow.persist();
+    let email = this.uow.mockEmails.getById(emailId);
+    if (!email) return { ok: false as const, error: "Notification not found." };
+    if ((email.to || "").toLowerCase() === "administration@ppg-demo.com") {
+      email = {
+        ...email,
+        to: ADMIN_MOCK_EMAIL,
+        failureReason: null,
+      };
+      this.uow.mockEmails.update(email);
+      this.uow.persist();
+    }
+    const result = await deliverMockEmailWithProvider(this.uow, email, session, {
+      forceResend: true,
+      action: "retryFailedEmail",
+      skipIfAlreadySent: false,
+    });
+    this.uow.activity.create({
+      id: uid("act-email-retry"),
+      employeeId: email.employeeId,
+      onboardingCaseId: email.onboardingCaseId,
+      timestamp: nowIso(),
+      actor: session.name,
+      action: "Retry Failed Email",
+      detail: `${email.subject} · ${result.ok ? "ok" : result.error}`,
+    });
+    this.uow.persist();
+    return result.ok
+      ? { ok: true as const, message: "Retry completed.", email: result.email }
+      : { ok: false as const, error: result.error || "Retry failed.", email: result.email };
+  }
+
+  async resendWorkflowEmail(session: UserSession, emailId: string) {
+    this.reload();
+    if (session.role !== "Admin") {
+      return { ok: false as const, error: "Admin only." };
+    }
+    repairAdministrationRecipientRecords(this.uow);
+    this.uow.persist();
+    let email = this.uow.mockEmails.getById(emailId);
+    if (!email) return { ok: false as const, error: "Notification not found." };
+    if ((email.to || "").toLowerCase() === "administration@ppg-demo.com") {
+      email = { ...email, to: ADMIN_MOCK_EMAIL, failureReason: null };
+      this.uow.mockEmails.update(email);
+      this.uow.persist();
+    }
+    const result = await deliverMockEmailWithProvider(this.uow, email, session, {
+      forceResend: true,
+      action: "resendWorkflowEmail" as WorkflowEmailAction,
+      skipIfAlreadySent: false,
+    });
+    this.uow.activity.create({
+      id: uid("act-email-resend"),
+      employeeId: email.employeeId,
+      onboardingCaseId: email.onboardingCaseId,
+      timestamp: nowIso(),
+      actor: session.name,
+      action: "Resend Workflow Email",
+      detail: `${email.subject} · status ${result.email.deliveryStatus}`,
+    });
+    this.uow.persist();
+    return result.ok
+      ? { ok: true as const, message: "Resend completed.", email: result.email }
+      : { ok: false as const, error: result.error || "Resend failed.", email: result.email };
+  }
+
+  async deliverWorkflowEmailNow(
+    session: UserSession,
+    emailId: string,
+    action?: WorkflowEmailAction
+  ) {
+    this.reload();
+    if (session.role === "ONBOARDING_EMPLOYEE" || session.role === "OFFBOARDING_EMPLOYEE") {
+      return { ok: false as const, error: "Employees cannot trigger external email delivery." };
+    }
+    const email = this.uow.mockEmails.getById(emailId);
+    if (!email) return { ok: false as const, error: "Notification not found." };
+    return deliverMockEmailWithProvider(this.uow, email, session, {
+      action,
+      skipIfAlreadySent: true,
+    });
+  }
+
+  getEmailDeliveryDetails(session: UserSession, emailId: string) {
+    this.reload();
+    if (session.role !== "Admin" && session.role !== "HR") {
+      return { ok: false as const, error: "Not authorized." };
+    }
+    const email = this.uow.mockEmails.getById(emailId);
+    if (!email) return { ok: false as const, error: "Not found." };
+    return {
+      ok: true as const,
+      details: {
+        id: email.id,
+        subject: email.subject,
+        simulatedRecipient: email.to,
+        mappedRecipientMasked: email.mappedRecipientMasked || "—",
+        provider: email.provider || "none",
+        deliveryMode: email.deliveryMode || "mock",
+        deliveryStatus: email.deliveryStatus || "Pending",
+        providerMessageId: email.providerMessageId || null,
+        sentAt: email.deliveredAt || email.sentAt,
+        failedAt: email.failedAt || null,
+        failureReason: email.failureReason || null,
+        attemptCount: email.deliveryAttemptCount || 0,
+        lastAttemptAt: email.lastAttemptAt || null,
+        notificationType: email.notificationType || null,
+      },
+    };
+  }
+
   resetToSeed(options?: {
     resetTemplates?: boolean;
     preserveCases?: boolean;
@@ -1905,6 +2115,7 @@ export class AppDataService implements DataService {
       runId
     );
     if (!result) return { ok: false as const, error: "Reminder failed." };
+    // createMany is hooked → NotificationService delivers via SES automatically
     this.uow.mockEmails.createMany([result.email]);
     this.uow.activity.create({
       id: uid("act"),
@@ -1916,7 +2127,10 @@ export class AppDataService implements DataService {
       detail: `Send Reminder Now · ${task.title}`,
     });
     this.uow.persist();
-    return { ok: true as const, message: "Reminder sent to Mock Inbox." };
+    return {
+      ok: true as const,
+      message: "Reminder queued (Mock Inbox + SES if enabled).",
+    };
   }
 
   rescheduleTaskReminder(
