@@ -6,10 +6,16 @@ import type { MockEmail } from "./auth-types";
 export const TASK_DEPENDENCY_TITLES: Record<string, string[]> = {
   "Create Email": ["Create Network ID"],
   "SailPoint Access": ["Create Email"],
+  "Prepare Laptop": [
+    "Create Network ID",
+    "Create Email",
+    "SailPoint Access",
+  ],
   "Laptop Assigned": [
     "Create Network ID",
     "Create Email",
     "SailPoint Access",
+    "Prepare Laptop",
   ],
   "Software Installed": ["Laptop Assigned"],
 };

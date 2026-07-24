@@ -21,6 +21,12 @@ import {
   ALICIA_EMPLOYEE_ID,
   ALICIA_ONBOARDING_CASE_ID,
 } from "./alicia-types";
+import { areItSecurityAccountTasksComplete } from "./automation/account-created-workflow";
+import {
+  ensureLaptopReplacementTask,
+  ensureOnsiteEquipmentHandoff,
+} from "./equipment-handoff-ops";
+import { ONSITE_IT_SUPPORT_EMAIL } from "./automation/sailpoint-handoff";
 
 function nowIso(): string {
   return new Date().toISOString();
@@ -75,7 +81,26 @@ function blankRequest(
     onsiteITTaskId: null,
     managerTaskId: ids.managerTaskId,
     procurementTaskId: null,
+    replacementTaskId: null,
     onsiteStatus: null,
+    equipmentPath: "Decision Pending",
+    itSecurityStage: "Pending",
+    laptopDecisionStage: "Pending Manager Decision",
+    procurementStage: "Not Required",
+    onsiteItStage: "Awaiting Security Handoff",
+    spareLaptopStatus: "",
+    existingLaptopStatus: "",
+    spareAssetNumber: "",
+    existingAssetNumber: "",
+    previousAssignment: "",
+    deviceCondition: "",
+    softwareRequirements: "",
+    specialEquipmentNotes: "",
+    networkIdSnapshot: "",
+    companyEmailSnapshot: "",
+    sailpointProvisioningStatus: "",
+    securityHandoffAt: null,
+    securityHandoffEmailId: null,
     createdAt: now,
     updatedAt: now,
   };
@@ -679,13 +704,21 @@ export function submitLaptopNotRequired(
     return { ok: false as const, error: "Decision reason is required." };
   }
 
+  const reuse =
+    /existing laptop|reassign|reuse/i.test(args.reason) ||
+    args.reason === "Existing laptop will be reassigned";
+
   const next: LaptopRequest = {
     ...req,
-    laptopRequired: false,
+    laptopRequired: reuse ? true : false,
     managerDecision: "No",
     managerDecisionReason: args.reason as LaptopNotRequiredReason,
     managerRemarks: args.remarks || "",
-    requestStatus: "Laptop Not Required",
+    requestStatus: reuse ? "Laptop Not Required" : "Laptop Not Required",
+    equipmentPath: reuse ? "Reuse Existing Laptop" : "Not Required",
+    laptopDecisionStage: reuse ? "Reuse Existing Laptop" : "Not Required",
+    procurementStage: "Not Required",
+    existingLaptopStatus: reuse ? "Existing Laptop Selected" : "",
     managerSubmittedAt: nowIso(),
     managerSubmittedBy: session.email,
     updatedAt: nowIso(),
@@ -707,13 +740,10 @@ export function submitLaptopNotRequired(
     }
   }
 
-  // Mark laptop purchase branch tasks as Not Required / Cancelled where pending
+  // Cancel purchase-order branch only — keep Onsite preparation for reuse path
   for (const t of uow.tasks.list().filter((x) => x.onboardingCaseId === req.onboardingCaseId)) {
     if (
-      (t.title.includes("Purchase Order") ||
-        t.title.includes("Prepare Laptop") ||
-        t.isLaptopProcurementTask ||
-        t.isLaptopPrepareTask) &&
+      (t.title.includes("Purchase Order") || t.isLaptopProcurementTask) &&
       t.status !== "Completed"
     ) {
       uow.tasks.update({
@@ -724,6 +754,55 @@ export function submitLaptopNotRequired(
         blocked: false,
         blockedReason: "Laptop not required",
       });
+    }
+    if (
+      !reuse &&
+      (t.title.includes("Prepare Laptop") || t.isLaptopPrepareTask) &&
+      t.status !== "Completed"
+    ) {
+      uow.tasks.update({
+        ...stopAllReminders(t),
+        status: "Cancelled",
+        outcome: "Not Required",
+        completedAt: nowIso(),
+        blocked: false,
+        blockedReason: "Laptop not required",
+      });
+    }
+  }
+
+  // If IT Security already complete, activate reuse preparation immediately
+  if (reuse) {
+    if (
+      areItSecurityAccountTasksComplete(
+        uow.tasks.listByCaseId(req.onboardingCaseId)
+      )
+    ) {
+      ensureOnsiteEquipmentHandoff(uow, req.onboardingCaseId, {
+        actor: session.name,
+      });
+      uow.mockEmails.createMany([
+        {
+          id: uid("mail-existing-prep"),
+          automationRunId: "",
+          from: "oneflow@ppg-demo.com",
+          to: ONSITE_IT_SUPPORT_EMAIL,
+          cc: [],
+          subject: `Existing Laptop Preparation Required – ${req.employeeName}`,
+          htmlBody: `<p>Please prepare an existing laptop for <strong>${req.employeeName}</strong>.</p>
+            <p>Reason: ${args.reason}</p>
+            <p><a href="/oneflow/my-tasks">Open My Tasks</a></p>`,
+          sentAt: nowIso(),
+          readAt: null,
+          status: "Unread",
+          employeeId: req.employeeId,
+          onboardingCaseId: req.onboardingCaseId,
+          responsibleTeam: "Onsite IT Support",
+          notificationType: "Existing Laptop Preparation",
+          sourceType: "Laptop Decision",
+          sourceRecordId: req.id,
+        },
+      ]);
     }
   }
 
@@ -833,6 +912,14 @@ export function submitLaptopRequired(
       [args.managerRemarks, args.lateDeliveryReason].filter(Boolean).join(" · ") ||
       "",
     requestStatus: "Awaiting PO",
+    equipmentPath: "New Laptop Temporary Spare",
+    laptopDecisionStage: "New Laptop Approved",
+    procurementStage: "PO Creation",
+    spareLaptopStatus: "New Laptop Purchase In Progress",
+    onsiteItStage:
+      req.itSecurityStage === "Provisioning Complete"
+        ? "Preparing Spare Laptop"
+        : req.onsiteItStage || "Awaiting Security Handoff",
     managerSubmittedAt: nowIso(),
     managerSubmittedBy: session.email,
     procurementTaskId: poTask.id,
@@ -900,6 +987,40 @@ export function submitLaptopRequired(
     action: "Laptop required – procurement task created",
     detail: `Credit ${next.departmentCreditNumber} · ${next.laptopRequirementType}`,
   });
+
+  // IT Security handoff / spare prep is independent of PO
+  if (
+    areItSecurityAccountTasksComplete(
+      uow.tasks.listByCaseId(req.onboardingCaseId)
+    )
+  ) {
+    ensureOnsiteEquipmentHandoff(uow, req.onboardingCaseId, {
+      actor: session.name,
+    });
+    uow.mockEmails.createMany([
+      {
+        id: uid("mail-spare-prep"),
+        automationRunId: "",
+        from: "oneflow@ppg-demo.com",
+        to: ONSITE_IT_SUPPORT_EMAIL,
+        cc: [],
+        subject: `Spare Laptop Preparation Required – ${employee.fullName}`,
+        htmlBody: `<p>A new laptop was approved for <strong>${employee.fullName}</strong>.</p>
+          <p>Prepare a <strong>spare laptop</strong> for day one. Purchase order continues in parallel and must not block preparation.</p>
+          <p><a href="/oneflow/my-tasks">Open My Tasks</a></p>`,
+        sentAt: nowIso(),
+        readAt: null,
+        status: "Unread",
+        employeeId: employee.id,
+        onboardingCaseId: req.onboardingCaseId,
+        responsibleTeam: "Onsite IT Support",
+        notificationType: "Spare Laptop Preparation",
+        sourceType: "Laptop Decision",
+        sourceRecordId: req.id,
+      },
+    ]);
+  }
+
   uow.persist();
   return { ok: true as const, request: next, procurementTaskId: poTask.id };
 }
@@ -1050,10 +1171,21 @@ export function confirmPurchaseOrder(
     estimatedDeliveryDate: patch.estimatedDeliveryDate,
     procurementRemarks: patch.procurementRemarks || "",
     requestStatus: "PO Created",
+    procurementStage: "Ordered",
+    spareLaptopStatus:
+      req.spareLaptopStatus === "Spare Laptop Assigned"
+        ? "Spare Laptop Assigned"
+        : "New Laptop Purchase In Progress",
     procurementCompletedAt: nowIso(),
     procurementCompletedBy: session.email,
     onsiteITTaskId: prepare.id,
-    onsiteStatus: "Awaiting Delivery",
+    // Do not set Awaiting Delivery as a global blocker — spare prep continues
+    onsiteStatus: req.onsiteStatus || "Pending",
+    onsiteItStage:
+      req.onsiteItStage === "Awaiting Security Handoff"
+        ? "Preparing Spare Laptop"
+        : req.onsiteItStage || "Preparing Spare Laptop",
+    equipmentPath: "New Laptop Temporary Spare",
     updatedAt: nowIso(),
   };
   uow.laptopRequests.update(next);
@@ -1077,22 +1209,46 @@ export function confirmPurchaseOrder(
   } else {
     uow.tasks.update({
       ...prepare,
-      status: "Pending",
+      status: prepare.status === "Completed" ? "Completed" : "Pending",
       blocked: false,
       blockedReason: null,
-      unlockedAt: nowIso(),
+      dependencyTaskIds: uow.tasks
+        .listByCaseId(req.onboardingCaseId)
+        .filter((t) =>
+          ["Create Network ID", "Create Email", "SailPoint Access"].includes(
+            t.title
+          )
+        )
+        .map((t) => t.id),
+      unlockedAt: prepare.unlockedAt || nowIso(),
     });
   }
 
-  // Unlock existing "Laptop Assigned" template task if present
-  for (const t of uow.tasks.list().filter((x) => x.onboardingCaseId === req.onboardingCaseId)) {
-    if (t.title === "Laptop Assigned" && t.status === "Blocked") {
+  // Never re-block Laptop Assigned on PO / prepare purchase wait
+  for (const t of uow.tasks
+    .list()
+    .filter((x) => x.onboardingCaseId === req.onboardingCaseId)) {
+    if (
+      t.title === "Laptop Assigned" &&
+      (t.blockedReason || "").toLowerCase().includes("purchase")
+    ) {
       uow.tasks.update({
         ...t,
-        dependencyTaskIds: [...new Set([...t.dependencyTaskIds, prepare.id])],
-        blockedReason: `Waiting for: ${prepare.title}`,
+        blockedReason: t.blockedReason?.replace(/Waiting for:.*Purchase.*/i, "")
+          ? null
+          : t.blockedReason,
       });
     }
+  }
+
+  if (
+    areItSecurityAccountTasksComplete(
+      uow.tasks.listByCaseId(req.onboardingCaseId)
+    )
+  ) {
+    ensureOnsiteEquipmentHandoff(uow, req.onboardingCaseId, {
+      actor: session.name,
+    });
   }
 
   uow.mockEmails.createMany([
@@ -1105,33 +1261,35 @@ export function confirmPurchaseOrder(
       subject: `Laptop Purchase Order Created – ${employee.fullName}`,
       htmlBody: `<p>A purchase order has been created for ${employee.fullName}'s laptop.</p>
         <p>Estimated delivery: ${patch.estimatedDeliveryDate}</p>
-        <p><a href="/oneflow/tasks/${prepare.id}">View preparation task</a></p>`,
+        <p>Onsite IT is preparing a spare laptop for day one in parallel.</p>`,
       sentAt: nowIso(),
       readAt: null,
       status: "Unread",
       employeeId: employee.id,
       onboardingCaseId: req.onboardingCaseId,
       responsibleTeam: "Hiring Manager",
+      notificationType: "New Laptop Approved",
     },
     {
       id: uid("mail-po-it"),
       automationRunId: "",
       from: "admin@ppg-demo.com",
-      to: "itsupport@ppg-demo.com",
+      to: ONSITE_IT_SUPPORT_EMAIL,
       cc: [],
-      subject: `Prepare Laptop for ${employee.fullName}`,
-      htmlBody: `<p>Please prepare a laptop for ${employee.fullName}.</p>
+      subject: `Spare Laptop Preparation Required – ${employee.fullName}`,
+      htmlBody: `<p>PO created for ${employee.fullName}. Continue spare laptop preparation for day one.</p>
         <p>Requirement: ${req.laptopRequirementType}<br/>
-        Spec: ${req.requestedSpecification || req.standardModelRequested || "Standard"}<br/>
-        Estimated delivery: ${patch.estimatedDeliveryDate}<br/>
+        Estimated new laptop delivery: ${patch.estimatedDeliveryDate}<br/>
         Start date: ${employee.startDate}</p>
-        <p><a href="/oneflow/tasks/${prepare.id}">Open Task</a></p>`,
+        <p><a href="/oneflow/tasks/${prepare.id}">Open Preparation Task</a></p>`,
       sentAt: nowIso(),
       readAt: null,
       status: "Unread",
       employeeId: employee.id,
       onboardingCaseId: req.onboardingCaseId,
       responsibleTeam: "Onsite IT Support",
+      notificationType: "Spare Laptop Preparation",
+      relatedTaskId: prepare.id,
     },
     {
       id: uid("mail-po-emp"),
@@ -1141,8 +1299,7 @@ export function confirmPurchaseOrder(
       cc: [],
       subject: "Equipment Preparation Update",
       htmlBody: `<p>Hello ${employee.fullName},</p>
-        <p>Your laptop has been ordered. Equipment preparation is in progress for your first day.</p>
-        <p>Estimated readiness: ${patch.estimatedDeliveryDate}</p>
+        <p>Equipment is being prepared for your first day.</p>
         <p><a href="/oneflow/my-onboarding/${req.onboardingCaseId}">View My Onboarding</a></p>`,
       sentAt: nowIso(),
       readAt: null,
@@ -1150,6 +1307,7 @@ export function confirmPurchaseOrder(
       employeeId: employee.id,
       onboardingCaseId: req.onboardingCaseId,
       responsibleTeam: "HR Operations",
+      notificationType: "Equipment Ready",
     },
   ]);
 
@@ -1160,7 +1318,7 @@ export function confirmPurchaseOrder(
     timestamp: nowIso(),
     actor: session.name,
     action: "Laptop PO created",
-    detail: `PO ${patch.purchaseOrderNumber} · Onsite IT task activated`,
+    detail: `PO ${patch.purchaseOrderNumber} · Spare prep continues in parallel`,
   });
   uow.persist();
   return { ok: true as const, request: next };
@@ -1195,14 +1353,15 @@ function buildPrepareTask(
     lifecycleCaseId: caseId,
     group: "IT Checklist",
     title: `Prepare Laptop for ${employee.fullName}`,
-    description: "Receive, configure and prepare the ordered laptop for the new hire.",
-    instructions: `Estimated delivery: ${estimatedDelivery}. Update status as the device progresses.`,
+    description:
+      "Prepare equipment for the new hire after IT Security provisioning. Not blocked by purchase order.",
+    instructions: `Required-by / estimated: ${estimatedDelivery}. Update status as the device progresses. Spare prep is not blocked by new laptop delivery.`,
     status: "Pending",
     priority: "High",
     assignedOwner: "Jason Lim",
     responsibleTeam: "Onsite IT Support",
     assignedPersonName: "Jason Lim",
-    assignedEmail: "itsupport@ppg-demo.com",
+    assignedEmail: ONSITE_IT_SUPPORT_EMAIL,
     assignedUserName: "Jason Lim",
     employeeName: employee.fullName,
     employeeEmail: employee.email,
@@ -1217,7 +1376,8 @@ function buildPrepareTask(
     lastReminderAt: null,
     escalationStatus: "None",
     sourceSystem: "OneFlow",
-    dependencyTaskIds: [ALICIA_LAPTOP_PO_TASK_ID],
+    // Never depend on PO — IT Security completion unlocks preparation
+    dependencyTaskIds: [],
     blockedReason: null,
     blocked: false,
     unlockedAt: assignedAt,
@@ -1357,10 +1517,62 @@ export function updateEquipmentPreparationStatus(
     requestStatus = "Completed";
   }
 
+  let spareLaptopStatus = (req.spareLaptopStatus ||
+    "") as NonNullable<LaptopRequest["spareLaptopStatus"]>;
+  let existingLaptopStatus = (req.existingLaptopStatus ||
+    "") as NonNullable<LaptopRequest["existingLaptopStatus"]>;
+  let onsiteItStage = req.onsiteItStage || null;
+
+  if (req.equipmentPath === "New Laptop Temporary Spare") {
+    if (status === "Configuration In Progress") {
+      spareLaptopStatus = "Spare Laptop Preparation";
+      onsiteItStage = "Preparing Spare Laptop";
+    }
+    if (status === "Ready for Collection") {
+      spareLaptopStatus = "Spare Laptop Assigned";
+      onsiteItStage = "Ready for Employee";
+    }
+    if (status === "Device Received" && req.procurementStage === "Ordered") {
+      spareLaptopStatus = "New Laptop Received";
+    }
+    if (status === "Completed") {
+      spareLaptopStatus =
+        spareLaptopStatus === "Laptop Replacement Scheduled" ||
+        spareLaptopStatus === "New Laptop Received"
+          ? "New Laptop Assigned"
+          : "Spare Laptop Assigned";
+      onsiteItStage = "Completed";
+    }
+  }
+
+  if (req.equipmentPath === "Reuse Existing Laptop") {
+    if (status === "Configuration In Progress") {
+      existingLaptopStatus = "Reimage In Progress";
+      onsiteItStage = "Preparing Existing Laptop";
+    }
+    if (status === "Ready for Collection") {
+      existingLaptopStatus = "Ready for Assignment";
+      onsiteItStage = "Ready for Employee";
+    }
+    if (status === "Completed") {
+      existingLaptopStatus = "Existing Laptop Assigned";
+      onsiteItStage = "Completed";
+    }
+  }
+
   const next: LaptopRequest = {
     ...req,
     onsiteStatus: status,
     requestStatus,
+    spareLaptopStatus,
+    existingLaptopStatus,
+    onsiteItStage,
+    procurementStage:
+      status === "Device Received" || status === "Completed"
+        ? req.managerDecision === "Yes"
+          ? "Delivered"
+          : req.procurementStage
+        : req.procurementStage,
     updatedAt: nowIso(),
   };
   uow.laptopRequests.update(next);
@@ -1381,17 +1593,52 @@ export function updateEquipmentPreparationStatus(
     }
   }
 
+  // New laptop arrived after spare path — create replacement task
+  if (
+    status === "Device Received" &&
+    req.equipmentPath === "New Laptop Temporary Spare" &&
+    (req.spareLaptopStatus === "Spare Laptop Assigned" ||
+      req.onsiteItStage === "Ready for Employee" ||
+      req.onsiteItStage === "Completed")
+  ) {
+    ensureLaptopReplacementTask(uow, requestId);
+  }
+
+  if (status === "Completed" || status === "Ready for Collection") {
+    uow.mockEmails.createMany([
+      {
+        id: uid("mail-equip-ready"),
+        automationRunId: "",
+        from: "oneflow@ppg-demo.com",
+        to: "admin@ppg-demo.com",
+        cc: [req.employeeEmail],
+        subject: `Equipment Ready – ${req.employeeName}`,
+        htmlBody: `<p>Equipment preparation is ready for <strong>${req.employeeName}</strong>.</p>
+          <p>Employee-safe status: Equipment is being prepared for your first day / Temporary laptop prepared.</p>`,
+        sentAt: nowIso(),
+        readAt: null,
+        status: "Unread",
+        employeeId: req.employeeId,
+        onboardingCaseId: req.onboardingCaseId,
+        responsibleTeam: "Administration",
+        notificationType: "Equipment Ready",
+        sourceType: "Onsite IT Preparation",
+        sourceRecordId: req.id,
+      },
+    ]);
+  }
+
   uow.activity.create({
-    id: uid("act-laptop-prep"),
+    id: uid("act-onsite-equip"),
     employeeId: req.employeeId,
     onboardingCaseId: req.onboardingCaseId,
     timestamp: nowIso(),
     actor: session.name,
-    action: `Laptop preparation: ${status}`,
+    action: "Equipment preparation status updated",
     detail: status,
   });
   uow.persist();
-  return { ok: true as const, request: next };
+  return { ok: true as const, request: uow.laptopRequests.getById(requestId)! };
 }
 
 export function resetDemoLaptopRequest(

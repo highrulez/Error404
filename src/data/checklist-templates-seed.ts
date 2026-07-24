@@ -165,20 +165,21 @@ export function createDefaultChecklistTemplates(): ChecklistTemplateTask[] {
       responsibleTeam: "Onsite IT Support",
       title: "Prepare Laptop",
       description:
-        "Prepare and configure the ordered laptop before assignment.",
+        "Prepare equipment for the new hire after IT Security provisioning. Not blocked by purchase order.",
       sortOrder: 38,
       dueOffsetDays: -3,
-      dependencyTemplateTaskIds: [IDS.laptopPo],
+      // Handoff depends only on IT Security — never on PO / delivery
+      dependencyTemplateTaskIds: [IDS.network, IDS.email, IDS.sailpoint],
       assignedEmailRule: "Fixed Team Email",
       fixedAssignedEmail: TEAM_ASSIGNED_EMAIL["Onsite IT Support"],
-      requiresPurchaseOrder: true,
+      requiresPurchaseOrder: false,
     }),
     base({
       id: IDS.laptop,
       checklistGroup: "IT",
       responsibleTeam: "Onsite IT Support",
       title: "Laptop Assigned",
-      description: "Assign and prepare the employee laptop.",
+      description: "Assign the prepared laptop to the employee.",
       sortOrder: 40,
       dueOffsetDays: -4,
       dependencyTemplateTaskIds: [

@@ -13,6 +13,7 @@ import { addWorkingDays } from "./working-days";
 import { INDUCTION_EMPLOYEE_TASK_TITLE } from "./induction-types";
 import { ACCESS_CARD_EMPLOYEE_TASK_TITLE } from "./access-card-types";
 import { initializeLaptopRequestForOnboardingCase } from "./laptop-request-workflow";
+import { ensureOnsiteEquipmentHandoff } from "./equipment-handoff-ops";
 import {
   ALICIA_ACCESS_CARD_FORM_ID,
   ALICIA_EMAIL,
@@ -560,6 +561,14 @@ export function ensureAliciaOnboardingDemoData(
       warnings.push(...laptop.warnings);
     } else {
       warnings.push(laptop.error);
+    }
+
+    // If IT Security already complete, repair Onsite IT handoff (never blocked by PO)
+    const handoff = ensureOnsiteEquipmentHandoff(uow, ALICIA_ONBOARDING_CASE_ID, {
+      actor: session?.name || "OneFlow Ensure",
+    });
+    if (handoff.triggered) {
+      messages.push(...handoff.messages);
     }
 
     if (session) {

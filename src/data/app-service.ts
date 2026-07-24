@@ -58,9 +58,13 @@ import {
 } from "./dependencies";
 import {
   areItSecurityAccountTasksComplete,
-  buildAccountCreatedEmail,
   shouldSkipGenericOnsiteUnlockEmail,
 } from "./automation/account-created-workflow";
+import {
+  ensureOnsiteEquipmentHandoff,
+  repairEquipmentTaskDependencies,
+} from "./equipment-handoff-ops";
+import { buildSailPointHandoffEmail } from "./automation/sailpoint-handoff";
 import { TEMPLATE_GROUP_TO_CASE_GROUP } from "./template-types";
 import type {
   ChecklistTemplateAudit,
@@ -930,6 +934,9 @@ export class AppDataService implements DataService {
    * unlock newly ready tasks (Blocked → Pending) with activity, automation, email.
    */
   private processDependencyEffects(caseId: string, actor: string) {
+    // Ensure PO never re-blocks Onsite IT preparation after Security completes
+    repairEquipmentTaskDependencies(this.uow, caseId);
+
     const employeeId =
       this.uow.onboardingCases.getById(caseId)?.employeeId ?? "";
     const employee = this.uow.employees.getById(employeeId);
@@ -1062,8 +1069,10 @@ export class AppDataService implements DataService {
   }
 
   /**
-   * When all IT Security account tasks are complete, send Account Created email
-   * to Onsite IT Support and record workflow metadata (once per case).
+   * When all IT Security account tasks are complete:
+   * - Mark provisioning complete
+   * - Send SailPoint-style handoff to Onsite IT (never blocked by purchase)
+   * - Activate equipment preparation task
    */
   private maybeTriggerAccountCreatedWorkflow(
     caseId: string,
@@ -1075,6 +1084,12 @@ export class AppDataService implements DataService {
 
     const forceResend = options?.forceResend ?? false;
     if (!forceResend && onb.accountCreatedEmailSent) {
+      // Still repair equipment handoff if security is done but prep was blocked
+      const handoff = ensureOnsiteEquipmentHandoff(this.uow, caseId, {
+        actor,
+        forceResendEmail: false,
+      });
+      if (handoff.triggered) this.uow.persist();
       return { triggered: false };
     }
 
@@ -1087,36 +1102,49 @@ export class AppDataService implements DataService {
     if (!employee) return { triggered: false };
 
     const runId = uid("run");
-    const emailId = uid("mail-acct");
     const started = nowIso();
-    const email = buildAccountCreatedEmail({
-      employee,
-      onboardingCaseId: caseId,
-      automationRunId: runId,
-      emailId,
+
+    const handoff = ensureOnsiteEquipmentHandoff(this.uow, caseId, {
+      actor: forceResend ? actor : "OneFlow Automation",
+      forceResendEmail: forceResend,
     });
 
-    this.uow.mockEmails.createMany([email]);
+    const emailId = handoff.emailId || uid("mail-acct");
+    // Keep classic Account Created mail only when handoff skipped creating one
+    if (!handoff.emailId && !handoff.emailSkipped) {
+      const email = buildSailPointHandoffEmail({
+        employee,
+        onboardingCaseId: caseId,
+        automationRunId: runId,
+        emailId,
+        prepareTaskId: handoff.prepareTaskId,
+      });
+      this.uow.mockEmails.createMany([email]);
+    }
 
-    const laptopTask = caseTasks.find((t) => t.title === "Laptop Assigned");
-    if (laptopTask && laptopTask.status === "Blocked") {
-      const unlockedAt = started;
+    const refreshed = this.uow.tasks.listByCaseId(caseId);
+    const prepareTask = refreshed.find(
+      (t) =>
+        t.isLaptopPrepareTask ||
+        t.title === "Prepare Laptop" ||
+        /^Prepare Laptop/i.test(t.title)
+    );
+    if (prepareTask && prepareTask.status === "Blocked") {
       this.uow.tasks.update(
         restartRemindersFromUnlock(
           {
-            ...laptopTask,
+            ...prepareTask,
             status: "Pending",
             blockedReason: null,
-            unlockedAt,
+            unlockedAt: started,
           },
-          unlockedAt
+          started
         )
       );
     }
 
-    const softwareTask = caseTasks.find((t) => t.title === "Software Installed");
+    const softwareTask = refreshed.find((t) => t.title === "Software Installed");
     if (softwareTask && softwareTask.status !== "Blocked") {
-      const refreshed = this.uow.tasks.listByCaseId(caseId);
       const laptopDone =
         refreshed.find((t) => t.title === "Laptop Assigned")?.status ===
         "Completed";
@@ -1146,41 +1174,25 @@ export class AppDataService implements DataService {
       timestamp: started,
       actor: forceResend ? actor : "OneFlow Automation",
       action: forceResend
-        ? "Account Created email resent"
-        : "IT Security account creation completed.",
-      detail: forceResend
-        ? `Account Created email resent to Onsite IT Support by ${actor}.`
-        : "IT Security account creation completed.",
-    });
-
-    this.uow.activity.create({
-      id: uid("act"),
-      employeeId: employee.id,
-      onboardingCaseId: caseId,
-      timestamp: started,
-      actor: forceResend ? actor : "OneFlow Automation",
-      action: forceResend
-        ? "Account Created email resent"
-        : "Account Created email sent to Onsite IT Support.",
-      detail: forceResend
-        ? `New mock email ${emailId} sent to Onsite IT Support.`
-        : "Account Created email sent to Onsite IT Support.",
+        ? "SailPoint handoff email resent"
+        : "IT Security provisioning complete",
+      detail: handoff.messages.join(" · "),
     });
 
     const run: AutomationRun = {
       id: runId,
       runNumber: `ACCT-${Date.now().toString(36).toUpperCase()}`,
       trigger: forceResend
-        ? "Account Created email (resend)"
-        : "Account Created notification",
+        ? "SailPoint handoff (resend)"
+        : "SailPoint provisioning complete handoff",
       employeeId: employee.id,
       onboardingCaseId: caseId,
       status: "Successful",
       startedAt: started,
       endedAt: nowIso(),
       durationMs: 120,
-      tasksAssigned: 1,
-      emailsGenerated: 1,
+      tasksAssigned: handoff.prepareTaskId ? 1 : 0,
+      emailsGenerated: handoff.emailSkipped ? 0 : 1,
       errorMessage: null,
       simulateFailure: false,
       steps: [
@@ -1197,18 +1209,19 @@ export class AppDataService implements DataService {
         {
           id: uid("step"),
           order: 2,
-          name: "Generate Account Created notification",
+          name: "SailPoint handoff to Onsite IT",
           status: "Successful",
-          detail: `Mock email ${emailId} → ${email.to}`,
+          detail: handoff.messages.join(" · "),
           startedAt: started,
           completedAt: nowIso(),
         },
         {
           id: uid("step"),
           order: 3,
-          name: "Unlock Onsite IT tasks",
+          name: "Activate equipment preparation",
           status: "Successful",
-          detail: "Laptop Assigned set to Pending; Software Installed remains blocked.",
+          detail:
+            "Onsite IT preparation unlocked independently of purchase order.",
           startedAt: started,
           completedAt: nowIso(),
         },
@@ -1220,8 +1233,8 @@ export class AppDataService implements DataService {
       triggered: true,
       emailId,
       notice: forceResend
-        ? "Account Created email resent to Onsite IT Support."
-        : "Account Created notification sent to Onsite IT Support.",
+        ? "SailPoint handoff resent to Onsite IT Support."
+        : "SailPoint provisioning complete — Onsite IT handoff sent.",
     };
   }
 

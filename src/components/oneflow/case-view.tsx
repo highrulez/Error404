@@ -574,71 +574,131 @@ export function OnboardingCaseView({ caseId }: { caseId: string }) {
         {(() => {
           const laptop = service.getLaptopRequestByCase(caseId);
           if (!laptop) return null;
+          const itSec = laptop.itSecurityStage || "Pending";
+          const decision =
+            laptop.laptopDecisionStage ||
+            (laptop.managerDecision === "Yes"
+              ? "New Laptop Approved"
+              : laptop.managerDecision === "No"
+                ? "Reuse Existing Laptop"
+                : "Pending Manager Decision");
+          const procurement = laptop.procurementStage || "Not Required";
+          const onsite = laptop.onsiteItStage || "Awaiting Security Handoff";
+          const path = laptop.equipmentPath || "Decision Pending";
           return (
-            <div className="mt-5 rounded-lg border border-flow-line bg-flow-canvas/60 p-3">
-              <div className="flex flex-wrap items-start justify-between gap-2">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    Laptop Request
+            <div className="mt-5 space-y-3">
+              <div className="rounded-lg border border-flow-line bg-flow-canvas/60 p-3">
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  Equipment workflow (parallel stages)
+                </p>
+                <dl className="mt-3 grid gap-2 text-xs sm:grid-cols-2">
+                  <div className="rounded-md bg-white px-2 py-1.5">
+                    <dt className="text-slate-500">IT Security Provisioning</dt>
+                    <dd className="font-semibold text-slate-900">{itSec}</dd>
+                  </div>
+                  <div className="rounded-md bg-white px-2 py-1.5">
+                    <dt className="text-slate-500">Manager Laptop Decision</dt>
+                    <dd className="font-semibold text-slate-900">{decision}</dd>
+                  </div>
+                  <div className="rounded-md bg-white px-2 py-1.5">
+                    <dt className="text-slate-500">
+                      {path === "Reuse Existing Laptop"
+                        ? "Existing Laptop Preparation"
+                        : path === "New Laptop Temporary Spare"
+                          ? "Temporary Spare Preparation"
+                          : "Onsite IT Preparation"}
+                    </dt>
+                    <dd className="font-semibold text-slate-900">{onsite}</dd>
+                  </div>
+                  <div className="rounded-md bg-white px-2 py-1.5">
+                    <dt className="text-slate-500">New Laptop Procurement</dt>
+                    <dd className="font-semibold text-slate-900">
+                      {procurement}
+                    </dd>
+                  </div>
+                </dl>
+                {laptop.spareLaptopStatus ? (
+                  <p className="mt-2 text-xs text-slate-600">
+                    Spare status:{" "}
+                    <span className="font-medium">{laptop.spareLaptopStatus}</span>
                   </p>
-                  <p className="mt-1 text-sm font-medium text-slate-900">
-                    {laptop.requestStatus}
-                    {laptop.managerDecision
-                      ? ` · Manager: ${laptop.managerDecision}`
-                      : ""}
+                ) : null}
+                {laptop.existingLaptopStatus ? (
+                  <p className="mt-2 text-xs text-slate-600">
+                    Existing device:{" "}
+                    <span className="font-medium">
+                      {laptop.existingLaptopStatus}
+                    </span>
                   </p>
-                </div>
-                {laptop.managerTaskId || laptop.procurementTaskId ? (
-                  <Link
-                    href={`/oneflow/tasks/${
-                      laptop.procurementTaskId || laptop.managerTaskId
-                    }`}
-                    className="text-xs font-semibold text-flow-accent underline"
-                  >
-                    View Laptop Request
-                  </Link>
                 ) : null}
               </div>
-              <dl className="mt-3 grid gap-1 text-xs text-slate-600 sm:grid-cols-2 lg:grid-cols-3">
-                <div>
-                  Credit:{" "}
-                  <span className="font-medium text-slate-800">
-                    {laptop.departmentCreditNumber || "—"}
-                  </span>
+              <div className="rounded-lg border border-flow-line bg-flow-canvas/60 p-3">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                      Laptop Request
+                    </p>
+                    <p className="mt-1 text-sm font-medium text-slate-900">
+                      {laptop.requestStatus}
+                      {laptop.managerDecision
+                        ? ` · Manager: ${laptop.managerDecision}`
+                        : ""}
+                    </p>
+                  </div>
+                  {laptop.managerTaskId ||
+                  laptop.procurementTaskId ||
+                  laptop.onsiteITTaskId ? (
+                    <Link
+                      href={`/oneflow/tasks/${
+                        laptop.onsiteITTaskId ||
+                        laptop.procurementTaskId ||
+                        laptop.managerTaskId
+                      }`}
+                      className="text-xs font-semibold text-flow-accent underline"
+                    >
+                      View Equipment Task
+                    </Link>
+                  ) : null}
                 </div>
-                <div>
-                  Cost centre:{" "}
-                  <span className="font-medium text-slate-800">
-                    {laptop.costCentre || "—"}
-                  </span>
-                </div>
-                <div>
-                  Type:{" "}
-                  <span className="font-medium text-slate-800">
-                    {laptop.laptopRequirementType || "—"}
-                  </span>
-                </div>
-                <div>
-                  PO:{" "}
-                  <span className="font-medium text-slate-800">
-                    {laptop.purchaseOrderNumber || "—"}
-                  </span>
-                </div>
-                <div>
-                  Est. delivery:{" "}
-                  <span className="font-medium text-slate-800">
-                    {laptop.estimatedDeliveryDate
-                      ? formatDate(laptop.estimatedDeliveryDate)
-                      : "—"}
-                  </span>
-                </div>
-                <div>
-                  Onsite IT:{" "}
-                  <span className="font-medium text-slate-800">
-                    {laptop.onsiteStatus || "—"}
-                  </span>
-                </div>
-              </dl>
+                <dl className="mt-3 grid gap-1 text-xs text-slate-600 sm:grid-cols-2 lg:grid-cols-3">
+                  <div>
+                    Path:{" "}
+                    <span className="font-medium text-slate-800">{path}</span>
+                  </div>
+                  <div>
+                    Type:{" "}
+                    <span className="font-medium text-slate-800">
+                      {laptop.laptopRequirementType || "—"}
+                    </span>
+                  </div>
+                  <div>
+                    PO:{" "}
+                    <span className="font-medium text-slate-800">
+                      {laptop.purchaseOrderNumber || "—"}
+                    </span>
+                  </div>
+                  <div>
+                    Est. delivery:{" "}
+                    <span className="font-medium text-slate-800">
+                      {laptop.estimatedDeliveryDate
+                        ? formatDate(laptop.estimatedDeliveryDate)
+                        : "—"}
+                    </span>
+                  </div>
+                  <div>
+                    Network ID:{" "}
+                    <span className="font-medium text-slate-800">
+                      {laptop.networkIdSnapshot || "—"}
+                    </span>
+                  </div>
+                  <div>
+                    Onsite IT:{" "}
+                    <span className="font-medium text-slate-800">
+                      {laptop.onsiteStatus || onsite}
+                    </span>
+                  </div>
+                </dl>
+              </div>
             </div>
           );
         })()}

@@ -23,10 +23,14 @@ export function areItSecurityAccountTasksComplete(
 export function shouldSkipGenericOnsiteUnlockEmail(
   unlockedTasks: ChecklistTask[]
 ): boolean {
+  if (unlockedTasks.length !== 1) return false;
+  const t = unlockedTasks[0];
+  if (t.responsibleTeam !== "Onsite IT Support") return false;
   return (
-    unlockedTasks.length === 1 &&
-    unlockedTasks[0].responsibleTeam === "Onsite IT Support" &&
-    unlockedTasks[0].title === "Laptop Assigned"
+    t.title === "Laptop Assigned" ||
+    t.title === "Prepare Laptop" ||
+    /^Prepare Laptop/i.test(t.title) ||
+    Boolean(t.isLaptopPrepareTask)
   );
 }
 

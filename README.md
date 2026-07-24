@@ -64,6 +64,8 @@ Docker (Synology-friendly):
 docker compose up --build
 ```
 
+See [docs/SYNOLOGY_DEPLOYMENT.md](docs/SYNOLOGY_DEPLOYMENT.md) for Container Manager, reverse proxy, and production `.env` setup.
+
 Outbound HTTPS to AWS SES is required; no inbound AWS ports.
 
 ## How to test the New Hire workflow

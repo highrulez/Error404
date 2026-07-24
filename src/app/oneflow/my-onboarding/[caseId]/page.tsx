@@ -137,6 +137,10 @@ export default function EmployeeSafeOnboardingPage({
             data.equipmentStatus &&
             (data.equipmentStatus === "Laptop ordered" ||
               data.equipmentStatus === "Equipment preparation in progress" ||
+              data.equipmentStatus ===
+                "Equipment is being prepared for your first day" ||
+              data.equipmentStatus === "Temporary laptop prepared" ||
+              data.equipmentStatus === "New laptop assigned" ||
               data.equipmentStatus === "Ready for Day One") && (
               <p className="mt-2 text-xs text-slate-600">
                 Estimated readiness:{" "}

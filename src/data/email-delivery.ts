@@ -63,6 +63,9 @@ function logWorkflow(label: string) {
 function inferAction(email: MockEmail): WorkflowEmailAction {
   const t = (email.notificationType || "").toLowerCase();
   const subj = email.subject.toLowerCase();
+  if (t.includes("sailpoint") || subj.includes("sailpoint provisioning")) {
+    return "sendWorkflowCompletionEmail";
+  }
   if (t.includes("laptop") && (t.includes("manager") || t.includes("decision"))) {
     return "sendLaptopDecisionEmail";
   }

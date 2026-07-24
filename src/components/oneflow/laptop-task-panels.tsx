@@ -576,31 +576,93 @@ export function LaptopPreparePanel({
   return (
     <div className="mb-6 space-y-4 rounded-xl border border-flow-line bg-white p-4 shadow-sm">
       <h2 className="text-sm font-semibold">Prepare Laptop</h2>
+      <p className="text-xs text-slate-500">
+        Path:{" "}
+        <span className="font-medium text-slate-800">
+          {request.equipmentPath || "Decision Pending"}
+        </span>
+        {" · "}
+        Handoff is not blocked by purchase order.
+      </p>
       <dl className="space-y-1">
         <Row label="Employee" value={request.employeeName} />
+        <Row label="Employee ID" value={employee?.employeeNumber || "—"} />
         <Row label="Job title" value={employee?.role || "—"} />
         <Row label="Department" value={employee?.department || "—"} />
+        <Row label="Manager" value={employee?.managerName || request.managerName} />
         <Row
           label="Start date"
           value={employee ? formatDate(employee.startDate) : "—"}
         />
-        <Row label="Requirement type" value={request.laptopRequirementType} />
+        <Row label="Office" value={employee?.location || "—"} />
         <Row
-          label="Approved specification"
-          value={
-            request.requestedSpecification ||
-            request.standardModelRequested ||
-            "Standard"
-          }
+          label="Network ID"
+          value={request.networkIdSnapshot || "—"}
         />
         <Row
-          label="Estimated delivery"
-          value={
-            request.estimatedDeliveryDate
-              ? formatDate(request.estimatedDeliveryDate)
-              : "—"
-          }
+          label="Company email"
+          value={request.companyEmailSnapshot || request.employeeEmail}
         />
+        <Row
+          label="SailPoint status"
+          value={request.sailpointProvisioningStatus || "—"}
+        />
+        <Row label="Laptop decision" value={request.laptopDecisionStage || "—"} />
+        <Row label="Procurement" value={request.procurementStage || "—"} />
+        <Row label="Onsite stage" value={request.onsiteItStage || "—"} />
+        {request.equipmentPath === "New Laptop Temporary Spare" && (
+          <>
+            <Row
+              label="Spare asset"
+              value={request.spareAssetNumber || "—"}
+            />
+            <Row
+              label="Spare status"
+              value={request.spareLaptopStatus || "—"}
+            />
+            <Row
+              label="PO status"
+              value={request.purchaseOrderNumber || request.procurementStage || "—"}
+            />
+            <Row
+              label="Est. new laptop delivery"
+              value={
+                request.estimatedDeliveryDate
+                  ? formatDate(request.estimatedDeliveryDate)
+                  : "—"
+              }
+            />
+          </>
+        )}
+        {request.equipmentPath === "Reuse Existing Laptop" && (
+          <>
+            <Row
+              label="Existing asset"
+              value={request.existingAssetNumber || "—"}
+            />
+            <Row
+              label="Previous assignment"
+              value={request.previousAssignment || "—"}
+            />
+            <Row
+              label="Device condition"
+              value={request.deviceCondition || "—"}
+            />
+            <Row
+              label="Prep status"
+              value={request.existingLaptopStatus || "—"}
+            />
+          </>
+        )}
+        <Row
+          label="Software requirements"
+          value={request.softwareRequirements || "—"}
+        />
+        <Row
+          label="Special notes"
+          value={request.specialEquipmentNotes || "—"}
+        />
+        <Row label="Requirement type" value={request.laptopRequirementType || "—"} />
       </dl>
       {!closed && (
         <div className="flex flex-wrap items-end gap-2">

@@ -1,34 +1,42 @@
 # syntax=docker/dockerfile:1
 
-FROM node:20-alpine AS deps
+# OneFlow / PPG Workday — production image for Synology Container Manager
+# Secrets are injected at runtime via compose / Container Manager. Never bake .env into the image.
+
+FROM node:22-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-# Build-time public URL only — never pass AWS secrets as build args
-ARG NEXT_PUBLIC_APP_URL=http://localhost:3000
-ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
+# Ensure public/ exists so the runner COPY never fails when the repo has no public assets
+RUN mkdir -p public
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
+# Harmless build-time default; production URL is supplied at runtime via compose
+ARG NEXT_PUBLIC_APP_URL=https://ppg.highrulez.com
+ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
 RUN npm run build
 
-FROM node:20-alpine AS runner
+FROM node:22-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
-# Runtime secrets injected by Synology Container Manager / compose:
-# EMAIL_MODE, AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY,
-# SES_FROM_EMAIL, SES_FROM_NAME, NEXT_PUBLIC_APP_URL, EMAIL_RECIPIENT_MAP
+ENV PORT=3000
+ENV HOSTNAME=0.0.0.0
+
 RUN addgroup -S oneflow && adduser -S oneflow -G oneflow
+
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
+
 USER oneflow
 EXPOSE 3000
-ENV PORT=3000
-ENV HOSTNAME=0.0.0.0
-# Outbound HTTPS to AWS SES is required; no inbound AWS ports needed.
+
+# Runtime env (set by compose.yaml / Synology): AWS_*, SES_*, EMAIL_MODE,
+# EMAIL_RECIPIENT_MAP, NEXT_PUBLIC_APP_URL — never hard-coded here.
 CMD ["node", "server.js"]

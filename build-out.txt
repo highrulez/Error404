@@ -6,7 +6,7 @@
    - Environments: .env.local
 
    Creating an optimized production build ...
- Γ£ô Compiled successfully in 14.4s
+ Γ£ô Compiled successfully in 5.5s
    Linting and checking validity of types ...
 
 ./src/app/oneflow/checklist-templates/page.tsx
@@ -28,67 +28,11 @@
 
 info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
    Collecting page data ...
-   Generating static pages (0/33) ...
-   Generating static pages (8/33) 
-   Generating static pages (16/33) 
-   Generating static pages (24/33) 
- Γ£ô Generating static pages (33/33)
-   Finalizing page optimization ...
-   Collecting build traces ...
+[Error [PageNotFoundError]: Cannot find module for page: /oneflow/exit-clearance/page] {
+  code: 'ENOENT'
+}
 
-Route (app)                                            Size  First Load JS
-Γöî Γùï /                                               3.23 kB         109 kB
-Γö£ Γùï /_not-found                                       999 B         104 kB
-Γö£ ╞Æ /api/email/settings                               135 B         103 kB
-Γö£ ╞Æ /api/email/test                                   135 B         103 kB
-Γö£ ╞Æ /api/email/workflow                               135 B         103 kB
-Γö£ Γùï /login                                          1.89 kB         189 kB
-Γö£ Γùï /oneflow                                        5.84 kB         202 kB
-Γö£ Γùï /oneflow/automation-runs                        2.19 kB         202 kB
-Γö£ ╞Æ /oneflow/cases/[id]                             8.28 kB         208 kB
-Γö£ Γùï /oneflow/checklist-templates                    5.04 kB         205 kB
-Γö£ Γùï /oneflow/email-delivery                         6.21 kB         202 kB
-Γö£ Γùï /oneflow/employees                              4.27 kB         200 kB
-Γö£ Γùï /oneflow/exit-clearance                         2.97 kB         190 kB
-Γö£ Γùï /oneflow/exit-clearance-templates               4.76 kB         201 kB
-Γö£ ╞Æ /oneflow/exit-clearance/[id]                    6.97 kB         203 kB
-Γö£ ╞Æ /oneflow/exit-clearance/[id]/print              2.84 kB         190 kB
-Γö£ ╞Æ /oneflow/forms/access-card/[id]                   301 B         206 kB
-Γö£ ╞Æ /oneflow/forms/induction/[id]                     299 B         206 kB
-Γö£ Γùï /oneflow/inbox                                   5.9 kB         202 kB
-Γö£ Γùï /oneflow/lifecycle-cases                        4.35 kB         200 kB
-Γö£ Γùï /oneflow/my-forms                               4.79 kB         201 kB
-Γö£ ╞Æ /oneflow/my-forms/access-card/[formId]            299 B         206 kB
-Γö£ ╞Æ /oneflow/my-forms/access-card/[formId]/preview  1.35 kB         204 kB
-Γö£ ╞Æ /oneflow/my-forms/induction/[formId]              299 B         206 kB
-Γö£ ╞Æ /oneflow/my-forms/induction/[formId]/preview    1.24 kB         204 kB
-Γö£ Γùï /oneflow/my-new-hires                           4.47 kB         200 kB
-Γö£ Γùï /oneflow/my-offboarding                         4.35 kB         200 kB
-Γö£ ╞Æ /oneflow/my-offboarding/[caseId]                5.02 kB         201 kB
-Γö£ Γùï /oneflow/my-onboarding                          4.25 kB         200 kB
-Γö£ ╞Æ /oneflow/my-onboarding/[caseId]                 5.65 kB         202 kB
-Γö£ Γùï /oneflow/my-profile                             2.32 kB         190 kB
-Γö£ Γùï /oneflow/my-tasks                               6.97 kB         203 kB
-Γö£ Γùï /oneflow/new-hires                              4.78 kB         201 kB
-Γö£ Γùï /oneflow/offboarding                            5.01 kB         204 kB
-Γö£ Γùï /oneflow/offboarding/access-removal              4.7 kB         201 kB
-Γö£ Γùï /oneflow/offboarding/assets                     4.69 kB         201 kB
-Γö£ Γùï /oneflow/offboarding/cases                      4.82 kB         201 kB
-Γö£ ╞Æ /oneflow/offboarding/cases/[id]                 3.82 kB         207 kB
-Γö£ Γùï /oneflow/offboarding/upcoming                    4.7 kB         201 kB
-Γö£ Γùï /oneflow/reports                                3.03 kB         190 kB
-Γö£ Γùï /oneflow/settings                               3.23 kB         191 kB
-Γö£ ╞Æ /oneflow/tasks/[taskId]                         11.2 kB         207 kB
-Γö£ Γùï /workday                                        4.25 kB         200 kB
-Γö£ ╞Æ /workday/employees/[id]                         4.33 kB         200 kB
-Γö£ ╞Æ /workday/employees/[id]/edit                      806 B         201 kB
-Γöö Γùï /workday/employees/new                            695 B         201 kB
-+ First Load JS shared by all                        103 kB
-  Γö£ chunks/1255-612df69cb02f2021.js                 46.3 kB
-  Γö£ chunks/4bd1b696-f785427dddbba9fb.js             54.2 kB
-  Γöö other shared chunks (total)                        2 kB
-
-
-Γùï  (Static)   prerendered as static content
-╞Æ  (Dynamic)  server-rendered on demand
-
+> Build error occurred
+[Error: Failed to collect page data for /oneflow/exit-clearance] {
+  type: 'Error'
+}
