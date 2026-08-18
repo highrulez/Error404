@@ -249,6 +249,11 @@ function migrateStore(raw: Partial<AppStore>): AppStore {
     ? (migrateEmailsInUnknown(raw) as Partial<AppStore>)
     : raw;
   const seed = createSeedStore();
+  // Demo dataset v7 replaces the former worker personas with the five
+  // hackathon workers and their linked lifecycle journeys.
+  if ((migratedRaw.version ?? 0) < 7) {
+    return seed;
+  }
   const employees = migratedRaw.employees?.length
     ? migratedRaw.employees
     : seed.employees;
@@ -394,7 +399,7 @@ function migrateStore(raw: Partial<AppStore>): AppStore {
 
   // Historical protection: do not inject new blueprint tasks into existing cases.
   const store: AppStore = {
-    version: 6,
+    version: 7,
     employees: nextEmployees,
     onboardingCases: nextOnboarding,
     offboardingCases: nextOffboarding,

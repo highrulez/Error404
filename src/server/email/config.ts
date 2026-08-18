@@ -19,10 +19,10 @@ export interface EmailServerConfig {
 const EMAIL_MAP_ALIASES: Record<string, string> = {
   admin: "admin@ppg-demo.com",
   administration: "admin@ppg-demo.com",
-  alicia: "alicia.wong@ppg-demo.com",
-  "alicia.wong": "alicia.wong@ppg-demo.com",
-  daniel: "daniel.lim@ppg-demo.com",
-  "daniel.lim": "daniel.lim@ppg-demo.com",
+  nabila: "nabila.aziz@ppg-demo.com",
+  "nabila.aziz": "nabila.aziz@ppg-demo.com",
+  hamdan: "muhamad.asyraf.hamdan@ppg-demo.com",
+  "muhamad.asyraf.hamdan": "muhamad.asyraf.hamdan@ppg-demo.com",
 };
 
 const LEGACY_ADMINISTRATION = "administration@ppg-demo.com";
@@ -44,7 +44,7 @@ function canonicalizeMockKey(rawKey: string): string {
 /**
  * Parse EMAIL_RECIPIENT_MAP JSON or EMAIL_MAP_<localpart> env vars.
  * Keys are mock @ppg-demo.com addresses (lowercase).
- * Supports EMAIL_MAP_ADMIN, EMAIL_MAP_ALICIA, EMAIL_MAP_DANIEL aliases.
+ * Supports EMAIL_MAP_ADMIN, EMAIL_MAP_NABILA, EMAIL_MAP_HAMDAN aliases.
  * Legacy administration@ entries are folded into admin@.
  */
 export function parseRecipientMap(

@@ -33,12 +33,12 @@ function testParseRecipientMapEnvKeys() {
 function testFriendlyAliases() {
   const map = parseRecipientMap({
     EMAIL_MAP_ADMIN: "a@x.com",
-    EMAIL_MAP_ALICIA: "onboard@x.com",
-    EMAIL_MAP_DANIEL: "offboard@x.com",
+    EMAIL_MAP_NABILA: "onboard@x.com",
+    EMAIL_MAP_HAMDAN: "offboard@x.com",
   } as unknown as NodeJS.ProcessEnv);
   assert.equal(map["admin@ppg-demo.com"], "a@x.com");
-  assert.equal(map["alicia.wong@ppg-demo.com"], "onboard@x.com");
-  assert.equal(map["daniel.lim@ppg-demo.com"], "offboard@x.com");
+  assert.equal(map["nabila.aziz@ppg-demo.com"], "onboard@x.com");
+  assert.equal(map["muhamad.asyraf.hamdan@ppg-demo.com"], "offboard@x.com");
   assert.equal(map["administration@ppg-demo.com"], undefined);
 }
 

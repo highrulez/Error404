@@ -69,12 +69,12 @@ export default function SettingsPage() {
             const r = service.resetDanielExitFormJourney(session);
             if (!r.ok) setMessage(r.error);
             else {
-              setMessage("Daniel Exit Form Journey reset.");
+              setMessage("Hamdan Exit Form Journey reset.");
               refresh();
             }
           }}
         >
-          Reset Daniel Exit Form Journey
+          Reset Hamdan Exit Form Journey
         </button>
         <button
           type="button"

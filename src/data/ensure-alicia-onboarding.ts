@@ -1,5 +1,5 @@
 /**
- * Idempotent Alicia Wong onboarding demo ensure / repair.
+ * Idempotent Nabila onboarding demo ensure / repair.
  * Stable IDs only — never creates duplicates on repeated calls.
  */
 
@@ -330,7 +330,7 @@ export function ensureAliciaOnboardingDemoData(
       induction = {
         ...induction,
         formStatus: "Sent",
-        employeeName: "Alicia Wong",
+        employeeName: "Aziz, Nabila",
         employeeEmail: ALICIA_EMAIL,
         jobTitle: "Customer Service Specialist",
         department: "Customer Service",
@@ -361,7 +361,7 @@ export function ensureAliciaOnboardingDemoData(
         lifecycleCaseId: ALICIA_ONBOARDING_CASE_ID,
         employeeId: ALICIA_EMPLOYEE_ID,
         employeeEmail: ALICIA_EMAIL,
-        employeeName: induction.employeeName || "Alicia Wong",
+        employeeName: induction.employeeName || "Aziz, Nabila",
         jobTitle: induction.jobTitle || "Customer Service Specialist",
         department: induction.department || "Customer Service",
         acknowledgementDate: induction.acknowledgementDate ?? null,
@@ -408,7 +408,7 @@ export function ensureAliciaOnboardingDemoData(
         ...access,
         formStatus: "Sent",
         companyNameOnCard: "PPG",
-        applicantName: "Alicia Wong",
+        applicantName: "Aziz, Nabila",
         locationUnit: "L6-1",
         updatedAt: nowIso(),
       };

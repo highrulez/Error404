@@ -68,7 +68,7 @@ EMAIL_MODE=both
 
 NEXT_PUBLIC_APP_URL=https://ppg.highrulez.com
 
-EMAIL_RECIPIENT_MAP={"admin@ppg-demo.com":"REPLACE_ME","manager@ppg-demo.com":"REPLACE_ME","hr@ppg-demo.com":"REPLACE_ME","itsecurity@ppg-demo.com":"REPLACE_ME","alicia.wong@ppg-demo.com":"REPLACE_ME","daniel.lim@ppg-demo.com":"REPLACE_ME"}
+EMAIL_RECIPIENT_MAP={"admin@ppg-demo.com":"REPLACE_ME","manager@ppg-demo.com":"REPLACE_ME","hr@ppg-demo.com":"REPLACE_ME","itsecurity@ppg-demo.com":"REPLACE_ME","nabila.aziz@ppg-demo.com":"REPLACE_ME","muhamad.asyraf.hamdan@ppg-demo.com":"REPLACE_ME"}
 ```
 
 Notes:
@@ -76,7 +76,7 @@ Notes:
 - `EMAIL_MODE=mock` — Mock Inbox only (safe for smoke tests without SES).
 - `EMAIL_MODE=ses` or `both` — requires valid AWS credentials and a verified SES sender.
 - `EMAIL_RECIPIENT_MAP` maps mock `@ppg-demo.com` addresses to real inboxes. Real addresses stay on the NAS `.env` only.
-- Optional aliases: `EMAIL_MAP_ADMIN`, `EMAIL_MAP_ALICIA`, `EMAIL_MAP_DANIEL` (see `.env.example`).
+- Optional aliases: `EMAIL_MAP_ADMIN`, `EMAIL_MAP_NABILA`, `EMAIL_MAP_HAMDAN` (see `.env.example`).
 
 ---
 

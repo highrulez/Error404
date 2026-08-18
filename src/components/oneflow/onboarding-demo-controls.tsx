@@ -66,7 +66,7 @@ export function OnboardingDemoControls({
         Presentation Demo Controls
       </p>
       <p className="mt-1 text-xs text-amber-800/80">
-        Alicia Wong onboarding shortcuts. Mutates local prototype data only.
+        Nabila Aziz onboarding shortcuts. Mutates local prototype data only.
       </p>
       <div className="mt-3 flex flex-wrap gap-2">
         <Btn
@@ -85,29 +85,29 @@ export function OnboardingDemoControls({
             }
           }}
         >
-          Repair Alicia Onboarding Journey
+          Repair Nabila Onboarding Journey
         </Btn>
         <Btn
           busy={busy}
           onClick={() =>
-            run("Repair Alicia Onboarding Forms", () => {
+            run("Repair Nabila Onboarding Forms", () => {
               const r = service.repairAliciaOnboardingForms(session);
               if (!r.ok) throw new Error(r.error);
             })
           }
         >
-          Repair Alicia Onboarding Forms
+          Repair Nabila Onboarding Forms
         </Btn>
         <Btn
           busy={busy}
           onClick={() =>
-            run("Reset Alicia Onboarding Journey", () => {
+            run("Reset Nabila Onboarding Journey", () => {
               const r = service.resetAliciaOnboardingJourney(session);
               if (!r.ok) throw new Error(r.error);
             })
           }
         >
-          Reset Alicia Onboarding Journey
+          Reset Nabila Onboarding Journey
         </Btn>
         <Btn
           busy={busy}
@@ -123,12 +123,12 @@ export function OnboardingDemoControls({
         <Btn
           busy={busy}
           onClick={() =>
-            run("Login as Alicia", () =>
+            run("Login as Nabila", () =>
               loginAs(ALICIA_EMAIL, `/oneflow/my-onboarding/${ALICIA_ONBOARDING_CASE_ID}`)
             )
           }
         >
-          Login as Alicia
+          Login as Nabila
         </Btn>
         <Btn
           busy={busy}
@@ -167,13 +167,13 @@ export function OnboardingDemoControls({
         <Btn
           busy={busy}
           onClick={() =>
-            run("Reset Alicia Induction Journey", () => {
+            run("Reset Nabila Induction Journey", () => {
               const r = service.resetAliciaInductionJourney(session);
               if (!r.ok) throw new Error(r.error);
             })
           }
         >
-          Reset Alicia Induction Journey
+          Reset Nabila Induction Journey
         </Btn>
         <Btn
           busy={busy}
@@ -192,18 +192,18 @@ export function OnboardingDemoControls({
           busy={busy}
           disabled={!induction}
           onClick={() =>
-            run("Submit Induction Form as Alicia", () => {
+            run("Submit Induction Form as Nabila", () => {
               if (!induction) throw new Error("No induction form");
               service.populateInductionDemo(session, induction.id);
               const r = service.submitInductionForm(session, induction.id, {
                 employeeDeclaration: true,
-                typedSignature: "Alicia Wong",
+                typedSignature: "Aziz, Nabila",
               });
               if (!r.ok) throw new Error(r.error);
             })
           }
         >
-          Submit Induction Form as Alicia
+          Submit Induction Form as Nabila
         </Btn>
         <Btn
           busy={busy}
@@ -222,7 +222,7 @@ export function OnboardingDemoControls({
           busy={busy}
           disabled={!access}
           onClick={() =>
-            run("Submit Access Card Form as Alicia", () => {
+            run("Submit Access Card Form as Nabila", () => {
               if (!access) throw new Error("No access card form");
               service.populateAccessCardDemo(session, access.id);
               const r = service.submitAccessCardForm(session, access.id);
@@ -230,7 +230,7 @@ export function OnboardingDemoControls({
             })
           }
         >
-          Submit Access Card Form as Alicia
+          Submit Access Card Form as Nabila
         </Btn>
         <Btn
           busy={busy}
@@ -328,13 +328,13 @@ export function OnboardingDemoControls({
         <Btn
           busy={busy}
           onClick={() =>
-            run("Reset Alicia Laptop Request", () => {
+            run("Reset Nabila Laptop Request", () => {
               const r = service.resetDemoLaptopRequest(session);
               if (!r.ok) throw new Error(r.error);
             })
           }
         >
-          Reset Alicia Laptop Request
+          Reset Nabila Laptop Request
         </Btn>
         <Btn
           busy={busy}

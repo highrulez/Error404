@@ -97,11 +97,11 @@ Generated only once per employee when status becomes **New Hire**.
 
 ## Sample Malaysian employees
 
-1. Nur Aisyah binti Hassan — Finance — Active  
-2. Rajesh a/l Subramaniam — IT — Active  
-3. Amirul Hakim bin Ismail — Operations — Pre-Hire  
-4. Chong Mei Xin — Marketing — Contract / Active  
-5. Priya Lakshmi a/p Ganesan — HR — Offboarding  
+1. Thamotharan, Renuka Malar — GCSS - RPA • GCSS, Delivery Management — Active
+2. Aziz, Nabila — GCSS - RPA • GCSS, Delivery Management — Preboarding
+3. Nagaraja, Umashangari — GCSS, Delivery Management — Active
+4. Ramachandran, Yuganeswary — Req Bus Sup MY Fin MDM — Active
+5. Hamdan, Muhamad Asyraf Naqiyuddin — Req Sup IT IT BFS EAD — Offboarding
 
 ## Data layer
 
@@ -147,8 +147,9 @@ Generated only once per employee when status becomes **New Hire**.
 | Finance | finance@ppg-demo.com |
 | Corporate Card Admin | corporatecard@ppg-demo.com |
 | Administration (Access Card / exit clearance) | admin@ppg-demo.com |
-| Offboarding Employee (Daniel Lim) | daniel.lim@ppg-demo.com |
+| Onboarding Employee (Aziz, Nabila) | nabila.aziz@ppg-demo.com |
+| Offboarding Employee (Hamdan, Muhamad Asyraf Naqiyuddin) | muhamad.asyraf.hamdan@ppg-demo.com |
 
-Reset demo: Admin Overview → **Reset demo data** (clears cases/tasks/emails/runs; restores seed employees and Daniel exit form).
+Reset demo: Admin Overview → **Reset demo data** (clears cases/tasks/emails/runs; restores the five seeded workers and Hamdan exit form).
 
 

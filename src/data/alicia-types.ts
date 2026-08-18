@@ -1,14 +1,14 @@
-/** Permanent Alicia Wong onboarding demo constants — stable deterministic IDs */
+/** Permanent Nabila onboarding demo constants — stable deterministic IDs */
 
-export const ALICIA_EMPLOYEE_ID = "emp-alicia-wong";
-export const ALICIA_EMPLOYEE_NUMBER = "MY-00921";
-export const ALICIA_EMAIL = "alicia.wong@ppg-demo.com";
-export const ALICIA_CASE_NUMBER = "ONB-2026-0921";
+export const ALICIA_EMPLOYEE_ID = "emp-nabila-aziz";
+export const ALICIA_EMPLOYEE_NUMBER = "MY-10502";
+export const ALICIA_EMAIL = "nabila.aziz@ppg-demo.com";
+export const ALICIA_CASE_NUMBER = "ONB-2026-10502";
 
 /** Canonical stable demo IDs (do not randomize on init). */
-export const ALICIA_ONBOARDING_CASE_ID = "onboarding-alicia-0921";
-export const ALICIA_INDUCTION_FORM_ID = "induction-alicia-0921";
-export const ALICIA_ACCESS_CARD_FORM_ID = "access-card-alicia-0921";
+export const ALICIA_ONBOARDING_CASE_ID = "onboarding-nabila-10502";
+export const ALICIA_INDUCTION_FORM_ID = "induction-nabila-10502";
+export const ALICIA_ACCESS_CARD_FORM_ID = "access-card-nabila-10502";
 
 export const PERSONAL_INFO_TASK_TITLE = "Review Personal Information";
 export const FIRST_DAY_TASK_TITLE = "Acknowledge First-Day Instructions";

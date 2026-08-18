@@ -164,8 +164,8 @@ export const EXIT_CONFIRMATION_DEPARTMENTS: ExitConfirmationDepartment[] = [
 ];
 
 /** Stable permanent demo IDs */
-export const DANIEL_EMPLOYEE_ID = "emp-daniel-lim";
-export const DANIEL_OFFBOARDING_CASE_ID = "off-daniel-lim";
-export const DANIEL_EXIT_FORM_ID = "exit-form-daniel-lim";
-export const DANIEL_EMAIL = "daniel.lim@ppg-demo.com";
-export const DANIEL_EMPLOYEE_NUMBER = "MY-00881";
+export const DANIEL_EMPLOYEE_ID = "emp-hamdan-asyraf";
+export const DANIEL_OFFBOARDING_CASE_ID = "off-hamdan-asyraf";
+export const DANIEL_EXIT_FORM_ID = "exit-form-hamdan-asyraf";
+export const DANIEL_EMAIL = "muhamad.asyraf.hamdan@ppg-demo.com";
+export const DANIEL_EMPLOYEE_NUMBER = "MY-10505";

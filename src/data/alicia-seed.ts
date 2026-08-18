@@ -57,14 +57,14 @@ export function createAliciaEmployee(now = nowIso()): Employee {
   return {
     id: ALICIA_EMPLOYEE_ID,
     employeeNumber: ALICIA_EMPLOYEE_NUMBER,
-    fullName: "Alicia Wong",
-    preferredName: "Alicia",
+    fullName: "Aziz, Nabila",
+    preferredName: "Nabila",
     email: ALICIA_EMAIL,
-    phone: "+60 12-987 6543",
-    department: "Customer Service",
-    role: "Customer Service Specialist",
+    phone: "+60 12-555 0102",
+    department: "GCSS - RPA • GCSS, Delivery Management",
+    role: "Application Developer Specialist",
     location: "Malaysia – UOA Business Park",
-    managerName: "Sarah Tan",
+    managerName: "Hiring Manager",
     managerEmail: "manager@ppg-demo.com",
     employeeType: "Permanent",
     employmentStatus: "Preboarding",
@@ -72,7 +72,7 @@ export function createAliciaEmployee(now = nowIso()): Employee {
     requiresOnboarding: true,
     createdAt: now,
     updatedAt: now,
-    personalEmail: "alicia.wong.personal@example.com",
+    personalEmail: "nabila.aziz.personal@example.com",
     emergencyContactName: "",
     emergencyContactNumber: "",
   };
@@ -499,17 +499,17 @@ export function buildAliciaWelcomeEmail(
 ): MockEmail {
   const attachments: MockEmailAttachment[] = [
     att(
-      "Alicia_Wong_Induction_Checklist.pdf",
+      "Aziz_Nabila_Induction_Checklist.pdf",
       "induction-checklist",
       inductionFormId
     ),
     att(
-      "Alicia_Wong_UOA_Security_Access_Card_Application.pdf",
+      "Aziz_Nabila_UOA_Security_Access_Card_Application.pdf",
       "access-card-application",
       accessFormId
     ),
     att(
-      "Alicia_Wong_First_Day_Guide.pdf",
+      "Aziz_Nabila_First_Day_Guide.pdf",
       "first-day-guide",
       ALICIA_ONBOARDING_CASE_ID
     ),
@@ -656,7 +656,7 @@ export function buildAliciaDemoPackage(args: {
       <p>Please complete your Induction Checklist before your start date.</p>
       <p>Due: ${inductionDue}</p>
       <p><a href="/oneflow/my-forms/induction/${ALICIA_INDUCTION_FORM_ID}">Open and Complete Form</a></p>
-      <p>📎 Alicia_Wong_Induction_Checklist.pdf · Preview · Open and Complete Form · Download Mock Copy</p>
+      <p>📎 Aziz_Nabila_Induction_Checklist.pdf · Preview · Open and Complete Form · Download Mock Copy</p>
     </div>`,
     sentAt: now,
     readAt: null,
@@ -666,7 +666,7 @@ export function buildAliciaDemoPackage(args: {
     responsibleTeam: "HR Operations",
     attachments: [
       att(
-        "Alicia_Wong_Induction_Checklist.pdf",
+        "Aziz_Nabila_Induction_Checklist.pdf",
         "induction-checklist",
         ALICIA_INDUCTION_FORM_ID
       ),
@@ -685,7 +685,7 @@ export function buildAliciaDemoPackage(args: {
       <p>Please complete your UOA Security Access Card Application.</p>
       <p>Due: ${accessDue}</p>
       <p><a href="/oneflow/my-forms/access-card/${ALICIA_ACCESS_CARD_FORM_ID}">Open and Complete Form</a></p>
-      <p>📎 Alicia_Wong_UOA_Security_Access_Card_Application.pdf · Preview · Open and Complete Form · Download Mock Copy</p>
+      <p>📎 Aziz_Nabila_UOA_Security_Access_Card_Application.pdf · Preview · Open and Complete Form · Download Mock Copy</p>
     </div>`,
     sentAt: now,
     readAt: null,
@@ -695,7 +695,7 @@ export function buildAliciaDemoPackage(args: {
     responsibleTeam: "Administration",
     attachments: [
       att(
-        "Alicia_Wong_UOA_Security_Access_Card_Application.pdf",
+        "Aziz_Nabila_UOA_Security_Access_Card_Application.pdf",
         "access-card-application",
         ALICIA_ACCESS_CARD_FORM_ID
       ),
@@ -713,7 +713,7 @@ export function buildAliciaDemoPackage(args: {
       <p>Hello ${employee.fullName},</p>
       <p>Please review and acknowledge your first-day reporting instructions.</p>
       <p><a href="/oneflow/tasks/tsk-alicia-first-day">Open First-Day Instructions</a></p>
-      <p>📎 Alicia_Wong_First_Day_Guide.pdf · Preview · Download Mock Copy</p>
+      <p>📎 Aziz_Nabila_First_Day_Guide.pdf · Preview · Download Mock Copy</p>
     </div>`,
     sentAt: now,
     readAt: null,
@@ -723,7 +723,7 @@ export function buildAliciaDemoPackage(args: {
     responsibleTeam: "HR Operations",
     attachments: [
       att(
-        "Alicia_Wong_First_Day_Guide.pdf",
+        "Aziz_Nabila_First_Day_Guide.pdf",
         "first-day-guide",
         ALICIA_ONBOARDING_CASE_ID
       ),

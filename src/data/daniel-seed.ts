@@ -36,18 +36,18 @@ export function createDanielEmployee(now = nowIso()): Employee {
   return {
     id: DANIEL_EMPLOYEE_ID,
     employeeNumber: DANIEL_EMPLOYEE_NUMBER,
-    fullName: "Daniel Lim",
-    preferredName: "Daniel",
+    fullName: "Hamdan, Muhamad Asyraf Naqiyuddin",
+    preferredName: "Muhamad Asyraf",
     email: DANIEL_EMAIL,
-    phone: "+60 12-345 6789",
-    department: "Sales",
-    role: "Sales Executive",
-    location: "Malaysia – Shah Alam",
-    managerName: "Sarah Tan",
+    phone: "+60 12-555 0105",
+    department: "Req Sup IT IT BFS EAD",
+    role: "SAP COE EDI Analyst",
+    location: "Malaysia – UOA Business Park",
+    managerName: "Hiring Manager",
     managerEmail: "manager@ppg-demo.com",
     employeeType: "Permanent",
     employmentStatus: "Offboarding",
-    startDate: "2021-03-15",
+    startDate: "2022-06-13",
     requiresOnboarding: false,
     createdAt: now,
     updatedAt: now,
@@ -250,14 +250,14 @@ export function buildDanielDemoPackage(args: {
       DANIEL_OFFBOARDING_CASE_ID,
       "PPG Workday",
       "Offboarding case created",
-      `${offboardingCase.caseNumber} · permanent demo employee Daniel Lim`
+      `${offboardingCase.caseNumber} · permanent demo employee Hamdan, Muhamad Asyraf Naqiyuddin`
     ),
     exitActivity(
       employee.id,
       DANIEL_OFFBOARDING_CASE_ID,
       "OneFlow Automation",
       "Exit clearance form sent",
-      "Initial Employee Exit Clearance Form email generated for Daniel Lim"
+      "Initial Employee Exit Clearance Form email generated for Hamdan, Muhamad Asyraf Naqiyuddin"
     ),
   ];
 

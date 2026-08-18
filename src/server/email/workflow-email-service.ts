@@ -400,8 +400,8 @@ export function getPublicEmailSettings() {
     "itsecurity@ppg-demo.com": "IT Security / Onsite IT Support",
     "facilities@ppg-demo.com": "Facilities (non-induction)",
     "finance@ppg-demo.com": "Finance",
-    "alicia.wong@ppg-demo.com": "Onboarding Demo Employee — Alicia Wong",
-    "daniel.lim@ppg-demo.com": "Offboarding Demo Employee — Daniel Lim",
+    "nabila.aziz@ppg-demo.com": "Onboarding Demo Employee — Aziz, Nabila",
+    "muhamad.asyraf.hamdan@ppg-demo.com": "Offboarding Demo Employee — Hamdan, Muhamad Asyraf Naqiyuddin",
   };
 
   const mappings = Object.entries(cfg.recipientMap)
@@ -421,8 +421,8 @@ export function getPublicEmailSettings() {
     "itsecurity@ppg-demo.com",
     "facilities@ppg-demo.com",
     "finance@ppg-demo.com",
-    "alicia.wong@ppg-demo.com",
-    "daniel.lim@ppg-demo.com",
+    "nabila.aziz@ppg-demo.com",
+    "muhamad.asyraf.hamdan@ppg-demo.com",
   ];
   for (const d of defaults) {
     if (!mappings.some((m) => m.simulated === d)) {

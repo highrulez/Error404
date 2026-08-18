@@ -85,7 +85,7 @@ export function OffboardingDemoControls({
       )}
 
       <p className="mt-4 text-[11px] font-bold uppercase tracking-wide text-amber-900">
-        Exit Clearance Form (Daniel)
+        Exit Clearance Form (Hamdan)
       </p>
       <div className="mt-2 flex flex-wrap gap-2">
         <button
@@ -93,13 +93,13 @@ export function OffboardingDemoControls({
           disabled={busy}
           className="rounded-md border border-amber-400 bg-white px-3 py-1.5 text-xs font-semibold disabled:opacity-50"
           onClick={() =>
-            run("Daniel exit journey reset", () => {
+            run("Hamdan exit journey reset", () => {
               const r = service.resetDanielExitFormJourney(session);
               if (!r.ok) throw new Error(r.error);
             })
           }
         >
-          Reset Daniel Exit Form Journey
+          Reset Hamdan Exit Form Journey
         </button>
         <button
           type="button"
@@ -120,9 +120,9 @@ export function OffboardingDemoControls({
           disabled={busy}
           className="rounded-md border border-amber-400 bg-white px-3 py-1.5 text-xs font-semibold disabled:opacity-50"
           onClick={() =>
-            run("Switched to Daniel", () => {
+            run("Switched to Hamdan", () => {
               loginAs(
-                "daniel.lim@ppg-demo.com",
+                "muhamad.asyraf.hamdan@ppg-demo.com",
                 exitForm
                   ? `/oneflow/exit-clearance/${exitForm.id}`
                   : "/oneflow/exit-clearance"
@@ -130,7 +130,7 @@ export function OffboardingDemoControls({
             })
           }
         >
-          Login as Daniel
+          Login as Hamdan
         </button>
         <button
           type="button"
@@ -162,7 +162,7 @@ export function OffboardingDemoControls({
           disabled={busy || !exitForm}
           className="rounded-md border border-amber-400 bg-white px-3 py-1.5 text-xs font-semibold disabled:opacity-50"
           onClick={() =>
-            run("Form submitted as Daniel (admin)", () => {
+            run("Form submitted as Hamdan (admin)", () => {
               if (!exitForm) throw new Error("No exit form.");
               service.populateSampleExitAnswers(session, exitForm.id);
               const form = service.getExitClearanceForm(exitForm.id)!;
@@ -170,7 +170,7 @@ export function OffboardingDemoControls({
                 personalEmail: form.personalEmail,
                 contactNumber: form.contactNumber,
                 employeeDeclarationConfirmed: true,
-                employeeTypedSignature: "Daniel Lim",
+                employeeTypedSignature: "Hamdan, Muhamad Asyraf Naqiyuddin",
                 checklistItems: form.checklistItems.map((i) => ({
                   id: i.id,
                   employeeAnswer: i.employeeAnswer,
@@ -181,7 +181,7 @@ export function OffboardingDemoControls({
             })
           }
         >
-          Submit Form as Daniel
+          Submit Form as Hamdan
         </button>
         <button
           type="button"
@@ -396,14 +396,14 @@ export function OffboardingDemoControls({
           disabled={busy}
           className="rounded-md border border-amber-300 bg-white px-3 py-1.5 text-xs font-semibold disabled:opacity-50"
           onClick={() =>
-            run("Induction assigned to Daniel", () => {
+            run("Induction assigned to Hamdan", () => {
               const r = service.assignInductionToDaniel(session);
               if (!r.ok) throw new Error(r.error);
               onDone?.(`Induction form ${r.form.id}`);
             })
           }
         >
-          Assign Induction Checklist to Daniel
+          Assign Induction Checklist to Hamdan
         </button>
         <button
           type="button"
@@ -449,10 +449,10 @@ export function OffboardingDemoControls({
               onDone?.("Assign induction first.");
               return;
             }
-            loginAs("daniel.lim@ppg-demo.com", `/oneflow/my-forms/induction/${id}`);
+            loginAs("muhamad.asyraf.hamdan@ppg-demo.com", `/oneflow/my-forms/induction/${id}`);
           }}
         >
-          Submit Induction Form as Daniel
+          Submit Induction Form as Hamdan
         </button>
         <button
           type="button"
@@ -483,7 +483,7 @@ export function OffboardingDemoControls({
             })
           }
         >
-          Assign Access Card Application to Daniel
+          Assign Access Card Application to Hamdan
         </button>
         <button
           type="button"
@@ -530,12 +530,12 @@ export function OffboardingDemoControls({
               return;
             }
             loginAs(
-              "daniel.lim@ppg-demo.com",
+              "muhamad.asyraf.hamdan@ppg-demo.com",
               `/oneflow/my-forms/access-card/${id}`
             );
           }}
         >
-          Submit Access Card Form as Daniel
+          Submit Access Card Form as Hamdan
         </button>
         <button
           type="button"

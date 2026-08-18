@@ -21,9 +21,9 @@ async function main() {
     notificationId: "n1",
     notificationType: "Reminder",
     session: {
-      email: "alicia.wong@ppg-demo.com",
+      email: "nabila.aziz@ppg-demo.com",
       role: "ONBOARDING_EMPLOYEE",
-      name: "Alicia Wong",
+      name: "Aziz, Nabila",
     },
   });
   assert.equal(employeeBlocked.ok, false);

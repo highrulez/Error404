@@ -236,7 +236,7 @@ export function repairExitConfirmationData(
 
   if (repairedItems || createdTasks || warnings) {
     const sampleEmp =
-      uow.employees.list().find((e) => e.email.includes("daniel")) ||
+      uow.employees.list().find((e) => e.email.includes("muhamad.asyraf.hamdan")) ||
       uow.employees.list()[0];
     if (sampleEmp) {
       const existing = uow.activity

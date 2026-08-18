@@ -657,10 +657,10 @@ export function applySampleAnswers(
   });
   return {
     ...form,
-    personalEmail: "daniel.lim.personal@example.com",
+    personalEmail: "muhamad.asyraf.hamdan.personal@example.com",
     contactNumber: "+60 12-345 6789",
     employeeDeclarationConfirmed: true,
-    employeeTypedSignature: "Daniel Lim",
+    employeeTypedSignature: "Hamdan, Muhamad Asyraf Naqiyuddin",
     checklistItems: items,
     updatedAt: nowIso(),
   };
