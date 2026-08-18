@@ -17,7 +17,7 @@ RUN mkdir -p public
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 # Harmless build-time default; production URL is supplied at runtime via compose
-ARG NEXT_PUBLIC_APP_URL=https://ppg.highrulez.com
+ARG NEXT_PUBLIC_APP_URL=https://oneflow.highrulez.com
 ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
 RUN npm run build
 
