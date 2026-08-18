@@ -139,12 +139,12 @@ Generated only once per employee when status becomes **New Hire**.
 | Role | Email |
 | --- | --- |
 | Admin | admin@ppg-demo.com |
-| HR | hr@ppg-demo.com |
-| IT Security | itsecurity@ppg-demo.com |
-| Onsite IT | itsupport@ppg-demo.com |
+| Soh, Shi Rui Sherry (HR) | sherry.soh@ppg-demo.com |
+| Mohd Azli, Amirul Mukhlis (IT Security) | amirul.azli@ppg-demo.com |
+| Zulfikar Zikri, Nuqman Haziq (Onsite IT) | nuqman.zulfikar@ppg-demo.com |
 | Facilities | facilities@ppg-demo.com |
 | Hiring Manager | manager@ppg-demo.com |
-| Finance | finance@ppg-demo.com |
+| Bashari, Noorliana (MAL) (Finance) | noorliana.bashari@ppg-demo.com |
 | Corporate Card Admin | corporatecard@ppg-demo.com |
 | Administration (Access Card / exit clearance) | admin@ppg-demo.com |
 | Onboarding Employee (Aziz, Nabila) | nabila.aziz@ppg-demo.com |

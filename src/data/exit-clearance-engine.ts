@@ -326,7 +326,7 @@ export function buildInitialExitFormEmail(args: {
     automationRunId: runId,
     from: "oneflow.offboarding@ppg-demo.com",
     to: form.employeeEmail,
-    cc: ["hr@ppg-demo.com", "admin@ppg-demo.com"],
+    cc: ["sherry.soh@ppg-demo.com", "admin@ppg-demo.com"],
     subject: "Action Required: Complete Your Employee Exit Clearance Form",
     htmlBody: `
       <div style="font-family:Segoe UI,Arial,sans-serif;color:#1f2937;line-height:1.5;">
@@ -378,7 +378,7 @@ export function buildDepartmentConfirmationEmails(args: {
       automationRunId: args.runId,
       from: "oneflow.offboarding@ppg-demo.com",
       to,
-      cc: ["hr@ppg-demo.com", "admin@ppg-demo.com"],
+      cc: ["sherry.soh@ppg-demo.com", "admin@ppg-demo.com"],
       subject: `OneFlow: Exit clearance confirmation required — ${args.form.employeeName}`,
       htmlBody: `
         <div style="font-family:Segoe UI,Arial,sans-serif;color:#1f2937;line-height:1.5;">
@@ -418,7 +418,7 @@ export function buildCompletedExitFormEmail(args: {
     automationRunId: args.runId,
     from: "oneflow.offboarding@ppg-demo.com",
     to: args.form.employeeEmail,
-    cc: ["hr@ppg-demo.com", args.form.managerEmail].filter(Boolean),
+    cc: ["sherry.soh@ppg-demo.com", args.form.managerEmail].filter(Boolean),
     subject: "Employee Exit Clearance Completed",
     htmlBody: `
       <div style="font-family:Segoe UI,Arial,sans-serif;color:#1f2937;line-height:1.5;">

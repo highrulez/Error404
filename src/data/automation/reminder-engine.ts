@@ -538,7 +538,7 @@ export class LocalReminderEngine {
     const cc = [
       ccBase,
       "admin@ppg-demo.com",
-      ...(securityCritical ? ["hr@ppg-demo.com"] : []),
+      ...(securityCritical ? ["sherry.soh@ppg-demo.com"] : []),
     ].filter(
       (v, i, a) => a.indexOf(v) === i && v.toLowerCase() !== to.toLowerCase()
     );

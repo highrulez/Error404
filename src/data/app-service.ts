@@ -2378,19 +2378,19 @@ export class AppDataService implements DataService {
           employee,
           caseId,
           kind: "upcoming-last-day",
-          to: "hr@ppg-demo.com",
+          to: "sherry.soh@ppg-demo.com",
         }),
         buildOffboardingEventEmail({
           employee,
           caseId,
           kind: "scheduled-access-removal",
-          to: "itsecurity@ppg-demo.com",
+          to: "amirul.azli@ppg-demo.com",
         }),
         buildOffboardingEventEmail({
           employee,
           caseId,
           kind: "asset-return-reminder",
-          to: "itsupport@ppg-demo.com",
+          to: "nuqman.zulfikar@ppg-demo.com",
         }),
       ]);
     }
@@ -2519,7 +2519,7 @@ export class AppDataService implements DataService {
           employee: emp,
           caseId,
           kind: "overdue-access-removal",
-          to: "itsecurity@ppg-demo.com",
+          to: "amirul.azli@ppg-demo.com",
         }),
       ]);
     }
@@ -2562,7 +2562,7 @@ export class AppDataService implements DataService {
           employee: emp,
           caseId,
           kind: "completed",
-          to: "hr@ppg-demo.com",
+          to: "sherry.soh@ppg-demo.com",
         }),
       ]);
     }

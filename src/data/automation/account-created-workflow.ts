@@ -7,7 +7,7 @@ export const IT_SECURITY_ACCOUNT_TASKS = [
   "SailPoint Access",
 ] as const;
 
-export const ACCOUNT_CREATED_RECIPIENT = "itsupport@ppg-demo.com";
+export const ACCOUNT_CREATED_RECIPIENT = "nuqman.zulfikar@ppg-demo.com";
 export const ACCOUNT_CREATED_FROM = "sailpoint.communications@ppg-demo.com";
 
 export function areItSecurityAccountTasksComplete(

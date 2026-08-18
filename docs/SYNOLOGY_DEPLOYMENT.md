@@ -68,7 +68,7 @@ EMAIL_MODE=both
 
 NEXT_PUBLIC_APP_URL=https://ppg.highrulez.com
 
-EMAIL_RECIPIENT_MAP={"admin@ppg-demo.com":"REPLACE_ME","manager@ppg-demo.com":"REPLACE_ME","hr@ppg-demo.com":"REPLACE_ME","itsecurity@ppg-demo.com":"REPLACE_ME","nabila.aziz@ppg-demo.com":"REPLACE_ME","muhamad.asyraf.hamdan@ppg-demo.com":"REPLACE_ME"}
+EMAIL_RECIPIENT_MAP={"admin@ppg-demo.com":"REPLACE_ME","manager@ppg-demo.com":"REPLACE_ME","sherry.soh@ppg-demo.com":"REPLACE_ME","amirul.azli@ppg-demo.com":"REPLACE_ME","nuqman.zulfikar@ppg-demo.com":"REPLACE_ME","noorliana.bashari@ppg-demo.com":"REPLACE_ME","nabila.aziz@ppg-demo.com":"REPLACE_ME","muhamad.asyraf.hamdan@ppg-demo.com":"REPLACE_ME"}
 ```
 
 Notes:

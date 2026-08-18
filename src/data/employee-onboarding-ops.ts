@@ -289,7 +289,7 @@ export function getEmployeeOnboardingSummary(
     employeeTasks: myTasks,
     safeActivities: activity,
     contacts: [
-      { label: "HR", email: "hr@ppg-demo.com" },
+      { label: "HR", email: "sherry.soh@ppg-demo.com" },
       { label: "Administration", email: "admin@ppg-demo.com" },
     ],
     firstDay: getAliciaFirstDayContent(employee),
@@ -481,7 +481,7 @@ export function maybeMarkReadyForDayOne(
     {
       id: uid("mail-ready"),
       automationRunId: "",
-      from: "hr@ppg-demo.com",
+      from: "sherry.soh@ppg-demo.com",
       to: employee.email,
       cc: [],
       subject: "You Are Ready for Your First Day at PPG",

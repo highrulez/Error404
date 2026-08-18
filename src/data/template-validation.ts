@@ -135,12 +135,12 @@ export function sortTemplates(
 
 export function defaultFixedEmailForTeam(team: ResponsibleTeam): string {
   const map: Record<ResponsibleTeam, string> = {
-    "HR Operations": "hr@ppg-demo.com",
-    "IT Security": "itsecurity@ppg-demo.com",
-    "Onsite IT Support": "itsupport@ppg-demo.com",
+    "HR Operations": "sherry.soh@ppg-demo.com",
+    "IT Security": "amirul.azli@ppg-demo.com",
+    "Onsite IT Support": "nuqman.zulfikar@ppg-demo.com",
     "Facilities / Building Management": "facilities@ppg-demo.com",
     "Hiring Manager": "",
-    "Finance / Administration": "finance@ppg-demo.com",
+    "Finance / Administration": "noorliana.bashari@ppg-demo.com",
     "Corporate Card Admin": "corporatecard@ppg-demo.com",
     Administration: "admin@ppg-demo.com",
     Quality: "quality@ppg-demo.com",

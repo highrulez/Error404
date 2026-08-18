@@ -14,11 +14,11 @@ function testParseRecipientMapJson() {
   const map = parseRecipientMap({
     EMAIL_RECIPIENT_MAP: JSON.stringify({
       "manager@ppg-demo.com": "real.manager@example.com",
-      "hr@ppg-demo.com": "real.hr@example.com",
+      "sherry.soh@ppg-demo.com": "real.hr@example.com",
     }),
   } as unknown as NodeJS.ProcessEnv);
   assert.equal(map["manager@ppg-demo.com"], "real.manager@example.com");
-  assert.equal(map["hr@ppg-demo.com"], "real.hr@example.com");
+  assert.equal(map["sherry.soh@ppg-demo.com"], "real.hr@example.com");
 }
 
 function testParseRecipientMapEnvKeys() {
@@ -75,9 +75,9 @@ function testMaskEmail() {
 function testInvalidJsonFallsBack() {
   const map = parseRecipientMap({
     EMAIL_RECIPIENT_MAP: "{not-json",
-    EMAIL_MAP_hr: "hr@x.com",
+    EMAIL_MAP_sherry: "hr@x.com",
   } as unknown as NodeJS.ProcessEnv);
-  assert.equal(map["hr@ppg-demo.com"], "hr@x.com");
+  assert.equal(map["sherry.soh@ppg-demo.com"], "hr@x.com");
 }
 
 testParseRecipientMapJson();

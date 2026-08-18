@@ -15,7 +15,7 @@ async function main() {
 
   const employeeBlocked = await deliverWorkflowEmail({
     action: "sendTaskReminderEmail",
-    toMock: "hr@ppg-demo.com",
+    toMock: "sherry.soh@ppg-demo.com",
     subject: "Test",
     htmlBody: "<p>Hi</p>",
     notificationId: "n1",
@@ -31,7 +31,7 @@ async function main() {
 
   const mockMode = await deliverWorkflowEmail({
     action: "sendTaskReminderEmail",
-    toMock: "hr@ppg-demo.com",
+    toMock: "sherry.soh@ppg-demo.com",
     subject: "Reminder",
     htmlBody: "<p>Please complete your task</p>",
     notificationId: "n2",

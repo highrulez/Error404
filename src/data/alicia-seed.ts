@@ -106,8 +106,8 @@ export function getAliciaFirstDayContent(
     reportingTime: "9:00 AM",
     officeLocation: employee.location,
     managerName: employee.managerName,
-    contactPerson: "Amanda Lee (HR)",
-    contactEmail: "hr@ppg-demo.com",
+    contactPerson: "Soh, Shi Rui Sherry (HR)",
+    contactEmail: "sherry.soh@ppg-demo.com",
     dressCode: "Business casual",
     itemsToBring: [
       "Identity document (NRIC or passport)",
@@ -116,7 +116,7 @@ export function getAliciaFirstDayContent(
     ],
     parkingOrArrival:
       "Report to UOA Business Park lobby reception. Bring photo ID for visitor pass.",
-    emergencyContact: "HR Operations · hr@ppg-demo.com",
+    emergencyContact: "HR Operations · sherry.soh@ppg-demo.com",
   };
 }
 
@@ -517,7 +517,7 @@ export function buildAliciaWelcomeEmail(
   return {
     id: "mail-alicia-welcome",
     automationRunId: "",
-    from: "hr@ppg-demo.com",
+    from: "sherry.soh@ppg-demo.com",
     to: employee.email,
     cc: [],
     subject: "Welcome to PPG – Complete Your OneFlow Onboarding",
@@ -647,7 +647,7 @@ export function buildAliciaDemoPackage(args: {
   const inductionMail: MockEmail = {
     id: "mail-alicia-induction",
     automationRunId: "",
-    from: "hr@ppg-demo.com",
+    from: "sherry.soh@ppg-demo.com",
     to: employee.email,
     cc: [],
     subject: "Action Required: Complete Your Induction Checklist",
@@ -705,7 +705,7 @@ export function buildAliciaDemoPackage(args: {
   const firstDayMail: MockEmail = {
     id: "mail-alicia-first-day",
     automationRunId: "",
-    from: "hr@ppg-demo.com",
+    from: "sherry.soh@ppg-demo.com",
     to: employee.email,
     cc: [],
     subject: "Your First-Day Instructions at PPG",

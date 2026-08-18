@@ -121,7 +121,7 @@ function managerDecisionTask(
       maximumReminderCount: 3,
       escalationAfterWorkingDays: 3,
       escalationEmailRule: "Admin",
-      fixedEscalationEmail: "hr@ppg-demo.com",
+      fixedEscalationEmail: "sherry.soh@ppg-demo.com",
     },
     assignedAt,
     false
@@ -188,7 +188,7 @@ function managerDecisionEmail(args: {
   return {
     id: emailId,
     automationRunId: "",
-    from: "hr@ppg-demo.com",
+    from: "sherry.soh@ppg-demo.com",
     to: employee.managerEmail,
     cc: [],
     subject: `Action Required: Laptop Requirement for ${employee.fullName}`,
@@ -1039,7 +1039,7 @@ function buildProcurementTask(
       maximumReminderCount: 3,
       escalationAfterWorkingDays: 2,
       escalationEmailRule: "Admin",
-      fixedEscalationEmail: "hr@ppg-demo.com",
+      fixedEscalationEmail: "sherry.soh@ppg-demo.com",
     },
     assignedAt,
     false
@@ -1294,7 +1294,7 @@ export function confirmPurchaseOrder(
     {
       id: uid("mail-po-emp"),
       automationRunId: "",
-      from: "hr@ppg-demo.com",
+    from: "sherry.soh@ppg-demo.com",
       to: employee.email,
       cc: [],
       subject: "Equipment Preparation Update",
@@ -1358,11 +1358,11 @@ function buildPrepareTask(
     instructions: `Required-by / estimated: ${estimatedDelivery}. Update status as the device progresses. Spare prep is not blocked by new laptop delivery.`,
     status: "Pending",
     priority: "High",
-    assignedOwner: "Jason Lim",
+    assignedOwner: "Zulfikar Zikri, Nuqman Haziq",
     responsibleTeam: "Onsite IT Support",
-    assignedPersonName: "Jason Lim",
+    assignedPersonName: "Zulfikar Zikri, Nuqman Haziq",
     assignedEmail: ONSITE_IT_SUPPORT_EMAIL,
-    assignedUserName: "Jason Lim",
+    assignedUserName: "Zulfikar Zikri, Nuqman Haziq",
     employeeName: employee.fullName,
     employeeEmail: employee.email,
     department: employee.department,
@@ -1506,7 +1506,7 @@ export function updateEquipmentPreparationStatus(
   const teamOk =
     session.role === "Admin" ||
     session.role === "ONSITE_IT" ||
-    emailEq(session.email, "itsupport@ppg-demo.com");
+    emailEq(session.email, "nuqman.zulfikar@ppg-demo.com");
   if (!teamOk) return { ok: false as const, error: "Not authorized." };
 
   let requestStatus = req.requestStatus;

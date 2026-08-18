@@ -287,8 +287,8 @@ export function ensureInductionPresenterWorkflow(
   // Remove obsolete Facilities (and other non-canonical) induction tasks by wrong email
   const obsoleteEmails = new Set([
     "facilities@ppg-demo.com",
-    "hr@ppg-demo.com",
-    "finance@ppg-demo.com",
+    "sherry.soh@ppg-demo.com",
+    "noorliana.bashari@ppg-demo.com",
     "quality@ppg-demo.com",
     "productstewardship@ppg-demo.com",
   ]);

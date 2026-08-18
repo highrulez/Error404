@@ -228,7 +228,7 @@ export function OffboardingDemoControls({
           className="rounded-md border border-amber-400 bg-white px-3 py-1.5 text-xs font-semibold disabled:opacity-50"
           onClick={() =>
             run("Switched to Finance", () =>
-              loginAs("finance@ppg-demo.com", "/oneflow/my-tasks")
+              loginAs("noorliana.bashari@ppg-demo.com", "/oneflow/my-tasks")
             )
           }
         >
@@ -467,7 +467,7 @@ export function OffboardingDemoControls({
               onDone?.("Assign induction first.");
               return;
             }
-            loginAs("hr@ppg-demo.com", `/oneflow/my-forms/induction/${id}`);
+            loginAs("sherry.soh@ppg-demo.com", `/oneflow/my-forms/induction/${id}`);
           }}
         >
           Review Induction Form as HR

@@ -395,11 +395,12 @@ export function getPublicEmailSettings() {
 
   const PURPOSE: Record<string, string> = {
     "admin@ppg-demo.com": "Admin / Administration workflows",
-    "hr@ppg-demo.com": "HR Operations",
+    "sherry.soh@ppg-demo.com": "HR Operations",
     "manager@ppg-demo.com": "Hiring Manager",
-    "itsecurity@ppg-demo.com": "IT Security / Onsite IT Support",
+    "amirul.azli@ppg-demo.com": "IT Security",
+    "nuqman.zulfikar@ppg-demo.com": "Onsite IT Support",
     "facilities@ppg-demo.com": "Facilities (non-induction)",
-    "finance@ppg-demo.com": "Finance",
+    "noorliana.bashari@ppg-demo.com": "Finance",
     "nabila.aziz@ppg-demo.com": "Onboarding Demo Employee — Aziz, Nabila",
     "muhamad.asyraf.hamdan@ppg-demo.com": "Offboarding Demo Employee — Hamdan, Muhamad Asyraf Naqiyuddin",
   };
@@ -416,11 +417,12 @@ export function getPublicEmailSettings() {
   // Always show common demo accounts even if unmapped
   const defaults = [
     "admin@ppg-demo.com",
-    "hr@ppg-demo.com",
+    "sherry.soh@ppg-demo.com",
     "manager@ppg-demo.com",
-    "itsecurity@ppg-demo.com",
+    "amirul.azli@ppg-demo.com",
+    "nuqman.zulfikar@ppg-demo.com",
     "facilities@ppg-demo.com",
-    "finance@ppg-demo.com",
+    "noorliana.bashari@ppg-demo.com",
     "nabila.aziz@ppg-demo.com",
     "muhamad.asyraf.hamdan@ppg-demo.com",
   ];

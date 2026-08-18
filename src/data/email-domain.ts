@@ -16,9 +16,13 @@ export const LEGACY_ADMINISTRATION_EMAIL = "administration@ppg-demo.com";
 
 /** Local-part renames applied after domain migration. */
 const LOCAL_PART_RENAMES: Record<string, string> = {
-  "security@ppg-demo.com": "itsecurity@ppg-demo.com",
+  "hr@ppg-demo.com": "sherry.soh@ppg-demo.com",
+  "itsecurity@ppg-demo.com": "amirul.azli@ppg-demo.com",
+  "itsupport@ppg-demo.com": "nuqman.zulfikar@ppg-demo.com",
+  "finance@ppg-demo.com": "noorliana.bashari@ppg-demo.com",
+  "security@ppg-demo.com": "amirul.azli@ppg-demo.com",
   // guard against accidental double-prefix from older migrations
-  "ititsecurity@ppg-demo.com": "itsecurity@ppg-demo.com",
+  "ititsecurity@ppg-demo.com": "amirul.azli@ppg-demo.com",
   // Administration team consolidated onto Admin
   [LEGACY_ADMINISTRATION_EMAIL]: ADMIN_MOCK_EMAIL,
 };
@@ -54,8 +58,12 @@ function rewriteEmailsInText(text: string): string {
   );
   next = next.replace(
     /(?<![A-Za-z0-9._%+-])ititsecurity@ppg-demo\.com/gi,
-    "itsecurity@ppg-demo.com"
+    "amirul.azli@ppg-demo.com"
   );
+  next = next.replace(/\bhr@ppg-demo\.com\b/gi, "sherry.soh@ppg-demo.com");
+  next = next.replace(/\bitsecurity@ppg-demo\.com\b/gi, "amirul.azli@ppg-demo.com");
+  next = next.replace(/\bitsupport@ppg-demo\.com\b/gi, "nuqman.zulfikar@ppg-demo.com");
+  next = next.replace(/\bfinance@ppg-demo\.com\b/gi, "noorliana.bashari@ppg-demo.com");
   next = next.replace(
     /(?<![A-Za-z0-9._%+-])administration@ppg-demo\.com/gi,
     ADMIN_MOCK_EMAIL
@@ -90,6 +98,10 @@ export function emailNeedsMigration(email: string): boolean {
   const lower = email.toLowerCase();
   return (
     lower.endsWith(OLD_DOMAIN_SUFFIX) ||
+    lower === "hr@ppg-demo.com" ||
+    lower === "itsecurity@ppg-demo.com" ||
+    lower === "itsupport@ppg-demo.com" ||
+    lower === "finance@ppg-demo.com" ||
     lower === "security@ppg-demo.com" ||
     lower === "ititsecurity@ppg-demo.com" ||
     lower === LEGACY_ADMINISTRATION_EMAIL ||
@@ -102,6 +114,10 @@ export function storeNeedsEmailMigration(raw: unknown): boolean {
     const text = JSON.stringify(raw);
     return (
       text.toLowerCase().includes(OLD_DOMAIN_SUFFIX) ||
+      /\bhr@ppg-demo\.com\b/i.test(text) ||
+      /\bitsecurity@ppg-demo\.com\b/i.test(text) ||
+      /\bitsupport@ppg-demo\.com\b/i.test(text) ||
+      /\bfinance@ppg-demo\.com\b/i.test(text) ||
       /(?<![A-Za-z0-9._%+-])security@ppg-demo\.com/i.test(text) ||
       /ititsecurity@ppg-demo\.com/i.test(text) ||
       /(?<![A-Za-z0-9._%+-])administration@ppg-demo\.com/i.test(text)

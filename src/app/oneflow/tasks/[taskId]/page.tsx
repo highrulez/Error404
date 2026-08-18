@@ -658,7 +658,7 @@ export default function TaskDetailPage({
               <Row label="Reporting time" value="9:00 AM" />
               <Row label="Office location" value={employee.location} />
               <Row label="Manager" value={employee.managerName} />
-              <Row label="Contact person" value="Amanda Lee (HR)" />
+              <Row label="Contact person" value="Soh, Shi Rui Sherry (HR)" />
               <Row label="Dress code" value="Business casual" />
               <Row
                 label="Parking / arrival"
@@ -666,7 +666,7 @@ export default function TaskDetailPage({
               />
               <Row
                 label="Emergency contact"
-                value="HR Operations · hr@ppg-demo.com"
+                value="HR Operations · sherry.soh@ppg-demo.com"
               />
             </dl>
           )}

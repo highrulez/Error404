@@ -7,6 +7,10 @@ export interface DemoUserProfile {
   email: string;
   initials: string;
   role: UserRole;
+  position?: string;
+  department?: string;
+  location?: string;
+  employmentStatus?: string;
 }
 
 /** Display names and initials for confirmation / audit attribution. */
@@ -20,24 +24,30 @@ export const DEMO_PROFILES: DemoUserProfile[] = [
   },
   {
     userId: "user-hr",
-    name: "Amanda Lee",
-    email: "hr@ppg-demo.com",
-    initials: "AL",
+    name: "Soh, Shi Rui Sherry",
+    email: "sherry.soh@ppg-demo.com",
+    initials: "SSS",
     role: "HR",
+    position: "HR Business Services Manager, Singapore & Malaysia Shared Service Center",
+    department: "HR Business Services APAC",
   },
   {
     userId: "user-security",
-    name: "Kelvin Ong",
-    email: "itsecurity@ppg-demo.com",
-    initials: "KO",
+    name: "Mohd Azli, Amirul Mukhlis",
+    email: "amirul.azli@ppg-demo.com",
+    initials: "MAM",
     role: "IT_SECURITY",
+    position: "Information Security Analyst",
+    department: "IT Security Compliance",
   },
   {
     userId: "user-onsite",
-    name: "Jason Lim",
-    email: "itsupport@ppg-demo.com",
-    initials: "JL",
+    name: "Zulfikar Zikri, Nuqman Haziq",
+    email: "nuqman.zulfikar@ppg-demo.com",
+    initials: "ZZN",
     role: "ONSITE_IT",
+    position: "Site IT Support Analyst IV",
+    department: "AP Information Technology (MY)",
   },
   {
     userId: "user-facilities",
@@ -55,10 +65,12 @@ export const DEMO_PROFILES: DemoUserProfile[] = [
   },
   {
     userId: "user-finance",
-    name: "Farah Ahmad",
-    email: "finance@ppg-demo.com",
-    initials: "FA",
+    name: "Bashari, Noorliana (MAL)",
+    email: "noorliana.bashari@ppg-demo.com",
+    initials: "BNM",
     role: "FINANCE",
+    position: "Accounts Receivable Officer",
+    department: "Req Bus Sup MY Fin AR",
   },
   {
     userId: "user-corporate-card",
@@ -87,6 +99,10 @@ export const DEMO_PROFILES: DemoUserProfile[] = [
     email: "nabila.aziz@ppg-demo.com",
     initials: "AN",
     role: "ONBOARDING_EMPLOYEE",
+    position: "Application Developer Specialist",
+    department: "GCSS - RPA • GCSS, Delivery Management",
+    location: "Malaysia – UOA Business Park",
+    employmentStatus: "Preboarding",
   },
   {
     userId: "user-hamdan",
@@ -94,6 +110,10 @@ export const DEMO_PROFILES: DemoUserProfile[] = [
     email: DANIEL_EMAIL,
     initials: "HMA",
     role: "OFFBOARDING_EMPLOYEE",
+    position: "SAP COE EDI Analyst",
+    department: "Req Sup IT IT BFS EAD",
+    location: "Malaysia – UOA Business Park",
+    employmentStatus: "Offboarding",
   },
 ];
 

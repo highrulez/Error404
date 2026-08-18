@@ -74,7 +74,7 @@ export const INDUCTION_SECTION_DEFINITIONS: InductionSectionDefinition[] = [
     id: INDUCTION_SECTION_IDS.it,
     sectionName: INDUCTION_SECTION_NAMES[INDUCTION_SECTION_IDS.it],
     responsibleRole: "Onsite IT Support",
-    assignedEmail: "itsecurity@ppg-demo.com",
+    assignedEmail: "amirul.azli@ppg-demo.com",
     presenterName: "Onsite IT Support",
     responsibleTeam: "Onsite IT Support",
     required: true,

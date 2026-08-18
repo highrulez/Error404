@@ -18,7 +18,7 @@ import {
   deriveProcurementStage,
 } from "../laptop-request-types";
 
-export const ONSITE_IT_SUPPORT_EMAIL = ACCOUNT_CREATED_RECIPIENT; // itsupport@ppg-demo.com
+export const ONSITE_IT_SUPPORT_EMAIL = ACCOUNT_CREATED_RECIPIENT;
 export const SAILPOINT_HANDOFF_NOTIFICATION_TYPE =
   "SailPoint Provisioning Complete";
 

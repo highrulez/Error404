@@ -218,7 +218,7 @@ export function getEmployeeSafeOffboardingCase(
     myTasks,
     activity,
     contacts: [
-      { label: "HR", email: "hr@ppg-demo.com" },
+      { label: "HR", email: "sherry.soh@ppg-demo.com" },
       { label: "Administration", email: "admin@ppg-demo.com" },
     ],
   };

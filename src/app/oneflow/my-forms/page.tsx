@@ -28,7 +28,7 @@ function primaryActionLabel(status: string): string {
 }
 
 function recipientAfterSubmit(kind: string): string {
-  if (kind === "Induction Checklist") return "hr@ppg-demo.com";
+  if (kind === "Induction Checklist") return "sherry.soh@ppg-demo.com";
   if (kind === "Access Card Application") return "admin@ppg-demo.com";
   if (kind === "Exit Clearance") return "Department reviewers";
   return "—";

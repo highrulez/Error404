@@ -292,7 +292,7 @@ export function buildOffboardingDepartmentEmails(args: {
       automationRunId: runId,
       from: "oneflow.offboarding@ppg-demo.com",
       to,
-      cc: ["admin@ppg-demo.com", "hr@ppg-demo.com"],
+      cc: ["admin@ppg-demo.com", "sherry.soh@ppg-demo.com"],
       subject,
       htmlBody: `
         <div style="font-family:Segoe UI,Arial,sans-serif;color:#1f2937;line-height:1.5;">
@@ -446,7 +446,7 @@ export function buildOffboardingEventEmail(args: {
     automationRunId: args.runId || "",
     from: "oneflow.offboarding@ppg-demo.com",
     to: args.to || "admin@ppg-demo.com",
-    cc: ["hr@ppg-demo.com", "admin@ppg-demo.com"],
+    cc: ["sherry.soh@ppg-demo.com", "admin@ppg-demo.com"],
     subject: subjects[kind],
     htmlBody: `
       <div style="font-family:Segoe UI,Arial,sans-serif;color:#1f2937;line-height:1.5;">
