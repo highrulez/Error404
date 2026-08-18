@@ -1,10 +1,12 @@
 # OneFlow Project Documentation
 
+> The complete, presentation-ready Word package is [OneFlow_Project_Documentation.docx](OneFlow_Project_Documentation.docx). This Markdown file remains the repository-friendly source summary.
+
 > **Project Status:** Hackathon Prototype / Phase 1
 >
-> **Last Updated:** 18 August 2026
+> **Last Updated:** 19 August 2026
 
-OneFlow was created by Team Error 404 for **PPG AEN Hackathon 2026**. This document describes the repository as it exists today. References to Microsoft Power Platform and enterprise integration describe a proposed production direction, not deployed functionality.
+OneFlow was created by Team Error 404 for **PPG AEN Hackathon 2026**. This document describes the repository as it exists today. References to Microsoft Power Platform and enterprise integration describe a proposed production direction, not deployed functionality. The Word package includes validated deployment documentation, implementation-versus-future boundaries, diagram assets, user guidance, and indicative public-list-price planning assumptions checked on 19 August 2026.
 
 ## 1. Project Overview
 
