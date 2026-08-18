@@ -15,6 +15,10 @@ Hub landing page: `/`
 
 This is **not** the real Workday product. No Workday logos or trademarks are used.
 
+## Documentation
+
+For full project documentation, architecture, setup instructions, platform recommendations, cost considerations, and the hackathon demo guide, see [OneFlow Project Documentation](docs/PROJECT_DOCUMENTATION.md).
+
 ## Future Microsoft architecture
 
 ```
