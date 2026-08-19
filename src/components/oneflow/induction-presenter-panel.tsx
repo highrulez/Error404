@@ -87,7 +87,7 @@ export function InductionPresenterPanel({
   };
 
   return (
-    <div className="mb-6 space-y-4 rounded-xl border border-flow-line bg-white p-4 shadow-sm">
+    <div className="mb-6 space-y-5 rounded-2xl border border-flow-line bg-white p-5 shadow-sm">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <h2 className="text-sm font-semibold text-slate-900">
@@ -158,14 +158,14 @@ export function InductionPresenterPanel({
           {section.items.map((item) => (
             <li
               key={item.id}
-              className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-slate-100 bg-slate-50 px-3 py-2 text-sm"
+              className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-100 bg-slate-50 px-3 py-3 text-sm"
             >
               <span className="text-slate-800">{item.label}</span>
               {closed ? (
                 <StatusChip status={item.coverage || coverage[item.id] || "Covered"} />
               ) : (
                 <select
-                  className="rounded border border-flow-line bg-white px-2 py-1 text-xs"
+                  className="rounded-lg border border-flow-line bg-white px-2.5 py-1.5 text-xs outline-none focus:border-flow-accent focus:ring-2 focus:ring-flow-accent/20"
                   value={coverage[item.id] || "Pending"}
                   onChange={(e) =>
                     setItem(item.id, e.target.value as InductionItemCoverage)
@@ -231,7 +231,7 @@ export function InductionPresenterPanel({
           </button>
           <button
             type="button"
-            className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white"
+            className="rounded-xl bg-flow-accent px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-700"
             onClick={() => {
               const r = service.completeInductionSession(session, task.id, {
                 completedOn,

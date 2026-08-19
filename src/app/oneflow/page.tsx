@@ -9,6 +9,7 @@ import { useAuth } from "@/components/shared/auth-provider";
 import { ProgressBar, StatusChip } from "@/components/shared/status";
 import { formatDate } from "@/lib/utils";
 import { lifecycleReadiness } from "@/components/oneflow/lifecycle-visibility";
+import { AlertTriangle, CalendarClock, Mail, UserPlus, UserRoundX } from "lucide-react";
 
 export default function OneFlowOverviewPage() {
   const { session } = useAuth();
@@ -101,20 +102,19 @@ export default function OneFlowOverviewPage() {
 
       <div className="mb-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         {[
-          { label: "Preboarding", value: store.onboardingCases.filter((c) => c.status !== "Completed").length },
-          { label: "Offboarding", value: store.offboardingCases.filter((c) => c.status !== "Completed").length },
-          { label: "Overdue tasks", value: stats.overdueTasks },
-          { label: "Due this week", value: dueSoon.length },
-          { label: "Unread emails", value: unread },
+          { label: "Preboarding", value: store.onboardingCases.filter((c) => c.status !== "Completed").length, icon: UserPlus, tone: "bg-cyan-50 border-cyan-100 text-cyan-700" },
+          { label: "Offboarding", value: store.offboardingCases.filter((c) => c.status !== "Completed").length, icon: UserRoundX, tone: "bg-violet-50 border-violet-100 text-violet-700" },
+          { label: "Overdue tasks", value: stats.overdueTasks, icon: AlertTriangle, tone: "bg-rose-50 border-rose-100 text-rose-700" },
+          { label: "Due this week", value: dueSoon.length, icon: CalendarClock, tone: "bg-indigo-50 border-indigo-100 text-indigo-700" },
+          { label: "Unread emails", value: unread, icon: Mail, tone: "bg-sky-50 border-sky-100 text-sky-700" },
         ].map((s) => (
           <div
             key={s.label}
-            className="rounded-xl border border-flow-line bg-white p-4 shadow-sm"
+            className={`rounded-2xl border p-4 shadow-sm ${s.tone}`}
           >
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
-              {s.label}
-            </p>
-            <p className="mt-1 text-2xl font-semibold tabular-nums">{s.value}</p>
+            <div className="flex items-start justify-between"><p className="text-[11px] font-semibold uppercase tracking-wide opacity-75">{s.label}</p><s.icon className="h-4 w-4" /></div>
+            <p className="mt-2 text-3xl font-semibold tabular-nums text-slate-900">{s.value}</p>
+            <p className="mt-1 text-[11px] text-slate-500">Current lifecycle workload</p>
           </div>
         ))}
       </div>

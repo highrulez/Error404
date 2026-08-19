@@ -49,21 +49,21 @@ export function LifecycleVisibility({
   );
 
   return (
-    <div className="rounded-xl border border-flow-line bg-white p-4 shadow-sm">
+    <div className="rounded-2xl border border-flow-line bg-white p-5 shadow-sm">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{title}</p>
-          <p className="mt-1 text-3xl font-semibold tabular-nums">{readiness}%</p>
+          <p className="mt-1 text-4xl font-semibold tabular-nums text-slate-900">{readiness}%</p>
         </div>
         <p className="text-xs text-slate-500">Derived from applicable lifecycle tasks</p>
       </div>
-      <div className="mt-2"><ProgressBar value={readiness} tone="blue" /></div>
+      <div className="mt-3"><ProgressBar value={readiness} tone="blue" /></div>
 
       <div className="mt-4 flex flex-wrap gap-2">
         {stages.map((stage, index) => {
           const state = readiness === 100 || index < currentStage ? "Complete" : index === currentStage ? "Current" : "Pending";
           return (
-            <div key={stage} className="flex items-center gap-2 text-xs">
+            <div key={stage} className="flex items-center gap-2 rounded-lg bg-slate-50 px-2 py-1.5 text-xs">
               <span className={`flex h-6 w-6 items-center justify-center rounded-full font-semibold ${state === "Complete" ? "bg-emerald-100 text-emerald-800" : state === "Current" ? "bg-sky-100 text-sky-800" : "bg-slate-100 text-slate-500"}`}>{index + 1}</span>
               <span className="font-medium">{stage}</span>
               {index < stages.length - 1 && <span className="text-slate-300">→</span>}
@@ -77,7 +77,7 @@ export function LifecycleVisibility({
           const teamTasks = tasks.filter((task) => task.responsibleTeam === team);
           const open = teamTasks.filter(isOpen);
           const status = !open.length ? "Completed" : open.some((task) => task.status === "Blocked") ? "Blocked" : open.some((task) => task.status === "In Progress") ? "In Progress" : "Pending";
-          return <div key={team} className="flex items-center justify-between gap-2 rounded-md bg-slate-50 px-2 py-1.5 text-xs"><span className="truncate">{team}</span><StatusChip status={status} /></div>;
+          return <div key={team} className="flex items-center justify-between gap-2 rounded-xl bg-slate-50 px-3 py-2 text-xs"><span className="truncate">{team}</span><StatusChip status={status} /></div>;
         })}
       </div>
     </div>

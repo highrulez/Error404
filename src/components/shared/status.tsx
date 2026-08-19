@@ -48,6 +48,8 @@ const STATUS_STYLES: Record<string, string> = {
   Completed: "bg-emerald-100 text-emerald-800",
   Overdue: "bg-rose-100 text-rose-800",
   Blocked: "bg-amber-100 text-amber-900",
+  "Due Soon": "bg-amber-50 text-amber-800 ring-1 ring-inset ring-amber-200",
+  "Not Applicable": "bg-slate-100 text-slate-500",
   "Not Started": "bg-slate-100 text-slate-600",
   "On Hold": "bg-amber-50 text-amber-800",
   "Not Sent": "bg-slate-100 text-slate-600",
@@ -79,7 +81,7 @@ export function StatusChip({ status }: { status: string }) {
   return (
     <span
       className={cn(
-        "inline-flex rounded-md px-2 py-0.5 text-[11px] font-semibold",
+        "inline-flex rounded-md px-2 py-0.5 text-[11px] font-semibold ring-1 ring-inset ring-black/[0.03]",
         STATUS_STYLES[status] ?? "bg-slate-100 text-slate-700"
       )}
     >
