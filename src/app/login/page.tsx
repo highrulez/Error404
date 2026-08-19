@@ -21,7 +21,7 @@ function destination(user: User) {
   if (user.role === "Admin") return "/oneflow";
   if (user.role === "OFFBOARDING_EMPLOYEE") return "/oneflow/my-offboarding";
   if (user.role === "ONBOARDING_EMPLOYEE") return "/oneflow/my-onboarding";
-  return "/oneflow/my-tasks";
+  return "/oneflow";
 }
 
 export default function LoginPage() {

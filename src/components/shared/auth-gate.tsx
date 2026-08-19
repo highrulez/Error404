@@ -26,7 +26,7 @@ function homeForRole(role: string): string {
   if (role === "Admin") return "/oneflow";
   if (role === "OFFBOARDING_EMPLOYEE") return "/oneflow/my-offboarding";
   if (role === "ONBOARDING_EMPLOYEE") return "/oneflow/my-onboarding";
-  return "/oneflow/my-tasks";
+  return "/oneflow";
 }
 
 function isEmployeeRole(role: string | undefined): boolean {

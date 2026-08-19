@@ -1,8 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { OneFlowShell } from "@/components/oneflow/shell";
 import { useData } from "@/components/shared/data-provider";
 import { useAuth } from "@/components/shared/auth-provider";
@@ -10,17 +8,12 @@ import { ProgressBar, StatusChip } from "@/components/shared/status";
 import { formatDate } from "@/lib/utils";
 import { lifecycleReadiness } from "@/components/oneflow/lifecycle-visibility";
 import { AlertTriangle, CalendarClock, Mail, UserPlus, UserRoundX } from "lucide-react";
+import { RoleDashboard } from "@/components/oneflow/role-dashboard";
 
 export default function OneFlowOverviewPage() {
   const { session } = useAuth();
-  const router = useRouter();
   const { store, service, ready, resetToSeed, setAutomationMode, refresh } = useData();
 
-  useEffect(() => {
-    if (session && session.role !== "Admin") {
-      router.replace("/oneflow/my-tasks");
-    }
-  }, [session, router]);
 
   const stats = ready
     ? service.getDashboardStats()
@@ -55,12 +48,16 @@ export default function OneFlowOverviewPage() {
     .sort((a, b) => a.dueDate.localeCompare(b.dueDate))
     .slice(0, 6);
 
-  if (!session || session.role !== "Admin") {
+  if (!session) {
     return (
       <OneFlowShell title="Overview">
         <p className="text-sm text-slate-500">Redirecting…</p>
       </OneFlowShell>
     );
+  }
+
+  if (session.role !== "Admin") {
+    return <OneFlowShell title="Dashboard" subtitle="Role priorities and employee journeys"><RoleDashboard /></OneFlowShell>;
   }
 
   return (
