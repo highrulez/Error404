@@ -1,3 +1,5 @@
+import { readSavedEmailSettings } from "./settings-store";
+
 /**
  * Server-only email configuration.
  * Never import this module from client components.
@@ -91,20 +93,21 @@ export function parseRecipientMap(
 }
 
 export function getEmailServerConfig(): EmailServerConfig {
+  const saved = readSavedEmailSettings();
   const accessKey = process.env.AWS_ACCESS_KEY_ID?.trim() || "";
   const secretKey = process.env.AWS_SECRET_ACCESS_KEY?.trim() || "";
   return {
-    mode: readMode(),
-    region: process.env.AWS_REGION?.trim() || "ap-southeast-1",
-    fromEmail: process.env.SES_FROM_EMAIL?.trim() || "",
-    fromName: process.env.SES_FROM_NAME?.trim() || "OneFlow",
-    appUrl: (
+    mode: saved.mode || readMode(),
+    region: saved.region || process.env.AWS_REGION?.trim() || "ap-southeast-1",
+    fromEmail: saved.fromEmail ?? process.env.SES_FROM_EMAIL?.trim() ?? "",
+    fromName: saved.fromName || process.env.SES_FROM_NAME?.trim() || "OneFlow",
+    appUrl: (saved.appUrl || (
       process.env.NEXT_PUBLIC_APP_URL ||
       process.env.APP_URL ||
       "http://localhost:3000"
-    ).replace(/\/$/, ""),
+    )).replace(/\/$/, ""),
     hasCredentials: Boolean(accessKey && secretKey),
-    recipientMap: parseRecipientMap(),
+    recipientMap: saved.recipientMap || parseRecipientMap(),
   };
 }
 
