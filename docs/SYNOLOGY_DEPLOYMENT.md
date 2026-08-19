@@ -78,8 +78,7 @@ Notes:
 - `EMAIL_MODE=ses` or `both` requires valid AWS credentials and a verified SES sender.
 - Admin **Settings → Email Delivery** manages delivery mode, sender configuration,
   application URL, and recipient mappings. Those saved settings take precedence
-  over the non-secret environment defaults above and persist in the
-  `oneflow-settings` Docker volume.
+  over the non-secret environment defaults above and persist in `./data` on the NAS.
 - AWS credentials remain server-side and are never stored in the Settings UI.
 
 ---
@@ -91,9 +90,20 @@ Notes:
 3. Create a project named **`oneflow`**.
 4. Select path: `/volume1/docker/oneflow`.
 5. Use compose file: **`compose.yaml`**.
-6. Build and start the project.
+6. Before the first start, create the persistent data directory and give it to
+   OneFlow's non-root container user (UID/GID `10001:10001`):
+
+   ```bash
+   sudo mkdir -p /volume1/docker/oneflow/data
+   sudo chown -R 10001:10001 /volume1/docker/oneflow/data
+   sudo chmod 750 /volume1/docker/oneflow/data
+   ```
+
+7. Build and start the project.
 
 The service listens on container port **3000** (`HOSTNAME=0.0.0.0`).
+The bind mount maps `/volume1/docker/oneflow/data` to `/app/data`; therefore
+`email-settings.json` survives restarts, rebuilds, and project recreation.
 
 ---
 

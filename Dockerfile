@@ -28,7 +28,12 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
-RUN addgroup -S oneflow && adduser -S oneflow -G oneflow
+ARG ONEFLOW_UID=10001
+ARG ONEFLOW_GID=10001
+RUN addgroup -S -g ${ONEFLOW_GID} oneflow \
+  && adduser -S -D -H -u ${ONEFLOW_UID} -G oneflow oneflow \
+  && mkdir -p /app/data \
+  && chown -R oneflow:oneflow /app/data
 
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
@@ -39,4 +44,5 @@ EXPOSE 3000
 
 # Runtime env (set by compose.yaml / Synology): AWS_*, SES_*, EMAIL_MODE,
 # NEXT_PUBLIC_APP_URL — never hard-coded here. UI settings persist in /app/data.
+# The Next.js process runs as oneflow (UID/GID 10001), never root.
 CMD ["node", "server.js"]

@@ -29,6 +29,12 @@ export async function POST(request: Request) {
   if (!region || !fromName || !appUrl || !/^https?:\/\//.test(appUrl) || (fromEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fromEmail))) return NextResponse.json({ ok: false, error: "Enter a valid region, sender name, sender email (if set), and http(s) application URL." }, { status: 400 });
   const rawMap = input.recipientMap as Record<string, unknown> | undefined; const recipientMap: Record<string, string> = {};
   for (const simulated of RECIPIENTS) { const destination = typeof rawMap?.[simulated] === "string" ? rawMap[simulated].trim() : ""; if (destination) { if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(destination)) return NextResponse.json({ ok: false, error: `Invalid destination for ${simulated}.` }, { status: 400 }); recipientMap[simulated] = destination; } }
-  saveEmailSettings({ mode, region, fromEmail, fromName, appUrl, recipientMap });
+  try {
+    saveEmailSettings({ mode, region, fromEmail, fromName, appUrl, recipientMap });
+  } catch (error) {
+    const detail = error instanceof Error ? { name: error.name, message: error.message } : {};
+    console.error("[Email settings] Failed to persist settings.", detail);
+    return NextResponse.json({ ok: false, error: "Email settings could not be saved. Check the server data-directory permissions." }, { status: 500 });
+  }
   return NextResponse.json({ ok: true, message: "Email settings and recipient mappings updated.", settings: settingsPayload() });
 }

@@ -24,7 +24,4 @@ services:
     ports:
       - "3005:3000"
     volumes:
-      - oneflow-settings:/app/data
-
-volumes:
-  oneflow-settings:
+      - ./data:/app/data
