@@ -1,136 +1,138 @@
 # OneFlow Project Documentation
 
-> **Project Status:** Hackathon Prototype / Phase 1
-> **Last Updated:** 19 August 2026
-> **Official demo:** https://oneflow.highrulez.com
+> Official hackathon demo: [https://oneflow.highrulez.com](https://oneflow.highrulez.com)
+> Status: Hackathon prototype using synthetic data
+> Primary presentation document: `docs/OneFlow_Project_Documentation.docx`
 
-The presentation-ready package is `OneFlow_Project_Documentation.docx`; this is its repository-friendly source summary.
+## Purpose
 
-## Project team
+OneFlow is an employee lifecycle orchestration prototype. Workday remains the HR source system; OneFlow coordinates the downstream work across HR, IT, Facilities, Finance, managers and employees. It provides lifecycle cases, role ownership, readiness or clearance visibility, tasks, forms, notifications, activity and reports. It is not a live Workday integration or production system.
 
-**Team Error 404**
+| Business problem | OneFlow capability | Benefit |
+| --- | --- | --- |
+| Fragmented lifecycle follow-up | Lifecycle cases, activity and notifications | Shared operational view |
+| Unclear ownership | Role dashboards and task queues | Clear accountable teams |
+| Late readiness checks | Day 1 and clearance progress | Earlier intervention |
+| Offboarding risk | Access, asset and clearance tracking | More visible controls |
 
-| Team Member | Project |
-|---|---|
-| Thamotharan, Renuka Malar | OneFlow — PPG AEN Hackathon 2026 |
-| Ramachandran, Yuganeswary | OneFlow — PPG AEN Hackathon 2026 |
-| Hairul Afizee | OneFlow — PPG AEN Hackathon 2026 |
-| Bashari, Noorliana | OneFlow — PPG AEN Hackathon 2026 |
+## Access and roles
 
-## Overview
+Open [https://oneflow.highrulez.com](https://oneflow.highrulez.com). Use manual sign-in with a supplied demo account or choose a full quick-login card. The accounts and all underlying data are synthetic.
 
-OneFlow is an employee-lifecycle orchestration prototype. A mock Workday worker change becomes a OneFlow case with role-based tasks, forms, progress, mock notifications, activity history, and operational reporting. It demonstrates a concept; it is not a live Workday integration or production system.
+| Group | Demo accounts |
+| --- | --- |
+| Administration | OneFlow Admin |
+| People & Management | Soh, Shi Rui Sherry; Sarah Tan |
+| Technology | Mohd Azli, Amirul Mukhlis; Zulfikar Zikri, Nuqman Haziq |
+| Operations | Nur Aisyah; Bashari, Noorliana (MAL); Michael Wong |
+| Specialist Functions | Quality Representative; Product Stewardship Representative |
+| Employee Journeys | Aziz, Nabila; Hamdan, Muhamad Asyraf Naqiyuddin |
 
-Users access the hackathon demo at https://oneflow.highrulez.com. Reverse-proxy and Docker ports are internal deployment details, not normal user access URLs.
+The role dashboard is a summary of priorities, journeys and upcoming work. **My Tasks** is the actual operational queue. Admin can monitor the complete demonstration, review cases, reports, settings, notifications and automation simulation. Other roles see their relevant responsibilities.
 
-| Problem | OneFlow capability | Prototype result |
-|---|---|---|
-| Fragmented communication | Lifecycle case and mock notifications | Demonstrated |
-| Unclear ownership | Role-based task assignment and views | Demonstrated |
-| Manual follow-up | Progress and automation simulation | Simulated |
-| Limited visibility | Case progress and reports | Demonstrated |
-| Offboarding risk | Clearance and task tracking | Demonstrated |
-| Auditability | Activity history and task state | Demonstrated |
+## Current user manual
 
-## Portals and capabilities
+- **Admin Dashboard:** monitors lifecycle health, readiness or clearance progress, blocked or overdue work, responsible teams and upcoming lifecycle events.
+- **Employees:** shows the synthetic workforce directory and lifecycle statuses.
+- **Lifecycle Cases:** opens onboarding and offboarding cases for tasks, ownership, progress and activity.
+- **My Tasks:** the role-based queue for due dates, status and permitted actions.
+- **Reports:** lifecycle, readiness and bottleneck reporting views.
+- **Settings:** administrative configuration, including Email Delivery and supported reset controls.
+- **Mock Inbox:** safe in-app notification record for the prototype.
+- **Automation:** prototype automation simulation; it is not live Power Automate.
+- **My Onboarding / My Offboarding:** employee-facing journey, actions, messages and forms.
+- **My Forms / My Profile:** form progress and synthetic employee information.
 
-### PPG Workday Demo Portal
+## How to send a test email
 
-This is a mock HR source application, not real Workday. No production Workday API is connected. It supports worker/employee detail review, including department, position, location, start date, and lifecycle status (Active, Preboarding, Offboarding), plus supported demonstration changes.
+AWS SES is a prototype test-delivery capability. AWS credentials are configured server-side. Administrators do not enter access keys or secret keys in the browser.
 
-### OneFlow Portal
+1. Sign in as **OneFlow Admin** at [https://oneflow.highrulez.com](https://oneflow.highrulez.com).
+2. Open **Settings**, then **Email Delivery**.
+3. Review delivery configuration, AWS region, sender details, application URL and the server-side credential status.
+4. Under **Recipient Mappings**, find the synthetic identity to test, such as `nabila.aziz@ppg-demo.com`.
+5. Enter the administrator-approved test mailbox as its **Delivery Destination** and save the mapping.
+6. In the test-email controls, select the simulated recipient and choose **Send Test Email**.
+7. Check the mapped mailbox and the resulting OneFlow delivery or mock-notification record where available.
 
-OneFlow provides lifecycle case management, onboarding/offboarding journeys, role-specific responsibilities, assigned tasks, forms, completion tracking, mock notifications, activity history, progress visibility, reports, and automation simulation.
+OneFlow identities remain synthetic. The mapped delivery destination determines the actual SES test mailbox. Do not document real destinations unless they are intentionally safe test addresses.
 
-The prototype contains optional AWS SES-related configuration from earlier development. It is a **prototype/legacy optional capability and is not recommended for production**. Production notifications should use Microsoft 365, Outlook/Exchange Online, Microsoft Graph, and/or the Power Automate Microsoft 365 Outlook connector.
+| Synthetic identity examples | Typical walkthrough |
+| --- | --- |
+| `admin@ppg-demo.com`, `sherry.soh@ppg-demo.com` | Administrator and HR |
+| `amirul.azli@ppg-demo.com`, `nuqman.zulfikar@ppg-demo.com` | IT Security and Onsite IT |
+| `noorliana.bashari@ppg-demo.com` | Finance |
+| `nabila.aziz@ppg-demo.com` | Onboarding employee |
+| `muhamad.asyraf.hamdan@ppg-demo.com` | Offboarding employee |
 
-## Demo data and walkthroughs
+### Email troubleshooting
 
-The demonstration workforce contains exactly five workers, all at **Malaysia – UOA Business Park**:
+| Problem | Check |
+| --- | --- |
+| Recipient did not receive email | Confirm the mapping exists and the delivery destination is correct. |
+| Credentials not configured | Confirm server-side AWS credentials; never enter credentials in the UI. |
+| `SignatureDoesNotMatch` | Confirm the server-side key/secret pair and AWS region. |
+| Sender rejected | Confirm the SES sender identity and sender configuration. |
+| Settings cannot save | Check persistent Docker storage and data-directory permissions, then application logs. |
 
-| Worker | Status | Start date |
-|---|---|---|
-| Thamotharan, Renuka Malar | Active | 8 Nov 2021 |
-| Aziz, Nabila | Preboarding | 10 business days ahead |
-| Nagaraja, Umashangari | Active | 20 Feb 2023 |
-| Ramachandran, Yuganeswary | Active | 15 Jan 2024 |
-| Hamdan, Muhamad Asyraf Naqiyuddin | Offboarding | 13 Jun 2022 |
+AWS SES is used only for prototype testing. A PPG production implementation should use the approved Microsoft 365 / Outlook / Exchange Online direction, potentially through Microsoft Graph, Power Automate and approved Microsoft/Azure integration.
 
-Nabila is the onboarding walkthrough employee: Workday Demo → Preboarding worker → OneFlow lifecycle case → role tasks → progress, mock notifications, and history → onboarding ready. Hamdan is the offboarding walkthrough employee: initiation → departmental clearance, access removal, equipment return, finance/manager actions → completion and audit trail. These are local Phase 1 behaviours; production needs approved Workday, identity/access, and Power Automate integration.
+## Employee walkthroughs
 
-### User guide
+### Aziz, Nabila - onboarding
 
-1. Open https://oneflow.highrulez.com.
-2. Use **Demo Account Quick Login** and choose a role.
-3. Use the dashboard to find work and navigation.
-4. Open **PPG Workday Demo** to inspect workers and lifecycle status.
-5. Open a OneFlow case to review tasks, forms, progress, notifications, and history.
-6. Complete permitted actions; case progress and history update.
-7. Use reports and automation history for the operational demonstration.
-8. Return to login/session controls to switch roles.
+Aziz, Nabila is the preboarding walkthrough. **My Onboarding** shows Day 1 readiness, countdown, next action, remaining actions and journey progress. **My Tasks**, **My Inbox**, **My Forms** and **My Profile** give the employee a single place to understand due work, messages, forms and readiness.
 
-Roles include Admin, HR, Hiring Manager, Onsite IT, IT Security, Finance, Facilities, Quality, Product Stewardship, Onboarding Employee, and Offboarding Employee. Each role sees its relevant assigned work; Admin reviews the complete demo.
+### Hamdan, Muhamad Asyraf Naqiyuddin - offboarding
+
+Hamdan is the offboarding walkthrough. **My Offboarding** shows exit progress, exit-clearance actions, forms and messages. Administrators and responsible departments can follow the same lifecycle case for access removal, asset return and clearance tasks.
+
+## Workday demo data
+
+PPG Workday Demo is a mock source application; no real Workday API is connected. The synthetic workforce contains exactly five workers, all at Malaysia - UOA Business Park.
+
+| Worker | Lifecycle status |
+| --- | --- |
+| Thamotharan, Renuka Malar | Active |
+| Aziz, Nabila | Preboarding |
+| Nagaraja, Umashangari | Active |
+| Ramachandran, Yuganeswary | Active |
+| Hamdan, Muhamad Asyraf Naqiyuddin | Offboarding |
+
+## Current prototype vs production
+
+| Area | Current prototype | Proposed production |
+| --- | --- | --- |
+| HR source | Mock Workday | Approved Workday integration |
+| Identity | Demo login accounts | Microsoft Entra ID, SSO and RBAC |
+| Data | Browser/local prototype data | Dataverse or approved persistence |
+| Automation | Simulation | Power Automate and approved integrations |
+| Email | Mock Inbox and AWS SES test delivery | Microsoft 365 / Outlook / Exchange Online |
+| Operations | Demo visibility | Azure Monitor, Application Insights and governance |
 
 ## Deployment
 
 ```text
 User Browser
-  ↓
-https://oneflow.highrulez.com
-  ↓
-Cloudflare DNS / HTTPS
-  ↓
-Synology Reverse Proxy
-  ↓
-OneFlow Docker
-  ↓
-Next.js Application
+  -> https://oneflow.highrulez.com
+  -> Cloudflare DNS / HTTPS
+  -> Reverse Proxy
+  -> OneFlow Docker
+  -> Next.js
 ```
 
-Technical note: the reverse proxy forwards internally to Docker host port `3005`; Docker maps `3005:3000`; Next.js listens on container port `3000`. `NEXT_PUBLIC_APP_URL=https://oneflow.highrulez.com` is the public configuration value.
+Normal users access the public URL only. Docker, internal ports and credentials are deployment concerns. Email configuration and recipient mappings are maintained in OneFlow Settings; recipient mappings are not a normal `.env` administration task. Docker persists saved settings at `/volume1/docker/oneflow/data/email-settings.json`, mounted inside the application at `/app/data/email-settings.json`.
 
-## Proposed Microsoft-first production direction
+## Demo guide
 
-The proposed production architecture follows a Microsoft-first approach because the organisation already primarily uses Microsoft 365 and Azure services. Final platform selection remains subject to PPG enterprise architecture, cybersecurity, and licensing review.
+1. Open OneFlow and introduce it as the orchestration layer, not a Workday replacement.
+2. Use OneFlow Admin to show lifecycle visibility, Employees and Lifecycle Cases.
+3. Open Nabila's case, then switch to Nabila's employee journey.
+4. Switch to Hamdan to show exit clearance and offboarding progress.
+5. Use IT Security or another role to contrast its dashboard with My Tasks.
+6. Show Email Delivery, recipient mapping and Send Test Email.
+7. Close with Reports, Automation and the Microsoft-first production direction.
 
-```text
-Workday API / Integration → Microsoft Dataverse → Power Automate → OneFlow
-                                                    ├→ Microsoft 365 / Outlook / Teams
-                                                    └→ Power BI Reporting
-Microsoft Entra ID provides identity. Azure integration services, Key Vault,
-Monitor, and Application Insights support the solution as required.
-```
+## Team
 
-Workday remains the HR source system; OneFlow is the orchestration/experience layer. Microsoft 365/Outlook/Exchange Online and Microsoft Graph are the production communication direction; AWS SES is not.
-
-## Cost assumptions
-
-All values are **indicative planning estimates** from public Microsoft Malaysia pages checked 19 August 2026. They exclude tax, discounts, and enterprise-agreement treatment and use USD1 = RM4.25 only for illustrative conversion. Actual PPG cost may be materially lower or structured differently due to existing Microsoft enterprise licensing agreements.
-
-Existing Microsoft 365, Outlook/Exchange Online, Entra ID, Azure tenant/services, and some Power Platform entitlement may be covered by an existing enterprise agreement; entitlement is to be confirmed and is not assumed free.
-
-| Incremental component | Public planning indicator |
-|---|---|
-| Power Apps Premium | USD20/user/month ≈ RM85 |
-| Power Automate Premium | USD15/user/month ≈ RM63.75 |
-| Power Automate Process | USD150/bot/month ≈ RM637.50 |
-| Dataverse database capacity | USD40/GB/month ≈ RM170 |
-| Power BI Pro | USD14/user/month ≈ RM59.50 |
-| Azure integration, Key Vault, Monitor, App Insights | Consumption / enterprise quote required |
-| Workday integration/API | Contract / scope confirmation required |
-
-Indicative implementation planning range: RM260,000–RM750,000. It covers discovery, integration, data model, SSO/security, workflow configuration, testing, reporting, training, change management, and transition; it is not a vendor quote.
-
-Sources: [Power Apps](https://www.microsoft.com/en-my/power-platform/products/power-apps/pricing), [Power Automate](https://www.microsoft.com/en-my/power-platform/products/power-automate/pricing), [Power BI](https://www.microsoft.com/en-my/power-platform/products/power-bi), [Azure Pricing Calculator](https://azure.microsoft.com/pricing/calculator/).
-
-## Security, privacy, and troubleshooting
-
-The demo uses synthetic data and browser local storage. Production requires Entra ID SSO/MFA/RBAC, least privilege, Key Vault secrets, encryption, audit retention, secure SDLC, approved integration identities, data minimisation, retention/deletion controls, and privacy/security assessment.
-
-For users: if the portal does not load, confirm internet access, verify https://oneflow.highrulez.com, refresh, then contact the demo administrator. For old data, use available reset/demo controls; clear site data only when appropriate. If a role cannot see a task, verify the Quick Login role and assignment.
-
-For administrators: Docker host port `3005` and container port `3000` are internal implementation details, not user URLs. Verify reverse-proxy and container health as required.
-
-## Conclusion
-
-OneFlow addresses the employee-lifecycle coordination challenge by demonstrating onboarding and offboarding workflows with role ownership and central visibility. It does not replace Workday. A production implementation should align to PPG’s Microsoft/Azure ecosystem, use Microsoft 365 for enterprise communication, and evaluate Power Platform/Azure services against existing enterprise agreements before procurement.
+**Team Error 404:** Thamotharan, Renuka Malar; Ramachandran, Yuganeswary; Hairul Afizee; Bashari, Noorliana.
