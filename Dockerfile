@@ -38,5 +38,5 @@ USER oneflow
 EXPOSE 3000
 
 # Runtime env (set by compose.yaml / Synology): AWS_*, SES_*, EMAIL_MODE,
-# EMAIL_RECIPIENT_MAP, NEXT_PUBLIC_APP_URL — never hard-coded here.
+# NEXT_PUBLIC_APP_URL — never hard-coded here. UI settings persist in /app/data.
 CMD ["node", "server.js"]

@@ -6,6 +6,7 @@
 import assert from "node:assert/strict";
 
 // Isolate env before importing service
+Object.assign(process.env, { NODE_ENV: "test" });
 process.env.EMAIL_MODE = "mock";
 delete process.env.AWS_ACCESS_KEY_ID;
 delete process.env.AWS_SECRET_ACCESS_KEY;

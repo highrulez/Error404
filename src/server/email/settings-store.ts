@@ -12,12 +12,16 @@ export type SavedEmailSettings = {
   updatedAt?: string;
 };
 
-const filePath = join(process.cwd(), ".oneflow-email-settings.json");
+const filePath = join(process.cwd(), "data", "email-settings.json");
+const legacyFilePath = join(process.cwd(), ".oneflow-email-settings.json");
 
 export function readSavedEmailSettings(): SavedEmailSettings {
   try {
-    if (!existsSync(filePath)) return {};
-    const raw = JSON.parse(readFileSync(filePath, "utf8")) as SavedEmailSettings;
+    // Tests must exercise environment defaults without touching persisted Admin data.
+    if (process.env.NODE_ENV === "test") return {};
+    const source = existsSync(filePath) ? filePath : legacyFilePath;
+    if (!existsSync(source)) return {};
+    const raw = JSON.parse(readFileSync(source, "utf8")) as SavedEmailSettings;
     return raw && typeof raw === "object" ? raw : {};
   } catch {
     return {};

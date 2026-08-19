@@ -6,6 +6,8 @@ node_modules
 .env
 .env.*
 !.env.example
+/data
+.oneflow-email-settings.json
 npm-debug.log
 yarn-error.log
 pnpm-debug.log

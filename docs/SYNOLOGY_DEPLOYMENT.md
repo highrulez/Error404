@@ -11,7 +11,7 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000). Use `.env.local` on your workstation. Docker is **not** required for local development.
 
-Production URL: [https://ppg.highrulez.com](https://ppg.highrulez.com)
+Production URL: [https://oneflow.highrulez.com](https://oneflow.highrulez.com)
 
 ---
 
@@ -55,28 +55,32 @@ This file is read by Docker Compose / Container Manager. It must **never** be co
 
 ## 4. Add production environment variables
 
-Use this template (replace `REPLACE_ME` with real values on the NAS only):
+Use this minimal template. AWS credentials stay on the NAS only; delivery and
+sender defaults can subsequently be managed in the Admin UI.
 
 ```env
-AWS_REGION=us-east-1
-AWS_ACCESS_KEY_ID=REPLACE_ME
-AWS_SECRET_ACCESS_KEY=REPLACE_ME
+NEXT_PUBLIC_APP_URL=https://oneflow.highrulez.com
 
-SES_FROM_EMAIL=REPLACE_ME
+# Optional initial defaults; saved Admin settings take precedence.
+EMAIL_MODE=mock
+AWS_REGION=ap-southeast-1
+SES_FROM_EMAIL=
 SES_FROM_NAME=OneFlow
-EMAIL_MODE=both
 
-NEXT_PUBLIC_APP_URL=https://ppg.highrulez.com
-
-EMAIL_RECIPIENT_MAP={"admin@ppg-demo.com":"REPLACE_ME","manager@ppg-demo.com":"REPLACE_ME","sherry.soh@ppg-demo.com":"REPLACE_ME","amirul.azli@ppg-demo.com":"REPLACE_ME","nuqman.zulfikar@ppg-demo.com":"REPLACE_ME","noorliana.bashari@ppg-demo.com":"REPLACE_ME","nabila.aziz@ppg-demo.com":"REPLACE_ME","muhamad.asyraf.hamdan@ppg-demo.com":"REPLACE_ME"}
+# Required only when SES delivery is enabled.
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
 ```
 
 Notes:
 
-- `EMAIL_MODE=mock` — Mock Inbox only (safe for smoke tests without SES).
-- `EMAIL_MODE=ses` or `both` — requires valid AWS credentials and a verified SES sender.
-- `EMAIL_RECIPIENT_MAP` maps mock `@ppg-demo.com` addresses to real inboxes. Real addresses stay on the NAS `.env` only.
-- Optional aliases: `EMAIL_MAP_ADMIN`, `EMAIL_MAP_NABILA`, `EMAIL_MAP_HAMDAN` (see `.env.example`).
+- `EMAIL_MODE=mock` is safe for smoke tests without AWS credentials.
+- `EMAIL_MODE=ses` or `both` requires valid AWS credentials and a verified SES sender.
+- Admin **Settings → Email Delivery** manages delivery mode, sender configuration,
+  application URL, and recipient mappings. Those saved settings take precedence
+  over the non-secret environment defaults above and persist in the
+  `oneflow-settings` Docker volume.
+- AWS credentials remain server-side and are never stored in the Settings UI.
 
 ---
 
@@ -114,7 +118,7 @@ In **Control Panel → Login Portal → Advanced → Reverse Proxy** (or equival
 | Field | Value |
 | --- | --- |
 | Protocol | HTTPS |
-| Hostname | `ppg.highrulez.com` |
+| Hostname | `oneflow.highrulez.com` |
 | Port | `443` |
 
 **Destination**
@@ -136,7 +140,7 @@ Use the NAS LAN IP as the destination hostname instead of `localhost`.
 Configure a **Let's Encrypt** certificate for:
 
 ```text
-ppg.highrulez.com
+oneflow.highrulez.com
 ```
 
 Attach it to the reverse proxy / web service that terminates HTTPS.
@@ -162,7 +166,7 @@ Keep port 3000 reachable on the LAN (or via reverse proxy) only as needed.
 1. Sign in as Admin.
 2. Open **Settings → Email Delivery (SES)** (`/oneflow/email-delivery`).
 3. Confirm mode, credentials status, and **masked** recipient mappings.
-4. Send the **diagnostic / test SES email**.
+4. Send the **test email**.
 5. Confirm delivery metadata (MessageId) without exposing full real addresses in the browser.
 
 Outbound HTTPS from the NAS to AWS SES is required. No inbound AWS ports are needed.
@@ -198,7 +202,7 @@ Docker is optional for developers. Application features, demo data, and workflow
 ## 19–20. Secrets policy
 
 - Docker deployment uses the **NAS `.env` file** (or Container Manager environment UI).
-- **Never commit** `.env` / `.env.local` / real `EMAIL_RECIPIENT_MAP` values.
-- The Docker image does **not** embed AWS keys or real recipient addresses.
+- **Never commit** `.env` / `.env.local` or real AWS credentials.
+- The Docker image does **not** embed AWS keys or saved recipient addresses.
 - Only `.env.example` (placeholders) belongs in Git.
 - GitHub Actions **validates** (lint/build/optional image build) and does **not** deploy to Synology.

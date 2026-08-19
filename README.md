@@ -47,6 +47,9 @@ Open [http://localhost:3000](http://localhost:3000).
 Workflow notifications always write to the **Mock Inbox** (audit channel).
 
 Optional real delivery uses server-side **AWS SES v2** (`EMAIL_MODE=mock|ses|both`).
+Admins manage delivery mode, sender details, and recipient mappings in
+**Settings → Email Delivery**. Saved settings take precedence over the
+non-secret environment defaults; AWS credentials remain server-side.
 
 | Mode | Behavior |
 | --- | --- |
@@ -54,7 +57,9 @@ Optional real delivery uses server-side **AWS SES v2** (`EMAIL_MODE=mock|ses|bot
 | `ses` | SES send + delivery metadata |
 | `both` | Mock Inbox + SES |
 
-Configure via `.env.example` / Synology container env. Secrets never use `NEXT_PUBLIC_*`.
+Use `.env.example` only for the public URL, SES credentials, and initial
+non-secret defaults. Recipient mappings are stored through the Settings UI;
+secrets never use `NEXT_PUBLIC_*`.
 
 Admin UI: **Settings → Email Delivery (SES)** (`/oneflow/email-delivery`)
 

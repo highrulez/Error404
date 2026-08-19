@@ -26,6 +26,7 @@ yarn-debug.log*
 yarn-error.log*
 *.log
 .oneflow-email-settings.json
+/data/
 
 # Env — never commit secrets (keep .env.example)
 .env

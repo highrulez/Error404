@@ -18,8 +18,7 @@ jobs:
       # Harmless placeholders so the build does not need real AWS secrets.
       # SES stays inactive unless EMAIL_MODE is ses/both with real credentials at runtime.
       EMAIL_MODE: mock
-      NEXT_PUBLIC_APP_URL: https://ppg.highrulez.com
-      SES_FROM_NAME: OneFlow
+      NEXT_PUBLIC_APP_URL: https://oneflow.highrulez.com
     steps:
       - name: Checkout
         uses: actions/checkout@v4
