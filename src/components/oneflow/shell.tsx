@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { PhaseBanner } from "@/components/shared/phase-banner";
 import { useAuth } from "@/components/shared/auth-provider";
+import { roleLabel } from "@/data/role-labels";
 
 export function OneFlowShell({
   children,
@@ -28,7 +29,7 @@ export function OneFlowShell({
             {session && (
               <div className="mt-3 rounded-md bg-white/10 px-2 py-2 text-[11px]">
                 <p className="font-semibold text-white">{session.name}</p>
-                <p className="text-white/60">{session.role}</p>
+                <p className="text-white/60">{roleLabel(session.role)}</p>
                 <p className="truncate text-white/45">{session.email}</p>
               </div>
             )}
@@ -81,7 +82,7 @@ export function OneFlowShell({
                 )}
                 {session && (
                   <p className="mt-1 text-xs font-medium text-flow-accent">
-                    Viewing as: {session.name} — {session.role}
+                    Viewing as: {session.name} — {roleLabel(session.role)}
                   </p>
                 )}
               </div>
