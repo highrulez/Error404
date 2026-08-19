@@ -97,10 +97,13 @@ function MockInboxContent() {
   const unread = emails.filter((e) => e.status === "Unread").length;
 
   if (!session) return null;
+  const employeeView =
+    session.role === "ONBOARDING_EMPLOYEE" ||
+    session.role === "OFFBOARDING_EMPLOYEE";
 
   return (
     <OneFlowShell
-      title="Mock Inbox"
+      title={employeeView ? "My Inbox" : "Mock Inbox"}
       subtitle="Audit channel for workflow notifications — SES delivery is optional via Admin → Email Delivery"
     >
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
@@ -302,7 +305,7 @@ function MockInboxContent() {
                             href={attachmentDownloadHref(att)}
                             className="rounded-md border border-slate-300 bg-white px-2 py-1 text-xs font-semibold"
                           >
-                            Download Mock Copy
+                            Download Copy
                           </Link>
                         </div>
                       </div>

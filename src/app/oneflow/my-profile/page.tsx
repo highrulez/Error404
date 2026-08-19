@@ -1,43 +1,17 @@
 "use client";
 
+import { MapPin } from "lucide-react";
 import { OneFlowShell } from "@/components/oneflow/shell";
 import { useAuth } from "@/components/shared/auth-provider";
-import { DEMO_USERS, profileByEmail } from "@/data";
+import { useData } from "@/components/shared/data-provider";
+import { StatusChip } from "@/components/shared/status";
+import { formatDate } from "@/lib/utils";
+import { roleLabel } from "@/data/role-labels";
 
 export default function MyProfilePage() {
-  const { session } = useAuth();
-  if (!session) return null;
-  const profile = profileByEmail(session.email);
-  const user = DEMO_USERS.find((u) => u.email.toLowerCase() === session.email.toLowerCase());
-
-  return (
-    <OneFlowShell title="My Profile" subtitle="Demo account profile">
-      <div className="max-w-md rounded-xl border border-flow-line bg-white p-5 shadow-sm text-sm">
-        <dl className="space-y-2">
-          <div className="flex gap-2">
-            <dt className="w-28 text-slate-500">Name</dt>
-            <dd className="font-semibold">{profile?.name || session.name}</dd>
-          </div>
-          <div className="flex gap-2">
-            <dt className="w-28 text-slate-500">Email</dt>
-            <dd>{session.email}</dd>
-          </div>
-          <div className="flex gap-2">
-            <dt className="w-28 text-slate-500">Initials</dt>
-            <dd>{profile?.initials || user?.initials || "—"}</dd>
-          </div>
-          <div className="flex gap-2">
-            <dt className="w-28 text-slate-500">Role</dt>
-            <dd>{session.role}</dd>
-          </div>
-          {user?.responsibleTeam && (
-            <div className="flex gap-2">
-              <dt className="w-28 text-slate-500">Team</dt>
-              <dd>{user.responsibleTeam}</dd>
-            </div>
-          )}
-        </dl>
-      </div>
-    </OneFlowShell>
-  );
+  const { session } = useAuth(); const { store } = useData(); if (!session) return null;
+  const employee = store.employees.find((item) => item.email.toLowerCase() === session.email.toLowerCase());
+  const initials = (employee?.fullName || session.name).split(/[\s,]+/).filter(Boolean).map((part) => part[0]).join("").slice(0, 2).toUpperCase();
+  const fields = [["Employee ID", employee?.employeeNumber], ["Department", employee?.department], ["Location", employee?.location], ["Start Date", employee?.startDate ? formatDate(employee.startDate) : null], ["Manager", employee?.managerName], ["Email", session.email], ["Role", roleLabel(session.role)]];
+  return <OneFlowShell title="My Profile" subtitle="Your OneFlow account and employment details"><div className="max-w-3xl rounded-2xl border border-flow-line bg-white p-5 shadow-sm"><header className="flex flex-wrap items-center gap-4 border-b border-flow-line pb-5"><span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-sky-50 text-xl font-semibold text-flow-accent">{initials}</span><div><h2 className="text-xl font-semibold">{employee?.fullName || session.name}</h2><p className="mt-1 text-sm text-slate-500">{employee?.role || roleLabel(session.role)}</p><p className="mt-1 flex items-center gap-1 text-xs text-slate-500"><MapPin className="h-3.5 w-3.5" />{employee?.location || "—"}</p></div>{employee && <div className="ml-auto"><StatusChip status={employee.employmentStatus} /></div>}</header><dl className="mt-5 grid gap-x-8 gap-y-4 text-sm sm:grid-cols-2">{fields.map(([label, value]) => <div key={String(label)}><dt className="text-xs font-semibold uppercase tracking-wide text-slate-400">{label}</dt><dd className="mt-1 font-medium text-slate-800">{value || "—"}</dd></div>)}</dl></div></OneFlowShell>;
 }

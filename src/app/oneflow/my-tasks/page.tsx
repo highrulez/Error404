@@ -114,6 +114,21 @@ export default function MyTasksPage() {
     };
   }, [allTasks, session, today]);
 
+  const securityJourneys = useMemo(() => {
+    if (session?.role !== "IT_SECURITY") return [];
+    const cases = [
+      ...store.offboardingCases.map((item) => ({ id: item.id, type: "Offboarding" as const, employeeId: item.employeeId })),
+      ...store.onboardingCases.map((item) => ({ id: item.id, type: "Preboarding" as const, employeeId: item.employeeId })),
+    ];
+    return cases.map((item) => {
+      const tasks = allTasks.filter((task) => task.responsibleTeam === "IT Security" && (item.type === "Offboarding" ? task.offboardingCaseId === item.id : task.onboardingCaseId === item.id));
+      const employee = store.employees.find((value) => value.id === item.employeeId);
+      return { ...item, employee, total: tasks.length, completed: tasks.filter((task) => task.status === "Completed").length, blocked: tasks.filter((task) => task.status === "Blocked").length, pending: tasks.filter((task) => task.status === "Pending" || task.status === "In Progress").length };
+    }).filter((item) => item.total > 0);
+  }, [session?.role, store.offboardingCases, store.onboardingCases, store.employees, allTasks]);
+
+  const upcomingSecurityWork = useMemo(() => allTasks.filter((task) => task.responsibleTeam === "IT Security" && task.status !== "Completed" && task.status !== "Cancelled").sort((a, b) => a.dueDate.localeCompare(b.dueDate)).slice(0, 3), [allTasks]);
+
   const filtered = useMemo(() => {
     if (!session) return [];
     return allTasks.filter((t) => {
@@ -258,6 +273,12 @@ export default function MyTasksPage() {
       title="My Tasks"
       subtitle="Work assigned to you and your teams"
     >
+      {session.role === "IT_SECURITY" && (
+        <section className="mb-5 rounded-2xl border border-sky-100 bg-white p-5 shadow-sm">
+          <div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-xs font-semibold uppercase tracking-wide text-sky-700">IT Security Dashboard</p><h2 className="mt-1 text-lg font-semibold">Current Employee Journeys</h2></div><Link href="#task-queue" className="text-sm font-semibold text-flow-accent hover:underline">View My Tasks</Link></div>
+          <div className="mt-4 grid gap-3 lg:grid-cols-[1fr_1fr_.9fr]">{securityJourneys.map((journey) => <div key={`${journey.type}-${journey.id}`} className={`rounded-xl border p-4 ${journey.type === "Offboarding" ? "border-violet-100 bg-violet-50/40" : "border-cyan-100 bg-cyan-50/40"}`}><div className="flex items-center justify-between gap-2"><p className="font-semibold text-slate-900">{journey.employee?.fullName || "Employee"}</p><StatusChip status={journey.type} /></div><p className="mt-1 text-xs text-slate-500">{journey.total} security tasks</p><div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs"><div><p className="text-lg font-semibold text-emerald-700">{journey.completed}</p><p className="text-slate-500">completed</p></div><div><p className="text-lg font-semibold text-slate-700">{journey.pending}</p><p className="text-slate-500">open</p></div><div><p className={`text-lg font-semibold ${journey.blocked ? "text-amber-700" : "text-slate-500"}`}>{journey.blocked}</p><p className="text-slate-500">blocked</p></div></div></div>)}<div className="rounded-xl border border-slate-100 bg-slate-50 p-4"><p className="text-sm font-semibold">Upcoming Work</p><ul className="mt-3 space-y-2">{upcomingSecurityWork.map((task) => <li key={task.id} className="text-xs"><Link href={`/oneflow/tasks/${task.id}`} className="font-medium text-slate-800 hover:text-flow-accent">{task.title}</Link><p className="mt-0.5 text-slate-500">Due {formatDate(task.dueDate)}</p></li>)}{!upcomingSecurityWork.length && <li className="text-xs text-slate-500">No upcoming IT Security work.</li>}</ul></div></div>
+        </section>
+      )}
       {/* Summary strip */}
       <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
         {[
@@ -449,7 +470,7 @@ export default function MyTasksPage() {
         </div>
       )}
 
-      <div className="grid gap-3 lg:grid-cols-[1fr_280px]">
+      <div id="task-queue" className="grid gap-3 lg:grid-cols-[1fr_280px]">
         <div className="overflow-x-auto rounded-lg border border-flow-line bg-white">
           <table className="min-w-full text-left text-sm">
             <thead className="border-b border-flow-line bg-slate-50 text-[11px] uppercase tracking-wide text-slate-500">

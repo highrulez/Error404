@@ -1,67 +1,22 @@
 "use client";
 
 import Link from "next/link";
+import { CalendarDays, CheckCircle2, FileText, Mail, type LucideIcon } from "lucide-react";
 import { OneFlowShell } from "@/components/oneflow/shell";
 import { useAuth } from "@/components/shared/auth-provider";
 import { useData } from "@/components/shared/data-provider";
 import { StatusChip, ProgressBar } from "@/components/shared/status";
+import { formatDate } from "@/lib/utils";
+import { lifecycleReadiness } from "@/components/oneflow/lifecycle-visibility";
 import { DANIEL_OFFBOARDING_CASE_ID } from "@/data";
 
+function dayCopy(date: string) { const days = Math.ceil((new Date(`${date}T00:00:00`).getTime() - new Date().setHours(0, 0, 0, 0)) / 86400000); return days <= 0 ? days === 0 ? "Your last working day is today" : "Your last working day has passed" : days === 1 ? "Your last working day is tomorrow" : `Your last working day is in ${days} days`; }
+function SummaryCard({ label, value, Icon, tone }: { label: string; value: string | number; Icon: LucideIcon; tone: string }) { return <div className={`rounded-xl p-3 ${tone}`}><div className="flex justify-between"><p className="text-[11px] font-semibold uppercase tracking-wide">{label}</p><Icon className="h-4 w-4" /></div><p className="mt-2 text-xl font-semibold">{value}</p></div>; }
+
 export default function MyOffboardingPage() {
-  const { session } = useAuth();
-  const { ready, store, service } = useData();
-  if (!session) return null;
-
-  const employee = store.employees.find(
-    (e) => e.email.toLowerCase() === session.email.toLowerCase()
-  );
-  const offCase =
-    store.offboardingCases.find((c) => c.employeeId === employee?.id) ||
-    (session.role === "OFFBOARDING_EMPLOYEE"
-      ? store.offboardingCases.find((c) => c.id === DANIEL_OFFBOARDING_CASE_ID)
-      : undefined);
-
-  return (
-    <OneFlowShell title="My Offboarding" subtitle="Your offboarding journey">
-      {!offCase ? (
-        <p className="text-sm text-slate-500">
-          No offboarding case found for your account.
-        </p>
-      ) : (
-        <div className="space-y-4">
-          <div className="rounded-xl border border-flow-line bg-white p-4 shadow-sm">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div>
-                <p className="font-semibold">{offCase.caseNumber}</p>
-                <p className="text-xs text-slate-500">Offboarding case</p>
-              </div>
-              <StatusChip status={offCase.status} />
-            </div>
-            <div className="mt-3">
-              <ProgressBar value={offCase.overallProgress} tone="blue" />
-            </div>
-            <Link
-              href={`/oneflow/my-offboarding/${offCase.id}`}
-              className="mt-3 inline-block rounded-md bg-flow-accent px-3 py-2 text-sm font-semibold text-white"
-            >
-              View My Offboarding
-            </Link>
-          </div>
-          {ready &&
-            service
-              .listMyForms(session)
-              .filter((f) => f.kind === "Exit Clearance")
-              .map((f) => (
-                <Link
-                  key={f.id}
-                  href={f.href}
-                  className="block rounded-xl border border-flow-line bg-white p-4 text-sm font-semibold shadow-sm hover:border-flow-accent"
-                >
-                  Continue {f.formName} →
-                </Link>
-              ))}
-        </div>
-      )}
-    </OneFlowShell>
-  );
+  const { session } = useAuth(); const { ready, store, service } = useData(); if (!session) return null;
+  const employee = store.employees.find((item) => item.email.toLowerCase() === session.email.toLowerCase()); const caseItem = store.offboardingCases.find((item) => item.employeeId === employee?.id) || (session.role === "OFFBOARDING_EMPLOYEE" ? store.offboardingCases.find((item) => item.id === DANIEL_OFFBOARDING_CASE_ID) : undefined);
+  if (!caseItem || !employee) return <OneFlowShell title="My Offboarding"><p className="text-sm text-slate-500">No offboarding journey found for your account.</p></OneFlowShell>;
+  const tasks = store.tasks.filter((task) => task.offboardingCaseId === caseItem.id && task.status !== "Cancelled"); const outstanding = tasks.filter((task) => task.status !== "Completed"); const clearance = lifecycleReadiness(tasks); const forms = ready ? service.listMyForms(session).filter((form) => form.lifecycle === "Offboarding" && !["Completed", "Submitted", "Fully Cleared"].includes(form.status)) : []; const unread = (store.mockEmails || []).filter((mail) => mail.to.toLowerCase() === session.email.toLowerCase() && mail.status === "Unread").length; const next = [...outstanding].sort((a, b) => a.dueDate.localeCompare(b.dueDate))[0]; const current = Math.min(4, Math.floor((clearance / 100) * 5));
+  return <OneFlowShell title="My Offboarding" subtitle="Your exit clearance journey"><div className="space-y-5"><section className="rounded-2xl border border-violet-100 bg-gradient-to-br from-violet-50 to-white p-5 shadow-sm"><p className="text-sm font-medium text-violet-800">Hello, {employee.preferredName || employee.fullName}</p><h2 className="mt-2 text-2xl font-semibold">{dayCopy(caseItem.lastWorkingDate)}</h2><div className="mt-3 flex flex-wrap gap-3 text-sm text-slate-600"><span className="flex items-center gap-1"><CalendarDays className="h-4 w-4 text-violet-600" />{formatDate(caseItem.lastWorkingDate)}</span><StatusChip status={caseItem.status} /></div><p className="mt-3 text-xs text-slate-500">Reference: {caseItem.caseNumber}</p></section><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"><SummaryCard label="Actions Remaining" value={outstanding.length} Icon={CheckCircle2} tone="bg-violet-50 text-violet-700" /><SummaryCard label="Forms to Complete" value={forms.length} Icon={FileText} tone="bg-indigo-50 text-indigo-700" /><SummaryCard label="Unread Messages" value={unread} Icon={Mail} tone="bg-sky-50 text-sky-700" /><SummaryCard label="Last Working Day" value={formatDate(caseItem.lastWorkingDate)} Icon={CalendarDays} tone="bg-slate-50 text-slate-700" /></div><div className="grid gap-4 lg:grid-cols-[1.15fr_.85fr]"><section className="rounded-2xl border border-flow-line bg-white p-5 shadow-sm"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Exit Clearance</p><p className="mt-1 text-4xl font-semibold">{clearance}%</p><div className="mt-3"><ProgressBar value={clearance} tone="blue" /></div><p className="mt-2 text-sm text-slate-500">{outstanding.length} actions remaining for your exit clearance</p></section><section className="rounded-2xl border border-flow-line bg-white p-5 shadow-sm"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Next Action</p>{next ? <><p className="mt-2 font-semibold">{next.title}</p><p className="mt-1 text-sm text-slate-500">Due {formatDate(next.dueDate)}</p><Link href={`/oneflow/tasks/${next.id}`} className="mt-4 inline-block rounded-xl bg-flow-accent px-3 py-2 text-sm font-semibold text-white">Continue</Link></> : <p className="mt-2 font-semibold text-emerald-700">You’re all caught up.</p>}</section></div><section className="rounded-2xl border border-flow-line bg-white p-5 shadow-sm"><h2 className="text-base font-semibold">Your Offboarding Journey</h2><div className="mt-4 grid gap-2 sm:grid-cols-5">{["Exit Initiated", "Handover", "Access & Equipment", "Clearance", "Exit Complete"].map((stage, index) => { const complete = clearance === 100 || index < current; const active = !complete && index === current; return <div key={stage} className="rounded-xl bg-slate-50 p-3 text-center text-xs"><span className={`mx-auto flex h-7 w-7 items-center justify-center rounded-full ${complete ? "bg-emerald-100 text-emerald-700" : active ? "bg-violet-100 text-violet-700" : "bg-slate-200 text-slate-500"}`}>{complete ? "✓" : index + 1}</span><p className="mt-2 font-medium">{stage}</p><p className="mt-1 text-slate-500">{complete ? "Complete" : active ? "In progress" : "Upcoming"}</p></div>; })}</div></section></div></OneFlowShell>;
 }
