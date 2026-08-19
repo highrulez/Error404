@@ -8,6 +8,7 @@ import { useData } from "@/components/shared/data-provider";
 import { useAuth } from "@/components/shared/auth-provider";
 import { ProgressBar, StatusChip } from "@/components/shared/status";
 import { formatDate } from "@/lib/utils";
+import { lifecycleReadiness } from "@/components/oneflow/lifecycle-visibility";
 
 export default function OneFlowOverviewPage() {
   const { session } = useAuth();
@@ -37,6 +38,21 @@ export default function OneFlowOverviewPage() {
   const mode = store.settings?.automationMode ?? "simulation";
   const unread = (store.mockEmails ?? []).filter((e) => e.status === "Unread")
     .length;
+  const today = new Date().toISOString().slice(0, 10);
+  const openTasks = store.tasks.filter(
+    (t) => t.status !== "Completed" && t.status !== "Cancelled"
+  );
+  const dueSoon = openTasks.filter(
+    (t) => t.dueDate >= today && t.dueDate <= new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10)
+  );
+  const offboardingCases = store.offboardingCases.map((c) => ({
+    case: c,
+    employee: store.employees.find((e) => e.id === c.employeeId),
+  }));
+  const attentionTasks = openTasks
+    .filter((t) => t.status === "Overdue" || t.status === "Blocked" || t.dueDate < today)
+    .sort((a, b) => a.dueDate.localeCompare(b.dueDate))
+    .slice(0, 6);
 
   if (!session || session.role !== "Admin") {
     return (
@@ -85,10 +101,10 @@ export default function OneFlowOverviewPage() {
 
       <div className="mb-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         {[
-          { label: "New hires", value: stats.newHires },
-          { label: "Open cases", value: stats.openCases },
-          { label: "Completed tasks", value: stats.completedTasks },
+          { label: "Preboarding", value: store.onboardingCases.filter((c) => c.status !== "Completed").length },
+          { label: "Offboarding", value: store.offboardingCases.filter((c) => c.status !== "Completed").length },
           { label: "Overdue tasks", value: stats.overdueTasks },
+          { label: "Due this week", value: dueSoon.length },
           { label: "Unread emails", value: unread },
         ].map((s) => (
           <div
@@ -179,6 +195,16 @@ export default function OneFlowOverviewPage() {
           </div>
         );
       })()}
+
+      <div className="mb-5 rounded-xl border border-flow-line bg-white p-4 shadow-sm">
+        <div className="mb-3 flex items-center justify-between gap-2"><h2 className="text-sm font-semibold">Needs Attention</h2><span className="text-xs text-slate-500">Most urgent incomplete work</span></div>
+        {attentionTasks.length ? <div className="overflow-x-auto"><table className="w-full min-w-[680px] text-left text-xs"><thead className="border-b border-slate-100 text-slate-500"><tr><th className="pb-2">Employee</th><th className="pb-2">Task</th><th className="pb-2">Responsible role</th><th className="pb-2">Due</th><th className="pb-2">Status</th><th className="pb-2">Lifecycle</th></tr></thead><tbody>{attentionTasks.map((task) => { const employee = store.employees.find((e) => e.id === task.employeeId); const lifecycle = task.offboardingCaseId ? "Offboarding" : "Onboarding"; const href = task.offboardingCaseId ? `/oneflow/offboarding/cases/${task.offboardingCaseId}` : `/oneflow/cases/${task.onboardingCaseId}`; return <tr key={task.id} className="border-b border-slate-100"><td className="py-2">{employee?.fullName ?? "—"}</td><td className="py-2"><Link href={href} className="font-semibold text-flow-accent hover:underline">{task.title}</Link></td><td className="py-2">{task.responsibleTeam}</td><td className="py-2">{formatDate(task.dueDate)}</td><td className="py-2"><StatusChip status={task.dueDate < today && task.status === "Pending" ? "Overdue" : task.status} /></td><td className="py-2">{lifecycle}</td></tr>; })}</tbody></table></div> : <p className="text-sm text-slate-400">No overdue or blocked work.</p>}
+      </div>
+
+      <div className="mb-5 grid gap-4 lg:grid-cols-2">
+        <div className="rounded-xl border border-flow-line bg-white p-4 shadow-sm"><h2 className="text-sm font-semibold">Upcoming joiners</h2><div className="mt-3 space-y-2">{cases.map(({ case: c, employee }) => <Link key={c.id} href={`/oneflow/cases/${c.id}`} className="flex items-center justify-between rounded-md bg-slate-50 px-3 py-2 text-xs"><span><strong>{employee?.fullName}</strong><br />{formatDate(employee?.startDate ?? "")}</span><span className="font-semibold">{lifecycleReadiness(store.tasks.filter((t) => t.onboardingCaseId === c.id))}% ready</span></Link>)}</div></div>
+        <div className="rounded-xl border border-flow-line bg-white p-4 shadow-sm"><h2 className="text-sm font-semibold">Upcoming leavers</h2><div className="mt-3 space-y-2">{offboardingCases.map(({ case: c, employee }) => <Link key={c.id} href={`/oneflow/offboarding/cases/${c.id}`} className="flex items-center justify-between rounded-md bg-slate-50 px-3 py-2 text-xs"><span><strong>{employee?.fullName}</strong><br />{formatDate(c.lastWorkingDate)}</span><span className="font-semibold">{lifecycleReadiness(store.tasks.filter((t) => t.offboardingCaseId === c.id))}% clear</span></Link>)}{!offboardingCases.length && <p className="text-xs text-slate-400">No offboarding cases.</p>}</div></div>
+      </div>
 
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-sm font-semibold">Recent onboarding cases</h2>

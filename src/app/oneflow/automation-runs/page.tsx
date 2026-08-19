@@ -50,7 +50,7 @@ export default function AutomationRunsPage() {
   return (
     <OneFlowShell
       title="Automation Runs"
-      subtitle="Local Mock Power Automate history"
+      subtitle="Prototype Automation Simulation — local mock activity history"
     >
       {toast && (
         <div
@@ -67,9 +67,9 @@ export default function AutomationRunsPage() {
       <div className="mb-4 rounded-xl border border-flow-line bg-white p-4 shadow-sm">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="text-sm font-semibold">Run Mock Automation</p>
+            <p className="text-sm font-semibold">Prototype Automation Simulation</p>
             <p className="mt-1 text-xs text-slate-500">
-              Select an onboarding case, then run success or failure simulation (~1.5s).
+              A mock Workday lifecycle event creates a case, assigns HR, IT Security and Onsite IT tasks, and generates notifications. No live Workday or Power Automate connection is used.
             </p>
           </div>
           <button

@@ -79,6 +79,11 @@ export function OneFlowShell({
                 {subtitle && (
                   <p className="mt-1 text-sm text-slate-500">{subtitle}</p>
                 )}
+                {session && (
+                  <p className="mt-1 text-xs font-medium text-flow-accent">
+                    Viewing as: {session.name} — {session.role}
+                  </p>
+                )}
               </div>
               <div className="flex flex-wrap gap-2 lg:hidden">
                 {navItems.slice(0, 3).map((item) => (

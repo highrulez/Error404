@@ -12,6 +12,7 @@ import { useData } from "@/components/shared/data-provider";
 import { useAuth } from "@/components/shared/auth-provider";
 import { ProgressBar, StatusChip } from "@/components/shared/status";
 import { OffboardingDemoControls } from "@/components/oneflow/offboarding-demo-controls";
+import { LifecycleVisibility } from "@/components/oneflow/lifecycle-visibility";
 import { formatDate, formatDateTime, TASK_STATUSES } from "@/lib/utils";
 import { AlertTriangle, Lock } from "lucide-react";
 
@@ -175,6 +176,13 @@ export function OffboardingCaseView({ caseId }: { caseId: string }) {
           </div>
         </div>
       </div>
+
+      <LifecycleVisibility type="Offboarding" tasks={tasks} />
+      {tasks.filter((t) => t.status !== "Completed" && t.status !== "Cancelled").length > 0 && (
+        <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+          {tasks.filter((t) => t.status !== "Completed" && t.status !== "Cancelled").length} outstanding tasks may affect exit clearance.
+        </p>
+      )}
 
       {exitForm && (
         <div className="rounded-xl border border-flow-line bg-white p-5 shadow-sm">
