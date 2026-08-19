@@ -10,6 +10,7 @@ import { StatusChip } from "@/components/shared/status";
 import { formatDate } from "@/lib/utils";
 import { RESPONSIBLE_TEAMS, UNIFIED_TASK_TYPES, teamForRole } from "@/data";
 import type { ChecklistTask } from "@/data";
+import { AlertTriangle, CalendarClock, CheckSquare, ListTodo } from "lucide-react";
 
 type TabKey =
   | "my-work"
@@ -260,16 +261,16 @@ export default function MyTasksPage() {
       {/* Summary strip */}
       <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
         {[
-          { label: "My Open Tasks", value: metrics.open },
-          { label: "Due Today", value: metrics.dueToday },
-          { label: "Overdue", value: metrics.overdue, warn: true },
-          { label: "Needs Attention", value: metrics.attention, warn: true },
+          { label: "My Open Tasks", value: metrics.open, icon: ListTodo, tone: "bg-sky-50 text-sky-700" },
+          { label: "Due Today", value: metrics.dueToday, icon: CalendarClock, tone: "bg-indigo-50 text-indigo-700" },
+          { label: "Overdue", value: metrics.overdue, icon: AlertTriangle, warn: true, tone: "bg-rose-50 text-rose-700" },
+          { label: "Needs Attention", value: metrics.attention, icon: CheckSquare, warn: true, tone: "bg-amber-50 text-amber-700" },
         ].map((m) => (
           <div
             key={m.label}
-            className="rounded-lg border border-flow-line bg-white px-3 py-2"
+            className={`rounded-xl border border-flow-line px-3 py-2 ${m.tone}`}
           >
-            <p className="text-[11px] text-slate-500">{m.label}</p>
+            <div className="flex items-center justify-between"><p className="text-[11px] font-semibold uppercase tracking-wide opacity-75">{m.label}</p><m.icon className="h-4 w-4" /></div>
             <p
               className={`text-xl font-semibold tabular-nums ${
                 m.warn && m.value > 0 ? "text-amber-700" : "text-slate-900"
@@ -457,7 +458,7 @@ export default function MyTasksPage() {
                 <th className="px-3 py-2 font-medium">Employee</th>
                 <th className="px-3 py-2 font-medium">Type</th>
                 <th className="px-3 py-2 font-medium">Lifecycle</th>
-                <th className="px-3 py-2 font-medium">Department</th>
+                <th className="px-3 py-2 font-medium">Responsible Team</th>
                 <th className="px-3 py-2 font-medium">Due</th>
                 <th className="px-3 py-2 font-medium">Priority</th>
                 <th className="px-3 py-2 font-medium">Status</th>
@@ -536,11 +537,9 @@ export default function MyTasksPage() {
         </div>
 
         {/* Optional preview drawer */}
-        <aside className="hidden rounded-lg border border-flow-line bg-white p-4 lg:block">
+        <aside className="hidden rounded-2xl border border-flow-line bg-white p-4 shadow-sm lg:block">
           {!preview ? (
-            <p className="text-sm text-slate-400">
-              Select a row to preview. Double-click or open to work the task.
-            </p>
+            <div className="rounded-xl bg-slate-50 px-3 py-6 text-center"><p className="text-sm font-medium text-slate-600">No task selected</p><p className="mt-1 text-xs text-slate-500">Select a row to preview, then open it to work the task.</p></div>
           ) : (
             <div className="space-y-3 text-sm">
               <p className="font-semibold text-slate-900">{preview.title}</p>
