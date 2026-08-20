@@ -1,4 +1,5 @@
 import type { UserRole } from "./auth-types";
+import type { ResponsibleTeam } from "./types";
 import { DANIEL_EMAIL } from "./exit-clearance-types";
 
 export interface DemoUserProfile {
@@ -17,10 +18,12 @@ export interface DemoUserProfile {
 export const DEMO_PROFILES: DemoUserProfile[] = [
   {
     userId: "user-admin",
-    name: "OneFlow Admin",
+    name: "Goh, Shing Yee",
     email: "admin@ppg-demo.com",
-    initials: "OA",
+    initials: "GSY",
     role: "Admin",
+    position: "Finance and Office Manager",
+    department: "Req Bus Sup MY Fin CR",
   },
   {
     userId: "user-hr",
@@ -58,10 +61,12 @@ export const DEMO_PROFILES: DemoUserProfile[] = [
   },
   {
     userId: "user-manager",
-    name: "Sarah Tan",
+    name: "Sub, Ammar Zahiruddin",
     email: "manager@ppg-demo.com",
-    initials: "ST",
+    initials: "SAZ",
     role: "HIRING_MANAGER",
+    position: "IT Infrastructure Manager APAC - South",
+    department: "IT Infrastructure Services",
   },
   {
     userId: "user-finance",
@@ -125,6 +130,32 @@ export function profileByEmail(email: string): DemoUserProfile | undefined {
 export function profileByUserId(userId: string): DemoUserProfile | undefined {
   return DEMO_PROFILES.find((p) => p.userId === userId);
 }
+
+const TEAM_TO_ROLE: Partial<Record<ResponsibleTeam, UserRole>> = {
+  "HR Operations": "HR",
+  "IT Security": "IT_SECURITY",
+  "Onsite IT Support": "ONSITE_IT",
+  "Facilities / Building Management": "FACILITIES",
+  "Hiring Manager": "HIRING_MANAGER",
+  "Finance / Administration": "FINANCE",
+  "Corporate Card Admin": "CORPORATE_CARD",
+  Administration: "Admin",
+  Quality: "QUALITY",
+  "Product Stewardship": "PRODUCT_STEWARDSHIP",
+};
+
+/** Canonical demo person for a role-owned task; never returns a team label. */
+export function profileForTeam(
+  team: ResponsibleTeam
+): DemoUserProfile | undefined {
+  const role = TEAM_TO_ROLE[team];
+  return role ? DEMO_PROFILES.find((profile) => profile.role === role) : undefined;
+}
+
+export const ADMIN_PROFILE = DEMO_PROFILES.find((p) => p.role === "Admin")!;
+export const HIRING_MANAGER_PROFILE = DEMO_PROFILES.find(
+  (p) => p.role === "HIRING_MANAGER"
+)!;
 
 export function initialsFromName(name: string): string {
   return name

@@ -560,7 +560,7 @@ export default function MyTasksPage() {
                 </div>
                 <div className="flex justify-between gap-2">
                   <dt>Assignee</dt>
-                  <dd className="font-medium">{preview.assignedEmail}</dd>
+                  <dd className="font-medium">{preview.assignedPersonName || "Unassigned"}</dd>
                 </div>
               </dl>
               <p className="text-xs text-slate-500 line-clamp-4">

@@ -10,6 +10,12 @@ import {
   migrateEmailsInUnknown,
   storeNeedsEmailMigration,
 } from "../email-domain";
+import {
+  ADMIN_PROFILE,
+  HIRING_MANAGER_PROFILE,
+  profileByEmail,
+  profileForTeam,
+} from "../demo-profiles";
 import type {
   ActivityHistory,
   AppStore,
@@ -47,6 +53,22 @@ import type {
 
 export const STORAGE_KEY = "oneflow-phase1-v3";
 
+const LEGACY_DEMO_NAMES: Array<[RegExp, string]> = [
+  [/Siti Aminah bt Yusof/g, "Soh, Shi Rui Sherry"],
+  [/Zulkarnain bin Hassan/g, "Mohd Azli, Amirul Mukhlis"],
+  [/Ariff bin Razak/g, "Zulfikar Zikri, Nuqman Haziq"],
+  [/Roslan bin Omar/g, "Nur Aisyah"],
+  [/Sarah Tan/g, HIRING_MANAGER_PROFILE.name],
+  [/OneFlow Admin/g, ADMIN_PROFILE.name],
+];
+
+function rewriteLegacyDemoNames(value: string): string {
+  return LEGACY_DEMO_NAMES.reduce(
+    (next, [legacy, replacement]) => next.replace(legacy, replacement),
+    value
+  );
+}
+
 function migrateTemplateTask(
   raw: Partial<ChecklistTemplateTask> & { id: string; title: string }
 ): ChecklistTemplateTask {
@@ -82,15 +104,18 @@ function migrateTemplateTask(
 }
 function migrateTask(raw: Partial<ChecklistTask> & { title: string }): ChecklistTask {
   const rule = DEFAULT_ASSIGNMENT_RULES.find((r) => r.taskName === raw.title);
-  const assignedPersonName =
-    raw.assignedPersonName ||
-    raw.assignedOwner ||
-    rule?.assignedPersonName ||
-    "Unassigned";
   const assignedEmail =
     raw.assignedEmail ||
     rule?.assignedEmail ||
     "";
+  const canonicalAssignee = assignedEmail
+    ? profileByEmail(assignedEmail)
+    : profileForTeam(raw.responsibleTeam || rule?.responsibleTeam || "HR Operations");
+  const assignedPersonName =
+    canonicalAssignee?.name ||
+    (raw.assignedPersonName && raw.assignedPersonName !== raw.responsibleTeam
+      ? raw.assignedPersonName
+      : "Unassigned");
   return {
     id: raw.id || `tsk-migrated-${raw.title}`,
     employeeId: raw.employeeId || "",
@@ -240,7 +265,12 @@ function migrateAssignmentRules(rules: AssignmentRule[]): AssignmentRule[] {
       byTask.set(def.taskName, def);
     }
   }
-  return next;
+  return next.map((rule) => {
+    const profile = profileByEmail(rule.assignedEmail) || profileForTeam(rule.responsibleTeam);
+    return profile
+      ? { ...rule, assignedEmail: profile.email, assignedPersonName: profile.name }
+      : rule;
+  });
 }
 
 function migrateStore(raw: Partial<AppStore>): AppStore {
@@ -297,12 +327,24 @@ function migrateStore(raw: Partial<AppStore>): AppStore {
   let exitClearanceForms =
     (migratedRaw.exitClearanceForms as EmployeeExitClearanceForm[] | undefined) ??
     [];
-  let nextEmployees = employees;
+  let nextEmployees = employees.map((employee) =>
+    employee.managerEmail === HIRING_MANAGER_PROFILE.email
+      ? { ...employee, managerName: HIRING_MANAGER_PROFILE.name }
+      : employee
+  );
   let nextOnboarding = onboardingCases;
   let nextOffboarding = offboardingCases;
   let nextTasks = migrateTasksWithDependencies(migrated);
-  let nextEmails = migratedRaw.mockEmails ?? [];
-  let nextActivity = migratedRaw.activity ?? [];
+  let nextEmails = (migratedRaw.mockEmails ?? []).map((email) => ({
+    ...email,
+    subject: rewriteLegacyDemoNames(email.subject || ""),
+    htmlBody: rewriteLegacyDemoNames(email.htmlBody || ""),
+  }));
+  let nextActivity = (migratedRaw.activity ?? []).map((activity) => ({
+    ...activity,
+    actor: rewriteLegacyDemoNames(activity.actor || ""),
+    detail: rewriteLegacyDemoNames(activity.detail || ""),
+  }));
   let nextRuns = migratedRaw.automationRuns ?? [];
   let inductionForms =
     (migratedRaw.inductionForms as AppStore["inductionForms"] | undefined) ?? [];
@@ -399,7 +441,7 @@ function migrateStore(raw: Partial<AppStore>): AppStore {
 
   // Historical protection: do not inject new blueprint tasks into existing cases.
   const store: AppStore = {
-    version: 7,
+    version: 8,
     employees: nextEmployees,
     onboardingCases: nextOnboarding,
     offboardingCases: nextOffboarding,

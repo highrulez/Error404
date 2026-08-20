@@ -5,6 +5,7 @@ import type {
   PayloadResponsibleTeam,
   ResponsibleTeam,
 } from "./types";
+import { profileForTeam } from "./demo-profiles";
 
 export const RESPONSIBLE_TEAMS: ResponsibleTeam[] = [
   "HR Operations",
@@ -131,7 +132,7 @@ export const DEFAULT_ASSIGNMENT_RULES: AssignmentRule[] = [
     location: "*",
     department: "*",
     assignedEmail: "sherry.soh@ppg-demo.com",
-    assignedPersonName: "Siti Aminah bt Yusof",
+    assignedPersonName: profileForTeam("HR Operations")!.name,
     active: true,
   },
   {
@@ -142,7 +143,7 @@ export const DEFAULT_ASSIGNMENT_RULES: AssignmentRule[] = [
     location: "*",
     department: "*",
     assignedEmail: "amirul.azli@ppg-demo.com",
-    assignedPersonName: "Zulkarnain bin Hassan",
+    assignedPersonName: profileForTeam("IT Security")!.name,
     active: true,
   },
   {
@@ -153,7 +154,7 @@ export const DEFAULT_ASSIGNMENT_RULES: AssignmentRule[] = [
     location: "*",
     department: "*",
     assignedEmail: "amirul.azli@ppg-demo.com",
-    assignedPersonName: "Zulkarnain bin Hassan",
+    assignedPersonName: profileForTeam("IT Security")!.name,
     active: true,
   },
   {
@@ -164,7 +165,7 @@ export const DEFAULT_ASSIGNMENT_RULES: AssignmentRule[] = [
     location: "*",
     department: "*",
     assignedEmail: "amirul.azli@ppg-demo.com",
-    assignedPersonName: "Zulkarnain bin Hassan",
+    assignedPersonName: profileForTeam("IT Security")!.name,
     active: true,
   },
   {
@@ -175,7 +176,7 @@ export const DEFAULT_ASSIGNMENT_RULES: AssignmentRule[] = [
     location: "*",
     department: "*",
     assignedEmail: "nuqman.zulfikar@ppg-demo.com",
-    assignedPersonName: "Ariff bin Razak",
+    assignedPersonName: profileForTeam("Onsite IT Support")!.name,
     active: true,
   },
   {
@@ -186,7 +187,7 @@ export const DEFAULT_ASSIGNMENT_RULES: AssignmentRule[] = [
     location: "*",
     department: "*",
     assignedEmail: "nuqman.zulfikar@ppg-demo.com",
-    assignedPersonName: "Ariff bin Razak",
+    assignedPersonName: profileForTeam("Onsite IT Support")!.name,
     active: true,
   },
   {
@@ -197,7 +198,7 @@ export const DEFAULT_ASSIGNMENT_RULES: AssignmentRule[] = [
     location: "*",
     department: "*",
     assignedEmail: "facilities@ppg-demo.com",
-    assignedPersonName: "Roslan bin Omar",
+    assignedPersonName: profileForTeam("Facilities / Building Management")!.name,
     active: true,
   },
   {
@@ -208,7 +209,7 @@ export const DEFAULT_ASSIGNMENT_RULES: AssignmentRule[] = [
     location: "*",
     department: "*",
     assignedEmail: "facilities@ppg-demo.com",
-    assignedPersonName: "Roslan bin Omar",
+    assignedPersonName: profileForTeam("Facilities / Building Management")!.name,
     active: true,
   },
   {
@@ -219,7 +220,7 @@ export const DEFAULT_ASSIGNMENT_RULES: AssignmentRule[] = [
     location: "*",
     department: "*",
     assignedEmail: "facilities@ppg-demo.com",
-    assignedPersonName: "Roslan bin Omar",
+    assignedPersonName: profileForTeam("Facilities / Building Management")!.name,
     active: true,
   },
   {
@@ -230,7 +231,7 @@ export const DEFAULT_ASSIGNMENT_RULES: AssignmentRule[] = [
     location: "*",
     department: "*",
     assignedEmail: "facilities@ppg-demo.com",
-    assignedPersonName: "Roslan bin Omar",
+    assignedPersonName: profileForTeam("Facilities / Building Management")!.name,
     active: true,
   },
   // Hiring Manager rules use placeholders — resolved from employee at runtime
