@@ -350,7 +350,7 @@ export function OnboardingDemoControls({
         <Btn
           busy={busy}
           onClick={() =>
-            run("Login as Sub, Ammar Zahiruddin", () =>
+            run("Login as Suib, Ammar Zahiruddin", () =>
               loginAs(
                 "manager@ppg-demo.com",
                 "/oneflow/my-tasks"
@@ -358,7 +358,7 @@ export function OnboardingDemoControls({
             )
           }
         >
-          Login as Sub, Ammar Zahiruddin
+          Login as Suib, Ammar Zahiruddin
         </Btn>
         <Btn
           busy={busy}

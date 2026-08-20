@@ -7,13 +7,13 @@ import { createSeedStore } from "./seed";
 assert.equal(ADMIN_PROFILE.name, "Goh, Shing Yee");
 assert.equal(ADMIN_PROFILE.position, "Finance and Office Manager");
 assert.equal(ADMIN_PROFILE.department, "Req Bus Sup MY Fin CR");
-assert.equal(HIRING_MANAGER_PROFILE.name, "Sub, Ammar Zahiruddin");
+assert.equal(HIRING_MANAGER_PROFILE.name, "Suib, Ammar Zahiruddin");
 assert.equal(HIRING_MANAGER_PROFILE.position, "IT Infrastructure Manager APAC - South");
 assert.equal(HIRING_MANAGER_PROFILE.department, "IT Infrastructure Services");
 
 assert.equal(profileForTeam("IT Security")?.name, "Mohd Azli, Amirul Mukhlis");
 assert.equal(profileForTeam("Onsite IT Support")?.name, "Zulfikar Zikri, Nuqman Haziq");
-assert.equal(profileForTeam("Hiring Manager")?.name, "Sub, Ammar Zahiruddin");
+assert.equal(profileForTeam("Hiring Manager")?.name, "Suib, Ammar Zahiruddin");
 
 for (const rule of DEFAULT_ASSIGNMENT_RULES.filter((rule) => rule.assignedEmail)) {
   assert.notEqual(rule.assignedPersonName, rule.responsibleTeam);
@@ -29,7 +29,7 @@ assert.equal(
 assert.equal(DEMO_USERS.find((user) => user.role === "Admin")?.name, "Goh, Shing Yee");
 assert.equal(
   DEMO_USERS.find((user) => user.role === "HIRING_MANAGER")?.name,
-  "Sub, Ammar Zahiruddin"
+  "Suib, Ammar Zahiruddin"
 );
 
 const obsolete = /Siti Aminah|Zulkarnain|Ariff bin Razak|Roslan bin Omar|Sarah Tan/;
@@ -52,7 +52,7 @@ assert.equal(
 );
 assert.equal(
   seed.tasks.find((task) => task.responsibleTeam === "Hiring Manager")?.assignedPersonName,
-  "Sub, Ammar Zahiruddin"
+  "Suib, Ammar Zahiruddin"
 );
 
 console.log("demo identity mapping tests passed");

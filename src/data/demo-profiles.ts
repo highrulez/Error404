@@ -61,7 +61,7 @@ export const DEMO_PROFILES: DemoUserProfile[] = [
   },
   {
     userId: "user-manager",
-    name: "Sub, Ammar Zahiruddin",
+    name: "Suib, Ammar Zahiruddin",
     email: "manager@ppg-demo.com",
     initials: "SAZ",
     role: "HIRING_MANAGER",

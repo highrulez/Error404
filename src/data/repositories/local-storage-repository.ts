@@ -59,6 +59,7 @@ const LEGACY_DEMO_NAMES: Array<[RegExp, string]> = [
   [/Ariff bin Razak/g, "Zulfikar Zikri, Nuqman Haziq"],
   [/Roslan bin Omar/g, "Nur Aisyah"],
   [/Sarah Tan/g, HIRING_MANAGER_PROFILE.name],
+  [/Sub, Ammar Zahiruddin/g, HIRING_MANAGER_PROFILE.name],
   [/OneFlow Admin/g, ADMIN_PROFILE.name],
 ];
 
