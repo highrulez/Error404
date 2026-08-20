@@ -52,7 +52,7 @@ def arrow(draw, x1, y, x2):
 def node(draw, xy, title, subtitle=None, fill=SKY, outline=ACCENT, title_fill=NAVY):
     rounded(draw, xy, fill=fill, outline=outline, radius=18, width=2)
     x1, y1, x2, y2 = xy
-    f_title = font(20, True)
+    f_title = font(16 if len(title) > 28 else 20, True)
     if subtitle:
         center_text(draw, (x1, y1 + 8, x2, y1 + 40), title, f_title, title_fill)
         center_text(draw, (x1, y1 + 34, x2, y2 - 8), subtitle, font(13), MUTED)
@@ -102,29 +102,27 @@ def production():
 
     node(draw, (70, 140, 340, 250), "Microsoft Entra ID", "Identity, SSO and RBAC")
     node(draw, (400, 140, 720, 250), "Azure Key Vault", "Secrets and certificates")
-    node(draw, (780, 140, 1180, 250), "Azure Monitor / App Insights", "Observability and audit")
+    node(draw, (780, 140, 1280, 250), "Azure Monitor / Application Insights", "Observability and audit")
 
-    node(draw, (70, 340, 300, 460), "Workday", "Approved HR source")
-    node(draw, (380, 340, 640, 460), "Integration / API", "Governed Workday events")
-    node(draw, (720, 340, 980, 460), "Dataverse", "Lifecycle case data")
-    node(draw, (1060, 340, 1360, 460), "Power Automate", "Workflow orchestration")
+    node(draw, (70, 340, 420, 460), "Workday / approved integration", "Governed HR source events")
+    node(draw, (500, 340, 780, 460), "Dataverse", "Lifecycle case data")
+    node(draw, (860, 340, 1180, 460), "Power Automate", "Workflow orchestration")
 
-    node(draw, (720, 560, 980, 680), "OneFlow", "Employee lifecycle UX")
-    node(draw, (1060, 560, 1400, 680), "Microsoft 365", "Outlook / Teams")
-    node(draw, (720, 780, 980, 900), "Power BI", "Operational reporting")
+    node(draw, (500, 560, 860, 680), "Power Apps / OneFlow", "Proposed production UI")
+    node(draw, (940, 560, 1380, 680), "Microsoft 365 / Outlook / Teams", "Production messaging")
+    node(draw, (680, 780, 980, 900), "Power BI", "Operational reporting")
 
-    arrow(draw, 300, 400, 380)
-    arrow(draw, 640, 400, 720)
-    arrow(draw, 980, 400, 1060)
-    draw.line((850, 460, 850, 560), fill=ACCENT, width=3)
-    draw.line((1210, 460, 1210, 560), fill=ACCENT, width=3)
-    arrow(draw, 980, 620, 1060)
-    draw.line((850, 680, 850, 780), fill=ACCENT, width=3)
+    arrow(draw, 420, 400, 500)
+    arrow(draw, 780, 400, 860)
+    draw.line((680, 460, 680, 560), fill=ACCENT, width=3)
+    draw.line((1020, 460, 1020, 560), fill=ACCENT, width=3)
+    arrow(draw, 860, 620, 940)
+    draw.line((680, 680, 680, 780), fill=ACCENT, width=3)
     draw.line((205, 250, 205, 340), fill=ACCENT, width=3)
-    draw.line((205, 295, 850, 295), fill=LINE, width=1)
-    draw.line((850, 250, 850, 340), fill=ACCENT, width=3)
+    draw.line((205, 295, 680, 295), fill=LINE, width=1)
+    draw.line((680, 250, 680, 340), fill=ACCENT, width=3)
 
-    draw.text((64, 930), "Proposed production architecture — not implemented", font=font(14), fill=LINE)
+    draw.text((64, 930), "Proposed Production Architecture — Not Implemented", font=font(16, True), fill=MUTED)
     img.save(OUT / "proposed-production-architecture.png", "PNG")
 
 

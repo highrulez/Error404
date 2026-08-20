@@ -2,6 +2,8 @@
 
 **PPG AEN Hackathon 2026 · Challenge 4 · Team Error 404**
 
+Thamotharan, Renuka Malar · Ramachandran, Yuganeswary · Hairul Afizee · Bashari, Noorliana
+
 Official demonstration: https://oneflow.highrulez.com
 
 > This document presents the OneFlow solution, how it addresses Hackathon Challenge 4, the prototype evidence, user guide, business value, and proposed production direction.
@@ -13,7 +15,10 @@ Official demonstration: https://oneflow.highrulez.com
 | **Priority** | High  ·  Cross-functional |
 | **Demonstration** | https://oneflow.highrulez.com |
 | **Status** | Hackathon prototype using synthetic data |
-| **Team** | Error 404 |
+| **Team** | Team Error 404 |
+
+**Prepared by Team Error 404**  
+Thamotharan, Renuka Malar · Ramachandran, Yuganeswary · Hairul Afizee · Bashari, Noorliana
 
 ### Contents
 
@@ -47,7 +52,7 @@ Official demonstration: https://oneflow.highrulez.com
 
 Hackathon Challenge 4, issued by Admin & MYSCC, asks teams to create a more connected and efficient employee journey while improving collaboration among HR, IT, payroll, facilities, managers and employees. The current process is fragmented: onboarding, offboarding, workplace administration, access provisioning and resource management rely on disconnected systems and manual communication. The result is delay, poor visibility, compliance risk and an inconsistent employee experience.
 
-Team Error 404 built OneFlow — an employee lifecycle orchestration prototype. Workday remains the HR source system. OneFlow is the coordination and experience layer around that source. It turns a hire or exit event into a shared lifecycle case, owned cross-functional work, employee actions, forms, notifications, and a visible readiness or clearance outcome.
+Team Error 404 built OneFlow — an employee lifecycle orchestration prototype. Workday remains the HR source system. OneFlow is the coordination and experience layer around that source. In the target operating model, a hire or exit event triggers OneFlow to create a lifecycle case. In the hackathon prototype, the source event and workflow automation are simulated. The case then becomes owned cross-functional work, employee actions, forms, notifications, and a visible readiness or clearance outcome.
 
 The prototype demonstrates the operating model requested by Challenge 4: a connected employee journey, role-based collaboration, lifecycle visibility, onboarding and offboarding orchestration, access and security responsibilities, and an employee-facing experience. It does not yet prove reduced real-world lead times, measured satisfaction improvement, or enterprise-scale compliance outcomes. Those require production integrations and a governed pilot.
 
@@ -60,7 +65,7 @@ The prototype demonstrates the operating model requested by Challenge 4: a conne
 | What did we build? | OneFlow: a shared orchestration layer around Workday for employee journeys and cross-functional work. |
 | Does it address the challenge? | Yes. Each official objective is mapped to a prototype capability, with honest status labels. |
 | What is implemented vs simulated? | Cases, dashboards, tasks, journeys, forms and inbox are implemented. Automation and Workday events are simulated. Email can optionally use AWS SES for prototype tests. |
-| What would production use? | Workday APIs, Microsoft Entra ID, Dataverse, Power Automate, Microsoft 365, Power BI, Key Vault and Azure Monitor. |
+| What would production use? | Workday APIs, Microsoft Entra ID, Dataverse, Power Apps, Power Automate, Microsoft 365, Power BI, Key Vault and Azure Monitor. |
 
 ## Hackathon Challenge 4 — Connected Employee Lifecycle
 
@@ -130,7 +135,7 @@ An employee does not experience HR, IT, facilities, finance and management as se
 
 ## OneFlow — The Proposed Solution
 
-OneFlow is not a Workday replacement. It is the connected orchestration and experience layer around Workday. When a person is hired or scheduled to leave, OneFlow creates a lifecycle case, assigns responsibilities to the right roles, gives the employee a journey, and shows whether the organisation is ready — or still exposed.
+OneFlow is not a Workday replacement. It is the connected orchestration and experience layer around Workday. In the target operating model, a hire or exit event triggers OneFlow to create a lifecycle case. In the hackathon prototype, the source event and workflow automation are simulated. The case then assigns responsibilities to the right roles, gives the employee a journey, and shows whether the organisation is ready — or still exposed.
 
 ![Figure 1 — Connected employee lifecycle](assets/diagrams/lifecycle-flow.png)
 
@@ -338,7 +343,7 @@ The prototype also includes Finance, Corporate Card, Quality and Product Steward
 
 ## User Manual
 
-Use this section to operate the demonstration. Open https://oneflow.highrulez.com. Demo password for all accounts: Demo123!
+Use this section to operate the demonstration. Open https://oneflow.highrulez.com. Sign in with the on-screen quick-login account cards.
 
 ### Login
 
@@ -350,7 +355,7 @@ Use this section to operate the demonstration. Open https://oneflow.highrulez.co
 1. Open the demonstration URL.
 2. Skip the short intro if it appears.
 3. From the hub, enter OneFlow, or go directly to login.
-4. Select an Employee Journey or a Demo Account. Alternatively sign in with email and Demo123!.
+4. Select an Employee Journey or a Demo Account using the on-screen quick-login cards.
 
 ### Admin Dashboard
 
@@ -444,7 +449,7 @@ Sign in as Hamdan, Muhamad Asyraf Naqiyuddin. Use My Offboarding to show last-wo
 ![Figure 20 — Send Test Email](assets/screenshots/18-send-test-email.png)
 
 **Figure 20 — Send Test Email**  
-*Select a simulated recipient such as nabila.aziz@ppg-demo.com and send. The page reports delivery result. A mapping must be saved first; the public demo may not retain a destination between sessions.*
+*Select a simulated recipient such as nabila.aziz@ppg-demo.com and send. The page reports the delivery result. A recipient mapping must be saved before sending a test email. Saved mappings remain available until they are changed or the demo configuration is reset.*
 
 ### Prototype email versus production email
 
@@ -472,7 +477,7 @@ If OneFlow progresses beyond the hackathon, the recommended direction is Microso
 ![Figure 22 — Proposed Microsoft-first production architecture](assets/diagrams/proposed-production-architecture.png)
 
 **Figure 22 — Proposed Microsoft-first production architecture**  
-*Workday remains the HR source. Identity, data, workflow, communication, reporting, secrets and monitoring sit in the Microsoft / Azure estate PPG already operates.*
+*Proposed Production Architecture — Not Implemented. Workday remains the HR source. Identity, data, workflow, UI, communication, reporting, secrets and monitoring sit in Microsoft / Azure services.*
 
 ## Recommended Production Technology
 
@@ -482,16 +487,19 @@ If OneFlow progresses beyond the hackathon, the recommended direction is Microso
 | Microsoft Entra ID | Authentication, SSO, groups and RBAC |
 | Dataverse | Governed store for cases, tasks, forms and audit-grade operational data |
 | Power Automate | Workflow, reminders, integrations and notifications |
-| OneFlow | Employee and role experience for the connected lifecycle |
+| Power Apps | Proposed production UI: model-driven application shell, Custom Pages for richer OneFlow dashboards and employee lifecycle experiences, and PCF controls where additional UI capability is required |
+| OneFlow | Employee and role experience for the connected lifecycle, delivered through Power Apps in a production implementation |
 | Microsoft 365 / Outlook / Teams | Production messaging and collaboration |
 | Power BI | Lead time, SLA, overdue, clearance and satisfaction reporting |
 | Azure Key Vault | Secrets, certificates and connection credentials |
 | Azure Monitor / Application Insights | Reliability, diagnostics and operational telemetry |
 | Integration / API services | Governed Workday and identity/security-system connections where required |
 
+The current Next.js prototype validates the UX and workflow concept. A Microsoft-native production implementation could use Power Apps as the application shell, Dataverse as the operational store, and Power Automate for orchestration. That production implementation is not built in this hackathon prototype.
+
 ### Why Microsoft / Azure
 
-Challenge 4 constraints include technology and security. A Microsoft-first path uses an ecosystem PPG already governs: identity, email, collaboration, low-code workflow, reporting and cloud operations. It reduces the need to introduce a disconnected new platform solely for lifecycle coordination. Feasibility is therefore higher than a greenfield stack, provided Workday integration and security review are funded properly.
+Challenge 4 constraints include technology and security. A Microsoft-first path aligns with the organisation's existing Microsoft/Azure ecosystem and governance model: identity, email, collaboration, low-code workflow, reporting and cloud operations. It reduces the need to introduce a disconnected new platform solely for lifecycle coordination. Feasibility is therefore higher than a greenfield stack, provided Workday integration and security review are funded properly.
 
 ## Prototype vs Production
 
@@ -499,6 +507,7 @@ Challenge 4 constraints include technology and security. A Microsoft-first path 
 | --- | --- | --- |
 | HR source | Workday mock, five synthetic workers | Approved Workday integration |
 | Authentication | Demo accounts | Microsoft Entra ID |
+| Application UI | Next.js prototype | Power Apps (model-driven / Custom Pages) — proposed, not implemented |
 | Data | Prototype / local persistence | Dataverse or approved datastore |
 | Automation | Simulated runs | Power Automate |
 | Email | Mock Inbox + optional AWS SES | Microsoft 365 / Outlook |
@@ -547,7 +556,7 @@ Likely cost drivers include:
 - Training and change management
 - Ongoing support
 
-Public Microsoft list prices, current as of 2026 and subject to change, include approximately USD 20 per user per month for Power Apps Premium (USD 12 at a 2,000-seat threshold), USD 15 per user per month for Power Automate Premium, and USD 14 per user per month for Power BI Pro on annual billing. Actual PPG pricing may differ due to enterprise agreements, existing Microsoft 365 bundles, and regional or volume terms. These figures are orientation only, not a PPG quote.
+Public Microsoft list prices, checked on 20 August 2026, include USD 20 per user per month for Power Apps Premium (USD 12 at a 2,000-seat threshold), USD 15 per user per month for Power Automate Premium, and USD 14 per user per month for Power BI Pro, each on annual billing. Microsoft states that published web prices are for marketing purposes and may differ by currency, region and agreement. Actual PPG pricing may differ due to enterprise agreements, existing Microsoft 365 bundles, and regional or volume terms. These figures are orientation only, not a PPG quote. See Pricing References in the Appendix.
 
 ## ROI and Success Metrics
 
@@ -663,4 +672,15 @@ Figures were captured from the public demonstration at https://oneflow.highrulez
 | 15–17 | Reports, automation, settings |
 | 18–20 | Email delivery, recipient mapping, Send Test Email |
 | 21–22 | Prototype architecture and proposed production architecture |
+
+### Pricing references
+
+Public list prices were checked on 20 August 2026. Microsoft notes that web prices are for marketing purposes and may differ by currency, country, region and agreement.
+
+| Source | URL | Figures used |
+| --- | --- | --- |
+| Power Apps pricing | https://www.microsoft.com/en-us/power-platform/products/power-apps/pricing | Premium USD 20 / user / month; USD 12 at 2,000-seat minimum |
+| Power Automate pricing | https://www.microsoft.com/en-us/power-platform/products/power-automate/pricing | Premium USD 15 / user / month |
+| Power BI pricing | https://www.microsoft.com/en-us/power-platform/products/power-bi/pricing | Pro USD 14 / user / month |
+| Power Platform Licensing Guide | https://aka.ms/pplic | Confirms the same USD list prices; web prices are marketing-only |
 

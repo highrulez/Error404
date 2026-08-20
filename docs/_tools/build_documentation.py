@@ -5,6 +5,7 @@ from pathlib import Path
 
 from PIL import Image as PILImage
 from docx import Document
+from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
 from docx.oxml import OxmlElement
@@ -121,21 +122,22 @@ def add_toc_field(paragraph):
     run = paragraph.add_run()
     begin = OxmlElement("w:fldChar")
     begin.set(qn("w:fldCharType"), "begin")
+    begin.set(qn("w:dirty"), "true")
+    run._r.append(begin)
+    run2 = paragraph.add_run()
     instr = OxmlElement("w:instrText")
     instr.set(qn("xml:space"), "preserve")
-    instr.text = ' TOC \\o "1-2" \\h \\z \\u '
+    instr.text = r' TOC \o "1-2" \h \z \u '
+    run2._r.append(instr)
+    run3 = paragraph.add_run()
     sep = OxmlElement("w:fldChar")
     sep.set(qn("w:fldCharType"), "separate")
-    text = OxmlElement("w:t")
-    text.text = "Right-click and choose Update Field to refresh contents."
+    run3._r.append(sep)
+    paragraph.add_run("Updating table of contents…")
+    run4 = paragraph.add_run()
     end = OxmlElement("w:fldChar")
     end.set(qn("w:fldCharType"), "end")
-    r = run._r
-    r.append(begin)
-    r.append(instr)
-    r.append(sep)
-    r.append(text)
-    r.append(end)
+    run4._r.append(end)
 
 
 def picture_size(path: Path, max_w=6.15, max_h=3.45):
@@ -192,6 +194,25 @@ class Dossier:
             st.paragraph_format.space_after = Pt(space_after)
             st.paragraph_format.line_spacing = 1.1
             st.paragraph_format.keep_with_next = True
+        for name, size, left, space_before, space_after in (
+            ("TOC 1", 11, 0, 2, 1),
+            ("TOC 2", 10, 18, 0, 0),
+        ):
+            try:
+                st = styles[name]
+            except KeyError:
+                st = styles.add_style(name, WD_STYLE_TYPE.PARAGRAPH)
+            st.font.name = "Calibri"
+            st.font.size = Pt(size)
+            st.font.color.rgb = INK
+            st.font.bold = name == "TOC 1"
+            st.paragraph_format.space_before = Pt(space_before)
+            st.paragraph_format.space_after = Pt(space_after)
+            st.paragraph_format.line_spacing = 1.0
+            st.paragraph_format.left_indent = Pt(left)
+            st.paragraph_format.keep_with_next = False
+            st.paragraph_format.keep_together = False
+            st.paragraph_format.widow_control = False
 
     def start_body(self):
         sec = self.doc.add_section()
@@ -232,6 +253,7 @@ class Dossier:
         run.add_picture(str(path), width=Cm(21.0), height=Cm(29.7))
         self.md.append("# OneFlow — Connected Employee Lifecycle\n")
         self.md.append("**PPG AEN Hackathon 2026 · Challenge 4 · Team Error 404**\n")
+        self.md.append("Thamotharan, Renuka Malar · Ramachandran, Yuganeswary · Hairul Afizee · Bashari, Noorliana\n")
         self.md.append("Official demonstration: https://oneflow.highrulez.com\n")
 
     def inside_cover(self):
@@ -241,7 +263,7 @@ class Dossier:
             "This document presents the OneFlow solution, how it addresses Hackathon Challenge 4, the prototype evidence, user guide, business value, and proposed production direction."
         )
         set_run(r, size=12, italic=True, color=NAVY)
-        p.paragraph_format.space_after = Pt(14)
+        p.paragraph_format.space_after = Pt(8)
         self.md.append(
             "> This document presents the OneFlow solution, how it addresses Hackathon Challenge 4, the prototype evidence, user guide, business value, and proposed production direction.\n"
         )
@@ -251,7 +273,7 @@ class Dossier:
             ("Priority", "High  ·  Cross-functional"),
             ("Demonstration", "https://oneflow.highrulez.com"),
             ("Status", "Hackathon prototype using synthetic data"),
-            ("Team", "Error 404"),
+            ("Team", "Team Error 404"),
         ]
         table = self.doc.add_table(rows=len(meta), cols=2)
         table.autofit = True
@@ -266,7 +288,28 @@ class Dossier:
         for k, v in meta:
             self.md.append(f"| **{k}** | {v} |")
         self.md.append("")
-        self.h2("Contents")
+        team_p = self.doc.add_paragraph()
+        team_p.paragraph_format.space_before = Pt(8)
+        team_p.paragraph_format.space_after = Pt(2)
+        tr = team_p.add_run("Prepared by Team Error 404")
+        set_run(tr, size=11, bold=True, color=NAVY)
+        names_p = self.doc.add_paragraph()
+        names_p.paragraph_format.space_after = Pt(6)
+        nr = names_p.add_run(
+            "Thamotharan, Renuka Malar  ·  Ramachandran, Yuganeswary  ·  Hairul Afizee  ·  Bashari, Noorliana"
+        )
+        set_run(nr, size=11, color=INK)
+        self.md.append("**Prepared by Team Error 404**  ")
+        self.md.append("Thamotharan, Renuka Malar · Ramachandran, Yuganeswary · Hairul Afizee · Bashari, Noorliana\n")
+        title = self.doc.add_paragraph()
+        title.paragraph_format.space_before = Pt(4)
+        title.paragraph_format.space_after = Pt(4)
+        keep_next(title)
+        trun = title.add_run("Contents")
+        set_run(trun, size=18, bold=True, color=NAVY)
+        toc = self.doc.add_paragraph()
+        add_toc_field(toc)
+        self.md.append("### Contents\n")
         contents = [
             "Executive Summary",
             "Hackathon Challenge 4 — Connected Employee Lifecycle",
@@ -293,11 +336,6 @@ class Dossier:
             "FAQ, Conclusion and Appendix",
         ]
         for item in contents:
-            para = self.doc.add_paragraph()
-            run = para.add_run(item)
-            set_run(run, size=11, color=NAVY)
-            para.paragraph_format.space_after = Pt(1)
-            para.paragraph_format.space_before = Pt(1)
             self.md.append(f"- {item}")
         self.md.append("")
 
@@ -365,13 +403,15 @@ class Dossier:
         self.md.append(f"\n> **{title}**  \n> {body}\n")
 
     def label_line(self, pairs):
-        for k, v in pairs:
+        for i, (k, v) in enumerate(pairs):
             para = self.doc.add_paragraph()
             a = para.add_run(f"{k}: ")
             set_run(a, size=11, bold=True, color=NAVY)
             b = para.add_run(v)
             set_run(b, size=11)
             para.paragraph_format.space_after = Pt(2)
+            if i < len(pairs) - 1:
+                para.paragraph_format.keep_with_next = True
             self.md.append(f"**{k}:** {v}  ")
         self.md.append("")
 
@@ -453,7 +493,7 @@ def build():
         "Hackathon Challenge 4, issued by Admin & MYSCC, asks teams to create a more connected and efficient employee journey while improving collaboration among HR, IT, payroll, facilities, managers and employees. The current process is fragmented: onboarding, offboarding, workplace administration, access provisioning and resource management rely on disconnected systems and manual communication. The result is delay, poor visibility, compliance risk and an inconsistent employee experience."
     )
     d.p(
-        "Team Error 404 built OneFlow — an employee lifecycle orchestration prototype. Workday remains the HR source system. OneFlow is the coordination and experience layer around that source. It turns a hire or exit event into a shared lifecycle case, owned cross-functional work, employee actions, forms, notifications, and a visible readiness or clearance outcome."
+        "Team Error 404 built OneFlow — an employee lifecycle orchestration prototype. Workday remains the HR source system. OneFlow is the coordination and experience layer around that source. In the target operating model, a hire or exit event triggers OneFlow to create a lifecycle case. In the hackathon prototype, the source event and workflow automation are simulated. The case then becomes owned cross-functional work, employee actions, forms, notifications, and a visible readiness or clearance outcome."
     )
     d.p(
         "The prototype demonstrates the operating model requested by Challenge 4: a connected employee journey, role-based collaboration, lifecycle visibility, onboarding and offboarding orchestration, access and security responsibilities, and an employee-facing experience. It does not yet prove reduced real-world lead times, measured satisfaction improvement, or enterprise-scale compliance outcomes. Those require production integrations and a governed pilot."
@@ -469,7 +509,7 @@ def build():
             ["What did we build?", "OneFlow: a shared orchestration layer around Workday for employee journeys and cross-functional work."],
             ["Does it address the challenge?", "Yes. Each official objective is mapped to a prototype capability, with honest status labels."],
             ["What is implemented vs simulated?", "Cases, dashboards, tasks, journeys, forms and inbox are implemented. Automation and Workday events are simulated. Email can optionally use AWS SES for prototype tests."],
-            ["What would production use?", "Workday APIs, Microsoft Entra ID, Dataverse, Power Automate, Microsoft 365, Power BI, Key Vault and Azure Monitor."],
+            ["What would production use?", "Workday APIs, Microsoft Entra ID, Dataverse, Power Apps, Power Automate, Microsoft 365, Power BI, Key Vault and Azure Monitor."],
         ],
     )
 
@@ -554,7 +594,7 @@ def build():
 
     d.h1("OneFlow — The Proposed Solution")
     d.p(
-        "OneFlow is not a Workday replacement. It is the connected orchestration and experience layer around Workday. When a person is hired or scheduled to leave, OneFlow creates a lifecycle case, assigns responsibilities to the right roles, gives the employee a journey, and shows whether the organisation is ready — or still exposed."
+        "OneFlow is not a Workday replacement. It is the connected orchestration and experience layer around Workday. In the target operating model, a hire or exit event triggers OneFlow to create a lifecycle case. In the hackathon prototype, the source event and workflow automation are simulated. The case then assigns responsibilities to the right roles, gives the employee a journey, and shows whether the organisation is ready — or still exposed."
     )
     d.figure(
         "lifecycle-flow.png",
@@ -819,7 +859,7 @@ def build():
     )
 
     d.h1("User Manual")
-    d.p("Use this section to operate the demonstration. Open https://oneflow.highrulez.com. Demo password for all accounts: Demo123!")
+    d.p("Use this section to operate the demonstration. Open https://oneflow.highrulez.com. Sign in with the on-screen quick-login account cards.")
     d.h2("Login")
     d.figure(
         "02-login.png",
@@ -832,7 +872,7 @@ def build():
             "Open the demonstration URL.",
             "Skip the short intro if it appears.",
             "From the hub, enter OneFlow, or go directly to login.",
-            "Select an Employee Journey or a Demo Account. Alternatively sign in with email and Demo123!.",
+            "Select an Employee Journey or a Demo Account using the on-screen quick-login cards.",
         ]
     )
     d.h2("Admin Dashboard")
@@ -924,7 +964,7 @@ def build():
     d.figure(
         "18-send-test-email.png",
         "Send Test Email",
-        "Select a simulated recipient such as nabila.aziz@ppg-demo.com and send. The page reports delivery result. A mapping must be saved first; the public demo may not retain a destination between sessions.",
+        "Select a simulated recipient such as nabila.aziz@ppg-demo.com and send. The page reports the delivery result. A recipient mapping must be saved before sending a test email. Saved mappings remain available until they are changed or the demo configuration is reset.",
         max_h=1.6,
     )
     d.h2("Prototype email versus production email")
@@ -953,7 +993,7 @@ def build():
     d.figure(
         "proposed-production-architecture.png",
         "Proposed Microsoft-first production architecture",
-        "Workday remains the HR source. Identity, data, workflow, communication, reporting, secrets and monitoring sit in the Microsoft / Azure estate PPG already operates.",
+        "Proposed Production Architecture — Not Implemented. Workday remains the HR source. Identity, data, workflow, UI, communication, reporting, secrets and monitoring sit in Microsoft / Azure services.",
         folder="diagrams",
         max_h=3.35,
     )
@@ -966,7 +1006,8 @@ def build():
             ["Microsoft Entra ID", "Authentication, SSO, groups and RBAC"],
             ["Dataverse", "Governed store for cases, tasks, forms and audit-grade operational data"],
             ["Power Automate", "Workflow, reminders, integrations and notifications"],
-            ["OneFlow", "Employee and role experience for the connected lifecycle"],
+            ["Power Apps", "Proposed production UI: model-driven application shell, Custom Pages for richer OneFlow dashboards and employee lifecycle experiences, and PCF controls where additional UI capability is required"],
+            ["OneFlow", "Employee and role experience for the connected lifecycle, delivered through Power Apps in a production implementation"],
             ["Microsoft 365 / Outlook / Teams", "Production messaging and collaboration"],
             ["Power BI", "Lead time, SLA, overdue, clearance and satisfaction reporting"],
             ["Azure Key Vault", "Secrets, certificates and connection credentials"],
@@ -974,9 +1015,12 @@ def build():
             ["Integration / API services", "Governed Workday and identity/security-system connections where required"],
         ],
     )
+    d.p(
+        "The current Next.js prototype validates the UX and workflow concept. A Microsoft-native production implementation could use Power Apps as the application shell, Dataverse as the operational store, and Power Automate for orchestration. That production implementation is not built in this hackathon prototype."
+    )
     d.h2("Why Microsoft / Azure")
     d.p(
-        "Challenge 4 constraints include technology and security. A Microsoft-first path uses an ecosystem PPG already governs: identity, email, collaboration, low-code workflow, reporting and cloud operations. It reduces the need to introduce a disconnected new platform solely for lifecycle coordination. Feasibility is therefore higher than a greenfield stack, provided Workday integration and security review are funded properly."
+        "Challenge 4 constraints include technology and security. A Microsoft-first path aligns with the organisation's existing Microsoft/Azure ecosystem and governance model: identity, email, collaboration, low-code workflow, reporting and cloud operations. It reduces the need to introduce a disconnected new platform solely for lifecycle coordination. Feasibility is therefore higher than a greenfield stack, provided Workday integration and security review are funded properly."
     )
 
     d.h1("Prototype vs Production")
@@ -985,6 +1029,7 @@ def build():
         [
             ["HR source", "Workday mock, five synthetic workers", "Approved Workday integration"],
             ["Authentication", "Demo accounts", "Microsoft Entra ID"],
+            ["Application UI", "Next.js prototype", "Power Apps (model-driven / Custom Pages) — proposed, not implemented"],
             ["Data", "Prototype / local persistence", "Dataverse or approved datastore"],
             ["Automation", "Simulated runs", "Power Automate"],
             ["Email", "Mock Inbox + optional AWS SES", "Microsoft 365 / Outlook"],
@@ -1043,7 +1088,7 @@ def build():
         ]
     )
     d.p(
-        "Public Microsoft list prices, current as of 2026 and subject to change, include approximately USD 20 per user per month for Power Apps Premium (USD 12 at a 2,000-seat threshold), USD 15 per user per month for Power Automate Premium, and USD 14 per user per month for Power BI Pro on annual billing. Actual PPG pricing may differ due to enterprise agreements, existing Microsoft 365 bundles, and regional or volume terms. These figures are orientation only, not a PPG quote."
+        "Public Microsoft list prices, checked on 20 August 2026, include USD 20 per user per month for Power Apps Premium (USD 12 at a 2,000-seat threshold), USD 15 per user per month for Power Automate Premium, and USD 14 per user per month for Power BI Pro, each on annual billing. Microsoft states that published web prices are for marketing purposes and may differ by currency, region and agreement. Actual PPG pricing may differ due to enterprise agreements, existing Microsoft 365 bundles, and regional or volume terms. These figures are orientation only, not a PPG quote. See Pricing References in the Appendix."
     )
 
     d.h1("ROI and Success Metrics")
@@ -1158,6 +1203,18 @@ def build():
             ["15–17", "Reports, automation, settings"],
             ["18–20", "Email delivery, recipient mapping, Send Test Email"],
             ["21–22", "Prototype architecture and proposed production architecture"],
+        ],
+    )
+
+    d.h2("Pricing references")
+    d.p("Public list prices were checked on 20 August 2026. Microsoft notes that web prices are for marketing purposes and may differ by currency, country, region and agreement.")
+    d.table(
+        ["Source", "URL", "Figures used"],
+        [
+            ["Power Apps pricing", "https://www.microsoft.com/en-us/power-platform/products/power-apps/pricing", "Premium USD 20 / user / month; USD 12 at 2,000-seat minimum"],
+            ["Power Automate pricing", "https://www.microsoft.com/en-us/power-platform/products/power-automate/pricing", "Premium USD 15 / user / month"],
+            ["Power BI pricing", "https://www.microsoft.com/en-us/power-platform/products/power-bi/pricing", "Pro USD 14 / user / month"],
+            ["Power Platform Licensing Guide", "https://aka.ms/pplic", "Confirms the same USD list prices; web prices are marketing-only"],
         ],
     )
 
