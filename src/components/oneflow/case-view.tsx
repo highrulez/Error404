@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { inductionSectionProgress } from "@/data/induction-seed";
 import { ALICIA_INDUCTION_FORM_ID } from "@/data/alicia-types";
+import { LifecycleVisibility } from "@/components/oneflow/lifecycle-visibility";
 
 function groupNotificationSummary(tasks: ChecklistTask[]) {
   const teams = [...new Set(tasks.map((t) => t.responsibleTeam))];
@@ -881,6 +882,14 @@ export function OnboardingCaseView({ caseId }: { caseId: string }) {
           </div>
         )}
       </div>
+
+      <LifecycleVisibility type="Onboarding" tasks={tasks} />
+
+      {tasks.filter((t) => t.status !== "Completed" && t.status !== "Cancelled").length > 0 && (
+        <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+          {tasks.filter((t) => t.status !== "Completed" && t.status !== "Cancelled").length} outstanding tasks may affect Day 1 readiness.
+        </p>
+      )}
 
       {overdueTasks.length > 0 && (
         <div className="rounded-xl border border-rose-200 bg-rose-50 p-4">

@@ -95,7 +95,7 @@ export default function MyFormsPage() {
                 </div>
               </dl>
               <div className="mt-3">
-                <p className="mb-1 text-[11px] text-slate-400">Progress</p>
+                <p className="mb-1 text-[11px] text-slate-400">{progress}% complete</p>
                 <ProgressBar value={progress} tone="blue" />
               </div>
               <div className="mt-2 flex flex-wrap gap-3 text-xs">

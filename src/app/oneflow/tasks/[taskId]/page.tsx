@@ -187,7 +187,10 @@ export default function TaskDetailPage({
   };
 
   return (
-    <OneFlowShell title={task.title} subtitle="Task Detail">
+    <OneFlowShell
+      title={task.employeeName || employee?.fullName || "Task detail"}
+      subtitle={`${employee?.role || "Employee"} · ${lifecycle}`}
+    >
       {message && (
         <div className="mb-3 rounded-md bg-sky-50 px-3 py-2 text-sm text-sky-900">{message}</div>
       )}
@@ -709,7 +712,7 @@ export default function TaskDetailPage({
         </div>
       )}
 
-      <div className="mb-3 rounded-xl border border-flow-line bg-white shadow-sm">
+      <div className="mb-3 rounded-2xl border border-flow-line bg-white shadow-sm">
         <button
           type="button"
           className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-semibold"
@@ -721,9 +724,9 @@ export default function TaskDetailPage({
           </span>
         </button>
         {showActivity && (
-          <ul className="space-y-2 border-t border-flow-line px-4 py-3 text-sm">
+          <ul className="relative space-y-3 border-t border-flow-line px-5 py-4 text-sm before:absolute before:bottom-5 before:left-7 before:top-5 before:w-px before:bg-sky-100">
             {activity.map((a) => (
-              <li key={a.id} className="border-b border-slate-100 pb-2">
+              <li key={a.id} className="relative rounded-xl bg-slate-50 py-2 pl-4 pr-3 before:absolute before:-left-[14px] before:top-4 before:h-2.5 before:w-2.5 before:rounded-full before:border-2 before:border-white before:bg-flow-accent before:shadow-sm">
                 <p className="font-medium text-slate-800">{a.action}</p>
                 <p className="text-xs text-slate-500">
                   {a.actor} · {new Date(a.timestamp).toLocaleString()}

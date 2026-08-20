@@ -1,24 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { OneFlowShell } from "@/components/oneflow/shell";
 import { useData } from "@/components/shared/data-provider";
 import { useAuth } from "@/components/shared/auth-provider";
 import { ProgressBar, StatusChip } from "@/components/shared/status";
 import { formatDate } from "@/lib/utils";
+import { lifecycleReadiness } from "@/components/oneflow/lifecycle-visibility";
+import { AlertTriangle, CalendarClock, Mail, UserPlus, UserRoundX } from "lucide-react";
+import { RoleDashboard } from "@/components/oneflow/role-dashboard";
 
 export default function OneFlowOverviewPage() {
   const { session } = useAuth();
-  const router = useRouter();
   const { store, service, ready, resetToSeed, setAutomationMode, refresh } = useData();
 
-  useEffect(() => {
-    if (session && session.role !== "Admin") {
-      router.replace("/oneflow/my-tasks");
-    }
-  }, [session, router]);
 
   const stats = ready
     ? service.getDashboardStats()
@@ -37,13 +32,32 @@ export default function OneFlowOverviewPage() {
   const mode = store.settings?.automationMode ?? "simulation";
   const unread = (store.mockEmails ?? []).filter((e) => e.status === "Unread")
     .length;
+  const today = new Date().toISOString().slice(0, 10);
+  const openTasks = store.tasks.filter(
+    (t) => t.status !== "Completed" && t.status !== "Cancelled"
+  );
+  const dueSoon = openTasks.filter(
+    (t) => t.dueDate >= today && t.dueDate <= new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10)
+  );
+  const offboardingCases = store.offboardingCases.map((c) => ({
+    case: c,
+    employee: store.employees.find((e) => e.id === c.employeeId),
+  }));
+  const attentionTasks = openTasks
+    .filter((t) => t.status === "Overdue" || t.status === "Blocked" || t.dueDate < today)
+    .sort((a, b) => a.dueDate.localeCompare(b.dueDate))
+    .slice(0, 6);
 
-  if (!session || session.role !== "Admin") {
+  if (!session) {
     return (
       <OneFlowShell title="Overview">
         <p className="text-sm text-slate-500">Redirecting…</p>
       </OneFlowShell>
     );
+  }
+
+  if (session.role !== "Admin") {
+    return <OneFlowShell title="Dashboard" subtitle="Role priorities and employee journeys"><RoleDashboard /></OneFlowShell>;
   }
 
   return (
@@ -85,20 +99,19 @@ export default function OneFlowOverviewPage() {
 
       <div className="mb-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         {[
-          { label: "New hires", value: stats.newHires },
-          { label: "Open cases", value: stats.openCases },
-          { label: "Completed tasks", value: stats.completedTasks },
-          { label: "Overdue tasks", value: stats.overdueTasks },
-          { label: "Unread emails", value: unread },
+          { label: "Preboarding", value: store.onboardingCases.filter((c) => c.status !== "Completed").length, icon: UserPlus, tone: "bg-cyan-50 border-cyan-100 text-cyan-700" },
+          { label: "Offboarding", value: store.offboardingCases.filter((c) => c.status !== "Completed").length, icon: UserRoundX, tone: "bg-violet-50 border-violet-100 text-violet-700" },
+          { label: "Overdue tasks", value: stats.overdueTasks, icon: AlertTriangle, tone: "bg-rose-50 border-rose-100 text-rose-700" },
+          { label: "Due this week", value: dueSoon.length, icon: CalendarClock, tone: "bg-indigo-50 border-indigo-100 text-indigo-700" },
+          { label: "Unread emails", value: unread, icon: Mail, tone: "bg-sky-50 border-sky-100 text-sky-700" },
         ].map((s) => (
           <div
             key={s.label}
-            className="rounded-xl border border-flow-line bg-white p-4 shadow-sm"
+            className={`rounded-2xl border p-4 shadow-sm ${s.tone}`}
           >
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
-              {s.label}
-            </p>
-            <p className="mt-1 text-2xl font-semibold tabular-nums">{s.value}</p>
+            <div className="flex items-start justify-between"><p className="text-[11px] font-semibold uppercase tracking-wide opacity-75">{s.label}</p><s.icon className="h-4 w-4" /></div>
+            <p className="mt-2 text-3xl font-semibold tabular-nums text-slate-900">{s.value}</p>
+            <p className="mt-1 text-[11px] text-slate-500">Current lifecycle workload</p>
           </div>
         ))}
       </div>
@@ -179,6 +192,16 @@ export default function OneFlowOverviewPage() {
           </div>
         );
       })()}
+
+      <div className="mb-5 rounded-xl border border-flow-line bg-white p-4 shadow-sm">
+        <div className="mb-3 flex items-center justify-between gap-2"><h2 className="text-sm font-semibold">Needs Attention</h2><span className="text-xs text-slate-500">Most urgent incomplete work</span></div>
+        {attentionTasks.length ? <div className="overflow-x-auto"><table className="w-full min-w-[680px] text-left text-xs"><thead className="border-b border-slate-100 text-slate-500"><tr><th className="pb-2">Employee</th><th className="pb-2">Task</th><th className="pb-2">Responsible role</th><th className="pb-2">Due</th><th className="pb-2">Status</th><th className="pb-2">Lifecycle</th></tr></thead><tbody>{attentionTasks.map((task) => { const employee = store.employees.find((e) => e.id === task.employeeId); const lifecycle = task.offboardingCaseId ? "Offboarding" : "Onboarding"; const href = task.offboardingCaseId ? `/oneflow/offboarding/cases/${task.offboardingCaseId}` : `/oneflow/cases/${task.onboardingCaseId}`; return <tr key={task.id} className="border-b border-slate-100"><td className="py-2">{employee?.fullName ?? "—"}</td><td className="py-2"><Link href={href} className="font-semibold text-flow-accent hover:underline">{task.title}</Link></td><td className="py-2">{task.responsibleTeam}</td><td className="py-2">{formatDate(task.dueDate)}</td><td className="py-2"><StatusChip status={task.dueDate < today && task.status === "Pending" ? "Overdue" : task.status} /></td><td className="py-2">{lifecycle}</td></tr>; })}</tbody></table></div> : <p className="text-sm text-slate-400">No overdue or blocked work.</p>}
+      </div>
+
+      <div className="mb-5 grid gap-4 lg:grid-cols-2">
+        <div className="rounded-xl border border-flow-line bg-white p-4 shadow-sm"><h2 className="text-sm font-semibold">Upcoming joiners</h2><div className="mt-3 space-y-2">{cases.map(({ case: c, employee }) => <Link key={c.id} href={`/oneflow/cases/${c.id}`} className="flex items-center justify-between rounded-md bg-slate-50 px-3 py-2 text-xs"><span><strong>{employee?.fullName}</strong><br />{formatDate(employee?.startDate ?? "")}</span><span className="font-semibold">{lifecycleReadiness(store.tasks.filter((t) => t.onboardingCaseId === c.id))}% ready</span></Link>)}</div></div>
+        <div className="rounded-xl border border-flow-line bg-white p-4 shadow-sm"><h2 className="text-sm font-semibold">Upcoming leavers</h2><div className="mt-3 space-y-2">{offboardingCases.map(({ case: c, employee }) => <Link key={c.id} href={`/oneflow/offboarding/cases/${c.id}`} className="flex items-center justify-between rounded-md bg-slate-50 px-3 py-2 text-xs"><span><strong>{employee?.fullName}</strong><br />{formatDate(c.lastWorkingDate)}</span><span className="font-semibold">{lifecycleReadiness(store.tasks.filter((t) => t.offboardingCaseId === c.id))}% clear</span></Link>)}{!offboardingCases.length && <p className="text-xs text-slate-400">No offboarding cases.</p>}</div></div>
+      </div>
 
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-sm font-semibold">Recent onboarding cases</h2>

@@ -20,12 +20,21 @@ export async function POST(request: Request) {
   }
 
   const toMock = (body.toMock || "admin@ppg-demo.com").trim().toLowerCase();
+  if (
+    body.session?.role !== "Admin" ||
+    body.session?.email?.toLowerCase() !== "admin@ppg-demo.com"
+  ) {
+    return NextResponse.json(
+      { ok: false, error: "Admin access required." },
+      { status: 403 }
+    );
+  }
   const result = await deliverWorkflowEmail({
     action: "sendTestSesEmail",
     toMock,
-    subject: "OneFlow SES Test Email",
+    subject: "OneFlow Test Email",
     htmlBody: wrapEmailDocument(
-      `<p>This is a OneFlow prototype SES connectivity test.</p><p>Simulated recipient: <strong>${escapeHtml(toMock)}</strong></p>`
+      `<p>This is a OneFlow prototype email connectivity test.</p><p>Simulated recipient: <strong>${escapeHtml(toMock)}</strong></p>`
     ),
     notificationId: `test-${Date.now()}`,
     notificationType: "SES Test",

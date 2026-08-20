@@ -16,6 +16,7 @@ const ARCHITECTURE_NODES = [
   { label: "Dataverse", tip: "Shared enterprise data platform" },
   { label: "Power Automate", tip: "Orchestrates workflow and notifications" },
   { label: "OneFlow", tip: "Employee lifecycle experience" },
+  { label: "Microsoft 365", tip: "Enterprise communication and collaboration" },
   { label: "Power BI", tip: "Reporting and operational insight" },
 ] as const;
 
@@ -216,8 +217,9 @@ export default function HubPage() {
           </p>
 
           <p className="mt-3 max-w-[20rem] text-sm leading-relaxed text-slate-500 sm:max-w-sm">
-            A unified employee-lifecycle prototype connecting onboarding,
-            offboarding, tasks, forms, approvals and automation.
+            A connected employee lifecycle experience bringing onboarding,
+            offboarding, tasks, forms, approvals and cross-team readiness into
+            one place.
           </p>
 
           <div
@@ -235,7 +237,7 @@ export default function HubPage() {
             <p className="mt-1.5 min-h-[1rem] text-[11px] text-slate-500 transition-colors">
               {teamHovered
                 ? "Status: Workflow found."
-                : "We found the workflow gaps."}
+                : "Turning employee lifecycle handoffs into coordinated action."}
             </p>
           </div>
 
@@ -244,7 +246,7 @@ export default function HubPage() {
             onClick={scrollToApps}
             className="mt-4 rounded-md border border-white/15 bg-transparent px-3.5 py-1.5 text-xs font-medium text-slate-400 transition hover:border-cyan-400/35 hover:text-cyan-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-400"
           >
-            Explore the Prototype ↓
+            Explore OneFlow ↓
           </button>
 
           <div className="mt-5 flex w-full justify-center">
@@ -265,11 +267,11 @@ export default function HubPage() {
             </p>
             <h2 className="mt-2 text-lg font-semibold text-white">PPG Workday</h2>
             <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-400">
-              Create and manage employee records, initiate hiring, and trigger
-              automated onboarding and offboarding workflows into OneFlow.
+              Explore employee records and simulate lifecycle events that
+              demonstrate how onboarding and offboarding can flow into OneFlow.
             </p>
             <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-slate-300 group-hover:text-cyan-200">
-              Open Workday
+              Open Workday Demo
               <span
                 aria-hidden
                 className="inline-block transition-transform duration-200 group-hover:translate-x-1"
@@ -288,8 +290,9 @@ export default function HubPage() {
             </p>
             <h2 className="mt-2 text-lg font-semibold text-white">OneFlow</h2>
             <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-400">
-              Manage onboarding, offboarding, tasks, forms, reminders and
-              workflow automation.
+              Coordinate onboarding and offboarding, role-based tasks, forms,
+              notifications, readiness, clearance and lifecycle progress from
+              one workspace.
             </p>
             <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-cyan-200">
               Enter OneFlow
@@ -308,7 +311,7 @@ export default function HubPage() {
           className="mt-10 w-full border-t border-white/10 pt-6"
         >
           <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500">
-            Future Microsoft Architecture
+            Proposed Microsoft Production Architecture
           </p>
           <div className="mt-3 flex flex-wrap items-center justify-center gap-x-1.5 gap-y-2 text-[11px] sm:text-xs">
             {ARCHITECTURE_NODES.map((node, i) => (
@@ -327,10 +330,14 @@ export default function HubPage() {
               </span>
             ))}
           </div>
+          <p className="mt-2 text-[10px] text-slate-500">
+            Proposed direction only · Identity: Microsoft Entra ID
+          </p>
         </div>
 
-        <footer className="mt-12 text-[11px] text-slate-600">
-          PPG AEN Hackathon 2026 · Team Error 404
+        <footer className="mt-12 space-y-1 text-[11px] text-slate-600">
+          <p>PPG AEN Hackathon 2026 · Team Error 404</p>
+          <p>Thamotharan, Renuka Malar · Ramachandran, Yuganeswary · Hairul Afizee · Bashari, Noorliana</p>
         </footer>
       </main>
     </div>

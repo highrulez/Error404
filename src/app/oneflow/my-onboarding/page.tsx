@@ -1,54 +1,22 @@
 "use client";
 
 import Link from "next/link";
+import { CalendarDays, CheckCircle2, FileText, Mail, MapPin, type LucideIcon } from "lucide-react";
 import { OneFlowShell } from "@/components/oneflow/shell";
 import { useAuth } from "@/components/shared/auth-provider";
 import { useData } from "@/components/shared/data-provider";
 import { StatusChip, ProgressBar } from "@/components/shared/status";
+import { formatDate } from "@/lib/utils";
+import { lifecycleReadiness } from "@/components/oneflow/lifecycle-visibility";
 import { ALICIA_ONBOARDING_CASE_ID } from "@/data/alicia-types";
 
+function dayCopy(date: string) { const days = Math.ceil((new Date(`${date}T00:00:00`).getTime() - new Date().setHours(0, 0, 0, 0)) / 86400000); return days <= 0 ? days === 0 ? "Your first day is today" : "Your first day has started" : days === 1 ? "Your first day is tomorrow" : `Your first day is in ${days} days`; }
+function SummaryCard({ label, value, Icon, tone }: { label: string; value: string | number; Icon: LucideIcon; tone: string }) { return <div className={`rounded-xl p-3 ${tone}`}><div className="flex justify-between"><p className="text-[11px] font-semibold uppercase tracking-wide">{label}</p><Icon className="h-4 w-4" /></div><p className="mt-2 text-xl font-semibold">{value}</p></div>; }
+
 export default function MyOnboardingPage() {
-  const { session } = useAuth();
-  const { store } = useData();
-  if (!session) return null;
-
-  const employee = store.employees.find(
-    (e) => e.email.toLowerCase() === session.email.toLowerCase()
-  );
-  const onbCase =
-    store.onboardingCases.find((c) => c.employeeId === employee?.id) ||
-    (session.role === "ONBOARDING_EMPLOYEE"
-      ? store.onboardingCases.find((c) => c.id === ALICIA_ONBOARDING_CASE_ID)
-      : undefined);
-
-  return (
-    <OneFlowShell title="My Onboarding" subtitle="Your onboarding journey">
-      {!onbCase ? (
-        <p className="text-sm text-slate-500">
-          No onboarding case found for your account.
-        </p>
-      ) : (
-        <div className="space-y-4">
-          <div className="rounded-xl border border-flow-line bg-white p-4 shadow-sm">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div>
-                <p className="font-semibold">{onbCase.caseNumber}</p>
-                <p className="text-xs text-slate-500">Onboarding case</p>
-              </div>
-              <StatusChip status={onbCase.status} />
-            </div>
-            <div className="mt-3">
-              <ProgressBar value={onbCase.overallProgress} tone="blue" />
-            </div>
-            <Link
-              href={`/oneflow/my-onboarding/${onbCase.id}`}
-              className="mt-3 inline-block rounded-md bg-flow-accent px-3 py-2 text-sm font-semibold text-white"
-            >
-              View My Onboarding
-            </Link>
-          </div>
-        </div>
-      )}
-    </OneFlowShell>
-  );
+  const { session } = useAuth(); const { store, service, ready } = useData(); if (!session) return null;
+  const employee = store.employees.find((item) => item.email.toLowerCase() === session.email.toLowerCase()); const caseItem = store.onboardingCases.find((item) => item.employeeId === employee?.id) || (session.role === "ONBOARDING_EMPLOYEE" ? store.onboardingCases.find((item) => item.id === ALICIA_ONBOARDING_CASE_ID) : undefined);
+  if (!caseItem || !employee) return <OneFlowShell title="My Onboarding"><p className="text-sm text-slate-500">No onboarding journey found for your account.</p></OneFlowShell>;
+  const tasks = store.tasks.filter((task) => task.onboardingCaseId === caseItem.id && task.status !== "Cancelled"); const outstanding = tasks.filter((task) => task.status !== "Completed"); const readiness = lifecycleReadiness(tasks); const forms = ready ? service.listMyForms(session).filter((form) => form.lifecycle === "Onboarding" && !["Completed", "Submitted", "Card Issued"].includes(form.status)) : []; const unread = (store.mockEmails || []).filter((mail) => mail.to.toLowerCase() === session.email.toLowerCase() && mail.status === "Unread").length; const next = [...outstanding].sort((a, b) => a.dueDate.localeCompare(b.dueDate))[0]; const current = Math.min(4, Math.floor((readiness / 100) * 5));
+  return <OneFlowShell title="My Onboarding" subtitle="Your first-day journey"><div className="space-y-5"><section className="rounded-2xl border border-cyan-100 bg-gradient-to-br from-cyan-50 to-white p-5 shadow-sm"><p className="text-sm font-medium text-cyan-800">Good morning, {employee.preferredName || employee.fullName}</p><h2 className="mt-2 text-2xl font-semibold">{dayCopy(employee.startDate)}</h2><div className="mt-3 flex flex-wrap gap-3 text-sm text-slate-600"><span className="flex items-center gap-1"><CalendarDays className="h-4 w-4 text-flow-accent" />{formatDate(employee.startDate)}</span><span className="flex items-center gap-1"><MapPin className="h-4 w-4 text-flow-accent" />{employee.location}</span><StatusChip status={employee.employmentStatus} /></div><p className="mt-3 text-xs text-slate-500">Reference: {caseItem.caseNumber}</p></section><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"><SummaryCard label="Actions Remaining" value={outstanding.length} Icon={CheckCircle2} tone="bg-sky-50 text-sky-700" /><SummaryCard label="Forms to Complete" value={forms.length} Icon={FileText} tone="bg-indigo-50 text-indigo-700" /><SummaryCard label="Unread Messages" value={unread} Icon={Mail} tone="bg-cyan-50 text-cyan-700" /><SummaryCard label="Start Date" value={formatDate(employee.startDate)} Icon={CalendarDays} tone="bg-slate-50 text-slate-700" /></div><div className="grid gap-4 lg:grid-cols-[1.15fr_.85fr]"><section className="rounded-2xl border border-flow-line bg-white p-5 shadow-sm"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Day 1 Readiness</p><p className="mt-1 text-4xl font-semibold">{readiness}%</p><div className="mt-3"><ProgressBar value={readiness} tone="blue" /></div><p className="mt-2 text-sm text-slate-500">{outstanding.length} actions remaining before your first day</p></section><section className="rounded-2xl border border-flow-line bg-white p-5 shadow-sm"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Next Action</p>{next ? <><p className="mt-2 font-semibold">{next.title}</p><p className="mt-1 text-sm text-slate-500">Due {formatDate(next.dueDate)}</p><Link href={`/oneflow/tasks/${next.id}`} className="mt-4 inline-block rounded-xl bg-flow-accent px-3 py-2 text-sm font-semibold text-white">Continue</Link></> : <p className="mt-2 font-semibold text-emerald-700">You’re all caught up.</p>}</section></div><section className="rounded-2xl border border-flow-line bg-white p-5 shadow-sm"><h2 className="text-base font-semibold">Your Onboarding Journey</h2><div className="mt-4 grid gap-2 sm:grid-cols-5">{["Personal Information", "Forms & Documents", "IT & Access", "Induction", "First-Day Readiness"].map((stage, index) => { const complete = readiness === 100 || index < current; const active = !complete && index === current; return <div key={stage} className="rounded-xl bg-slate-50 p-3 text-center text-xs"><span className={`mx-auto flex h-7 w-7 items-center justify-center rounded-full ${complete ? "bg-emerald-100 text-emerald-700" : active ? "bg-sky-100 text-sky-700" : "bg-slate-200 text-slate-500"}`}>{complete ? "✓" : index + 1}</span><p className="mt-2 font-medium">{stage}</p><p className="mt-1 text-slate-500">{complete ? "Complete" : active ? "In progress" : "Upcoming"}</p></div>; })}</div></section></div></OneFlowShell>;
 }

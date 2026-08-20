@@ -12,15 +12,16 @@ services:
       PORT: 3000
       HOSTNAME: 0.0.0.0
 
-      AWS_REGION: ${AWS_REGION}
-      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_REGION: ${AWS_REGION:-ap-southeast-1}
+      AWS_ACCESS_KEY_ID:
+      AWS_SECRET_ACCESS_KEY:
 
-      SES_FROM_EMAIL: ${SES_FROM_EMAIL}
-      SES_FROM_NAME: ${SES_FROM_NAME}
-      EMAIL_MODE: ${EMAIL_MODE}
-      EMAIL_RECIPIENT_MAP: ${EMAIL_RECIPIENT_MAP}
+      SES_FROM_EMAIL: ${SES_FROM_EMAIL:-}
+      SES_FROM_NAME: ${SES_FROM_NAME:-OneFlow}
+      EMAIL_MODE: ${EMAIL_MODE:-mock}
 
-      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-https://oneflow.highrulez.com}
     ports:
       - "3005:3000"
+    volumes:
+      - ./data:/app/data

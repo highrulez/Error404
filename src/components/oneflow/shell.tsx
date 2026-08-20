@@ -1,8 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { BarChart3, ClipboardList, FileText, Home, Settings, Users } from "lucide-react";
 import { PhaseBanner } from "@/components/shared/phase-banner";
 import { useAuth } from "@/components/shared/auth-provider";
+import { roleLabel } from "@/data/role-labels";
 
 export function OneFlowShell({
   children,
@@ -14,34 +17,51 @@ export function OneFlowShell({
   subtitle?: string;
 }) {
   const { session, navItems, logout } = useAuth();
+  const pathname = usePathname();
+  const displaySubtitle =
+    session &&
+    (session.role === "ONBOARDING_EMPLOYEE" ||
+      session.role === "OFFBOARDING_EMPLOYEE") &&
+    subtitle?.includes("SES")
+      ? "Your OneFlow messages and lifecycle notifications"
+      : subtitle;
+  const navIcon = (label: string) => {
+    if (label.includes("Dashboard") || label.includes("Overview")) return Home;
+    if (label.includes("Employee")) return Users;
+    if (label.includes("Case")) return ClipboardList;
+    if (label.includes("Report")) return BarChart3;
+    if (label.includes("Setting")) return Settings;
+    return FileText;
+  };
 
   return (
-    <div className="min-h-screen bg-flow-canvas font-flow text-flow-ink">
+    <div className="min-h-screen bg-slate-50 font-flow text-flow-ink">
       <div className="print:hidden">
         <PhaseBanner />
       </div>
       <div className="flex min-h-[calc(100vh-37px)] print:block print:min-h-0">
-        <aside className="hidden w-56 shrink-0 flex-col bg-flow-panel text-white lg:flex print:hidden">
-          <div className="border-b border-white/10 px-4 py-5">
+        <aside className="hidden w-64 shrink-0 flex-col bg-gradient-to-b from-slate-950 via-slate-900 to-indigo-950 text-white lg:flex print:hidden">
+          <div className="border-b border-white/10 px-5 py-6">
             <p className="text-lg font-semibold tracking-tight">OneFlow</p>
-            <p className="mt-1 text-[11px] text-white/55">Admin dashboard</p>
+            <p className="mt-1 text-[11px] tracking-wide text-cyan-100/70">Employee lifecycle orchestration</p>
             {session && (
-              <div className="mt-3 rounded-md bg-white/10 px-2 py-2 text-[11px]">
+              <div className="mt-4 rounded-xl border border-white/10 bg-white/10 px-3 py-3 text-[11px] shadow-sm">
                 <p className="font-semibold text-white">{session.name}</p>
-                <p className="text-white/60">{session.role}</p>
+                <p className="text-white/60">{roleLabel(session.role)}</p>
                 <p className="truncate text-white/45">{session.email}</p>
               </div>
             )}
           </div>
-          <nav className="flex flex-1 flex-col gap-1 p-3">
+          <nav className="flex flex-1 flex-col gap-1.5 p-3">
             {navItems.map((item) => (
-              <Link
+              (() => { const Icon = navIcon(item.label); const active = pathname === item.href; return <Link
                 key={item.href}
                 href={item.href}
-                className="rounded-md px-3 py-2 text-sm text-white/85 hover:bg-white/10"
+                className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition ${active ? "bg-white/15 font-semibold text-white shadow-sm" : "text-white/75 hover:bg-white/10 hover:text-white"}`}
               >
+                <Icon className="h-4 w-4" />
                 {item.label}
-              </Link>
+              </Link>; })()
             ))}
             <div className="mt-auto border-t border-white/10 pt-3 space-y-1">
               {session?.role === "Admin" && (
@@ -72,12 +92,17 @@ export function OneFlowShell({
           </nav>
         </aside>
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className="border-b border-flow-line bg-white px-5 py-4 print:hidden">
+          <header className="border-b border-slate-200/80 bg-white/85 px-5 py-5 backdrop-blur print:hidden">
             <div className="flex flex-wrap items-end justify-between gap-3">
               <div>
                 <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
-                {subtitle && (
-                  <p className="mt-1 text-sm text-slate-500">{subtitle}</p>
+                {displaySubtitle && (
+                  <p className="mt-1 text-sm text-slate-500">{displaySubtitle}</p>
+                )}
+                {session && (
+                  <p className="mt-1 text-xs font-medium text-flow-accent">
+                    Viewing as: {session.name} — {roleLabel(session.role)}
+                  </p>
                 )}
               </div>
               <div className="flex flex-wrap gap-2 lg:hidden">

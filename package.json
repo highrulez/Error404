@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test:email": "npx tsx src/server/email/config.test.ts && npx tsx src/server/email/workflow-email-service.test.ts"
+    "test:email": "npx tsx src/server/email/config.test.ts && npx tsx src/server/email/settings-store.test.ts && npx tsx src/server/email/workflow-email-service.test.ts"
   },
   "dependencies": {
     "@aws-sdk/client-sesv2": "^3.1094.0",
