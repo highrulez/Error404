@@ -80,6 +80,39 @@ def keep_together(p):
     pPr.append(el)
 
 
+def add_hyperlink(paragraph, text, url, size=11):
+    part = paragraph.part
+    r_id = part.relate_to(
+        url,
+        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink",
+        is_external=True,
+    )
+    hyperlink = OxmlElement("w:hyperlink")
+    hyperlink.set(qn("r:id"), r_id)
+    new_run = OxmlElement("w:r")
+    rPr = OxmlElement("w:rPr")
+    r_fonts = OxmlElement("w:rFonts")
+    r_fonts.set(qn("w:ascii"), "Calibri")
+    r_fonts.set(qn("w:hAnsi"), "Calibri")
+    rPr.append(r_fonts)
+    sz = OxmlElement("w:sz")
+    sz.set(qn("w:val"), str(int(size * 2)))
+    rPr.append(sz)
+    color = OxmlElement("w:color")
+    color.set(qn("w:val"), "0E7490")
+    rPr.append(color)
+    underline = OxmlElement("w:u")
+    underline.set(qn("w:val"), "single")
+    rPr.append(underline)
+    new_run.append(rPr)
+    text_el = OxmlElement("w:t")
+    text_el.set(qn("xml:space"), "preserve")
+    text_el.text = text
+    new_run.append(text_el)
+    hyperlink.append(new_run)
+    paragraph._p.append(hyperlink)
+
+
 def set_cell_text(cell, text, size=10, bold=False, color=INK, center=False):
     cell.text = ""
     p = cell.paragraphs[0]
@@ -88,6 +121,9 @@ def set_cell_text(cell, text, size=10, bold=False, color=INK, center=False):
     p.paragraph_format.line_spacing = 1.08
     if center:
         p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    if text.startswith("http://") or text.startswith("https://"):
+        add_hyperlink(p, text, text, size=size)
+        return
     run = p.add_run(text)
     set_run(run, size=size, bold=bold, color=color)
 
@@ -334,6 +370,8 @@ class Dossier:
             "Production Readiness, Security, Cost and Roadmap",
             "5–10 Minute Demo Guide",
             "FAQ, Conclusion and Appendix",
+            "How OneFlow Could Be Adopted",
+            "Solution Links & Submission Materials",
         ]
         for item in contents:
             self.md.append(f"- {item}")
@@ -355,11 +393,13 @@ class Dossier:
         self.doc.add_heading(text, 3)
         self.md.append(f"\n#### {text}\n")
 
-    def p(self, text):
+    def p(self, text, keep=False):
         para = self.doc.add_paragraph()
         run = para.add_run(text)
         set_run(run, size=11)
         para.paragraph_format.space_after = Pt(8)
+        if keep:
+            keep_next(para)
         self.md.append(f"{text}\n")
 
     def bullets(self, items):
@@ -401,6 +441,48 @@ class Dossier:
         p2.paragraph_format.space_after = Pt(2)
         self.doc.add_paragraph().paragraph_format.space_after = Pt(6)
         self.md.append(f"\n> **{title}**  \n> {body}\n")
+
+    def start_here(self):
+        table = self.doc.add_table(rows=1, cols=1)
+        cell = table.cell(0, 0)
+        shade(cell, CALLOUT)
+        borders(cell, CALLOUT_BORDER)
+        cell.text = ""
+        title_p = cell.paragraphs[0]
+        title_run = title_p.add_run("Start Here")
+        set_run(title_run, size=11, bold=True, color=NAVY)
+        title_p.paragraph_format.space_after = Pt(4)
+        demo_p = cell.add_paragraph()
+        demo_p.paragraph_format.space_after = Pt(1)
+        demo_label = demo_p.add_run("• Live demo: ")
+        set_run(demo_label, size=10)
+        add_hyperlink(demo_p, "https://oneflow.highrulez.com", "https://oneflow.highrulez.com", size=10)
+        lines = [
+            "• Challenge: Hackathon Challenge 4 — Connected Employee Lifecycle",
+            "• Team: Error 404",
+            "• Documentation: this dossier",
+            "• Final presentation: accompanying PowerPoint",
+        ]
+        for line in lines:
+            lp = cell.add_paragraph()
+            lr = lp.add_run(line)
+            set_run(lr, size=10)
+            lp.paragraph_format.space_after = Pt(1)
+        self.doc.add_paragraph().paragraph_format.space_after = Pt(6)
+        self.md.append(
+            "\n> **Start Here**  \n"
+            "> - Live demo: https://oneflow.highrulez.com  \n"
+            "> - Challenge: Hackathon Challenge 4 — Connected Employee Lifecycle  \n"
+            "> - Team: Error 404  \n"
+            "> - Documentation: this dossier  \n"
+            "> - Final presentation: accompanying PowerPoint\n"
+        )
+
+    def p_url(self, url):
+        para = self.doc.add_paragraph()
+        add_hyperlink(para, url, url, size=11)
+        para.paragraph_format.space_after = Pt(8)
+        self.md.append(f"{url}\n")
 
     def label_line(self, pairs):
         for i, (k, v) in enumerate(pairs):
@@ -489,6 +571,7 @@ def build():
     d.page_break()
 
     d.h1("Executive Summary")
+    d.start_here()
     d.p(
         "Hackathon Challenge 4, issued by Admin & MYSCC, asks teams to create a more connected and efficient employee journey while improving collaboration among HR, IT, payroll, facilities, managers and employees. The current process is fragmented: onboarding, offboarding, workplace administration, access provisioning and resource management rely on disconnected systems and manual communication. The result is delay, poor visibility, compliance risk and an inconsistent employee experience."
     )
@@ -1168,6 +1251,28 @@ def build():
         "The prototype has already reduced the largest risk in a lifecycle programme: ambiguity about the operating model. What remains is integration, security and measurement — work that is now well bounded.",
     )
 
+    d.h1("How OneFlow Could Be Adopted")
+    d.callout(
+        "Proposed adoption path — not implemented in the hackathon prototype.",
+        "This is a business and implementation sequence for a production pilot. It is not a deployment runbook, and none of these production steps are built in the hackathon prototype.",
+    )
+    d.numbered(
+        [
+            "Validate the OneFlow operating model with HR, IT, Facilities, Finance and managers.",
+            "Confirm the Workday lifecycle events and data required.",
+            "Confirm enterprise architecture and security requirements.",
+            "Establish Microsoft Entra ID authentication and role mapping.",
+            "Create the governed lifecycle data model in Dataverse or another approved store.",
+            "Implement workflow orchestration in Power Automate.",
+            "Integrate Microsoft 365 / Outlook notifications.",
+            "Integrate identity/access systems for real provisioning and removal.",
+            "Implement Power BI success-criteria reporting.",
+            "Run a controlled Malaysia pilot.",
+            "Measure lead time, readiness, clearance, overdue work, security gaps and employee satisfaction.",
+            "Scale only if pilot KPIs demonstrate value.",
+        ]
+    )
+
     d.h1("Appendix")
     d.h2("Project team")
     d.p("Team Error 404")
@@ -1179,9 +1284,25 @@ def build():
             "Bashari, Noorliana",
         ]
     )
+    d.h2("Solution Links & Submission Materials")
+    d.table(
+        ["Item", "Reference"],
+        [
+            ["Live Demonstration", "https://oneflow.highrulez.com"],
+            ["Solution Documentation", "OneFlow_Project_Documentation.docx"],
+            [
+                "Final Presentation Deck",
+                "See the accompanying final-presentation PowerPoint in the submission folder.",
+            ],
+            [
+                "Supporting Materials",
+                "Screenshots, architecture diagrams, Challenge 4 mapping, user manual, test-email guide, production architecture and adoption roadmap are included in this dossier and supporting assets.",
+            ],
+        ],
+        col_widths=[2.15, 4.15],
+    )
     d.h2("Demonstration")
-    d.p("https://oneflow.highrulez.com")
-    d.p("Repository: https://github.com/highrulez/Error404")
+    d.p_url("https://oneflow.highrulez.com")
     d.h2("Status labels used in this dossier")
     d.table(
         ["Label", "Meaning"],
@@ -1191,8 +1312,9 @@ def build():
             ["Proposed / not implemented", "Recommended for production; absent from the prototype."],
         ],
     )
+    d.page_break()
     d.h2("Screenshot and diagram index")
-    d.p("Figures were captured from the public demonstration at https://oneflow.highrulez.com. Email destinations are masked to a safe example mailbox.")
+    d.p("Figures were captured from the public demonstration at https://oneflow.highrulez.com. Email destinations are masked to a safe example mailbox.", keep=True)
     d.table(
         ["Figure", "Evidence"],
         [

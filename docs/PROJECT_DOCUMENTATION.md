@@ -45,10 +45,19 @@ Thamotharan, Renuka Malar · Ramachandran, Yuganeswary · Hairul Afizee · Basha
 - Production Readiness, Security, Cost and Roadmap
 - 5–10 Minute Demo Guide
 - FAQ, Conclusion and Appendix
+- How OneFlow Could Be Adopted
+- Solution Links & Submission Materials
 
 
 
 ## Executive Summary
+
+> **Start Here**  
+> - Live demo: https://oneflow.highrulez.com  
+> - Challenge: Hackathon Challenge 4 — Connected Employee Lifecycle  
+> - Team: Error 404  
+> - Documentation: this dossier  
+> - Final presentation: accompanying PowerPoint
 
 Hackathon Challenge 4, issued by Admin & MYSCC, asks teams to create a more connected and efficient employee journey while improving collaboration among HR, IT, payroll, facilities, managers and employees. The current process is fragmented: onboarding, offboarding, workplace administration, access provisioning and resource management rely on disconnected systems and manual communication. The result is delay, poor visibility, compliance risk and an inconsistent employee experience.
 
@@ -634,6 +643,24 @@ PPG should consider progressing OneFlow because the business problem is real, th
 > **Why OneFlow should progress beyond the hackathon**  
 > The prototype has already reduced the largest risk in a lifecycle programme: ambiguity about the operating model. What remains is integration, security and measurement — work that is now well bounded.
 
+## How OneFlow Could Be Adopted
+
+> **Proposed adoption path — not implemented in the hackathon prototype.**  
+> This is a business and implementation sequence for a production pilot. It is not a deployment runbook, and none of these production steps are built in the hackathon prototype.
+
+1. Validate the OneFlow operating model with HR, IT, Facilities, Finance and managers.
+2. Confirm the Workday lifecycle events and data required.
+3. Confirm enterprise architecture and security requirements.
+4. Establish Microsoft Entra ID authentication and role mapping.
+5. Create the governed lifecycle data model in Dataverse or another approved store.
+6. Implement workflow orchestration in Power Automate.
+7. Integrate Microsoft 365 / Outlook notifications.
+8. Integrate identity/access systems for real provisioning and removal.
+9. Implement Power BI success-criteria reporting.
+10. Run a controlled Malaysia pilot.
+11. Measure lead time, readiness, clearance, overdue work, security gaps and employee satisfaction.
+12. Scale only if pilot KPIs demonstrate value.
+
 ## Appendix
 
 ### Project team
@@ -645,11 +672,18 @@ Team Error 404
 - Hairul Afizee
 - Bashari, Noorliana
 
+### Solution Links & Submission Materials
+
+| Item | Reference |
+| --- | --- |
+| Live Demonstration | https://oneflow.highrulez.com |
+| Solution Documentation | OneFlow_Project_Documentation.docx |
+| Final Presentation Deck | See the accompanying final-presentation PowerPoint in the submission folder. |
+| Supporting Materials | Screenshots, architecture diagrams, Challenge 4 mapping, user manual, test-email guide, production architecture and adoption roadmap are included in this dossier and supporting assets. |
+
 ### Demonstration
 
 https://oneflow.highrulez.com
-
-Repository: https://github.com/highrulez/Error404
 
 ### Status labels used in this dossier
 
@@ -658,6 +692,8 @@ Repository: https://github.com/highrulez/Error404
 | Demonstrated | A judge can see and use the capability in the prototype. |
 | Partially demonstrated / simulated | The concept is shown; the production mechanism or measured result is not. |
 | Proposed / not implemented | Recommended for production; absent from the prototype. |
+
+
 
 ### Screenshot and diagram index
 
