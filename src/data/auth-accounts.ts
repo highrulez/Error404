@@ -12,8 +12,6 @@ const ROLE_TO_TEAM_LOOKUP: Partial<Record<UserRole, ResponsibleTeam>> = {
   FINANCE: "Finance / Administration",
   CORPORATE_CARD: "Corporate Card Admin",
   ADMINISTRATION: "Administration",
-  QUALITY: "Quality",
-  PRODUCT_STEWARDSHIP: "Product Stewardship",
 };
 
 export const ROLE_TO_TEAM = ROLE_TO_TEAM_LOOKUP;

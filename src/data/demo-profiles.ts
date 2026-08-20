@@ -85,20 +85,6 @@ export const DEMO_PROFILES: DemoUserProfile[] = [
     role: "CORPORATE_CARD",
   },
   {
-    userId: "user-quality",
-    name: "Quality Representative",
-    email: "quality@ppg-demo.com",
-    initials: "QR",
-    role: "QUALITY",
-  },
-  {
-    userId: "user-product-stewardship",
-    name: "Product Stewardship Representative",
-    email: "productstewardship@ppg-demo.com",
-    initials: "PS",
-    role: "PRODUCT_STEWARDSHIP",
-  },
-  {
     userId: "user-nabila",
     name: "Aziz, Nabila",
     email: "nabila.aziz@ppg-demo.com",
@@ -140,8 +126,6 @@ const TEAM_TO_ROLE: Partial<Record<ResponsibleTeam, UserRole>> = {
   "Finance / Administration": "FINANCE",
   "Corporate Card Admin": "CORPORATE_CARD",
   Administration: "Admin",
-  Quality: "QUALITY",
-  "Product Stewardship": "PRODUCT_STEWARDSHIP",
 };
 
 /** Canonical demo person for a role-owned task; never returns a team label. */

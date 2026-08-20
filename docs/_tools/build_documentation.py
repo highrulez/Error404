@@ -440,7 +440,7 @@ class Dossier:
         p1.paragraph_format.space_after = Pt(4)
         p2.paragraph_format.space_after = Pt(2)
         self.doc.add_paragraph().paragraph_format.space_after = Pt(6)
-        self.md.append(f"\n> **{title}**  \n> {body}\n")
+        self.md.append(f"\n> **{title}**\n> {body}\n")
 
     def start_here(self):
         table = self.doc.add_table(rows=1, cols=1)
@@ -938,7 +938,7 @@ def build():
         ],
     )
     d.p(
-        "The prototype also includes Finance, Corporate Card, Quality and Product Stewardship because those teams own real setup or clearance work in the seeded journeys. That is an extension of the challenge’s cross-functional intent, not a claim that payroll-specific functionality is already implemented."
+        "The prototype also includes Finance and Corporate Card because those teams own real setup or clearance work in the seeded journeys. That is an extension of the challenge’s cross-functional intent, not a claim that payroll-specific functionality is already implemented."
     )
     d.h2("Responsible Team vs Assignee")
     d.p("Responsible Team identifies the functional owner of a task; Assignee identifies the actual person responsible for completing it. For example, an IT Security task may have Responsible Team IT Security and Assignee Mohd Azli, Amirul Mukhlis. A manager-owned task may have Responsible Team Manager and Assignee the employee’s current reporting manager.")

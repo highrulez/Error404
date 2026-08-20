@@ -16,8 +16,6 @@ export const RESPONSIBLE_TEAMS: ResponsibleTeam[] = [
   "Finance / Administration",
   "Corporate Card Admin",
   "Administration",
-  "Quality",
-  "Product Stewardship",
 ];
 
 export const CHECKLIST_GROUPS: ChecklistGroup[] = [

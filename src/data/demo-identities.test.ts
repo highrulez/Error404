@@ -1,6 +1,6 @@
 import { strict as assert } from "node:assert";
 import { DEMO_USERS } from "./auth-accounts";
-import { DEFAULT_ASSIGNMENT_RULES } from "./checklist";
+import { DEFAULT_ASSIGNMENT_RULES, RESPONSIBLE_TEAMS } from "./checklist";
 import { ADMIN_PROFILE, HIRING_MANAGER_PROFILE, profileForTeam } from "./demo-profiles";
 import { createSeedStore } from "./seed";
 
@@ -31,6 +31,8 @@ assert.equal(
   DEMO_USERS.find((user) => user.role === "HIRING_MANAGER")?.name,
   "Suib, Ammar Zahiruddin"
 );
+assert.equal(DEMO_USERS.length, 10, "Only active demo accounts must be available for login");
+assert.equal(RESPONSIBLE_TEAMS.length, 8, "Only active task-routing teams must be configured");
 
 const obsolete = /Siti Aminah|Zulkarnain|Ariff bin Razak|Roslan bin Omar|Sarah Tan/;
 assert.equal(DEMO_USERS.some((user) => obsolete.test(user.name)), false);
@@ -53,6 +55,11 @@ assert.equal(
 assert.equal(
   seed.tasks.find((task) => task.responsibleTeam === "Hiring Manager")?.assignedPersonName,
   "Suib, Ammar Zahiruddin"
+);
+assert.equal(
+  seed.tasks.every((task) => RESPONSIBLE_TEAMS.includes(task.responsibleTeam)),
+  true,
+  "Every seeded task must route to an active team"
 );
 
 console.log("demo identity mapping tests passed");

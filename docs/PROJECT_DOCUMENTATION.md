@@ -65,7 +65,7 @@ Team Error 404 built OneFlow — an employee lifecycle orchestration prototype. 
 
 The prototype demonstrates the operating model requested by Challenge 4: a connected employee journey, role-based collaboration, lifecycle visibility, onboarding and offboarding orchestration, access and security responsibilities, and an employee-facing experience. It does not yet prove reduced real-world lead times, measured satisfaction improvement, or enterprise-scale compliance outcomes. Those require production integrations and a governed pilot.
 
-> **Did OneFlow solve Challenge 4?**  
+> **Did OneFlow solve Challenge 4?**
 > Yes — at prototype level. The prototype validates the proposed solution approach. A production pilot would validate measurable business impact. OneFlow is demonstrated and validated at prototype level; it is not a fully solved production deployment.
 
 | Reader question | OneFlow answer |
@@ -183,7 +183,7 @@ The table below uses the official Challenge 4 objectives. Status labels are deli
 
 ## Did OneFlow Solve Hackathon Challenge 4?
 
-> **Yes — at prototype level.**  
+> **Yes — at prototype level.**
 > OneFlow is demonstrated and validated at prototype level. It is not a claim that the challenge is fully solved in production.
 
 OneFlow successfully demonstrates the central concept requested by Challenge 4: a connected employee journey; cross-functional collaboration; clear ownership; visibility; onboarding and offboarding orchestration; access and security responsibilities; and an employee-facing experience.
@@ -348,7 +348,7 @@ Challenge 4 explicitly names HR, IT, payroll, facilities, managers and employees
 | Managers | Hiring Manager | Knowledge transfer, new-hire and transition actions |
 | Employees | Onboarding and offboarding employee journeys | Tasks, forms, inbox, profile, readiness or clearance |
 
-The prototype also includes Finance, Corporate Card, Quality and Product Stewardship because those teams own real setup or clearance work in the seeded journeys. That is an extension of the challenge’s cross-functional intent, not a claim that payroll-specific functionality is already implemented.
+The prototype also includes Finance and Corporate Card because those teams own real setup or clearance work in the seeded journeys. That is an extension of the challenge’s cross-functional intent, not a claim that payroll-specific functionality is already implemented.
 
 ### Responsible Team vs Assignee
 
@@ -443,7 +443,7 @@ Sign in as Hamdan, Muhamad Asyraf Naqiyuddin. Use My Offboarding to show last-wo
 
 ## How to Send a Prototype Test Email
 
-> **AWS SES is already configured server-side.**  
+> **AWS SES is already configured server-side.**
 > The administrator does not enter AWS credentials in the application. Never publish a real mapped destination, password, token or access key. AWS SES is a hackathon prototype convenience. It is not the proposed PPG production email solution.
 
 1. Login as OneFlow Admin.
@@ -657,12 +657,12 @@ Challenge 4 asks for a more connected employee journey and better collaboration 
 
 PPG should consider progressing OneFlow because the business problem is real, the prototype is usable, the production path fits the Microsoft and Workday estate, and the success criteria can be measured in a contained pilot. The next value is not another mock-up. It is a governed production foundation and a Malaysia pilot that proves lead time, accountability and access-control outcomes.
 
-> **Why OneFlow should progress beyond the hackathon**  
+> **Why OneFlow should progress beyond the hackathon**
 > The prototype has already reduced the largest risk in a lifecycle programme: ambiguity about the operating model. What remains is integration, security and measurement — work that is now well bounded.
 
 ## How OneFlow Could Be Adopted
 
-> **Proposed adoption path — not implemented in the hackathon prototype.**  
+> **Proposed adoption path — not implemented in the hackathon prototype.**
 > This is a business and implementation sequence for a production pilot. It is not a deployment runbook, and none of these production steps are built in the hackathon prototype.
 
 1. Validate the OneFlow operating model with HR, IT, Facilities, Finance and managers.

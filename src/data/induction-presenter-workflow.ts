@@ -284,7 +284,7 @@ export function ensureInductionPresenterWorkflow(
     );
   }
 
-  // Remove obsolete Facilities (and other non-canonical) induction tasks by wrong email
+  // Remove obsolete presenter tasks written by older demo data before canonical routing.
   const obsoleteEmails = new Set([
     "facilities@ppg-demo.com",
     "sherry.soh@ppg-demo.com",

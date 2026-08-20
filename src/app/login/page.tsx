@@ -13,7 +13,6 @@ const GROUPS: Array<{ label: string; roles: UserRole[]; accent: string; avatar: 
   { label: "People & Management", roles: ["HR", "HIRING_MANAGER"], accent: "border-l-violet-500", avatar: "border-violet-200 bg-violet-50 text-violet-700", badge: "bg-violet-50 text-violet-700" },
   { label: "Technology", roles: ["IT_SECURITY", "ONSITE_IT"], accent: "border-l-cyan-500", avatar: "border-cyan-200 bg-cyan-50 text-cyan-700", badge: "bg-cyan-50 text-cyan-700" },
   { label: "Operations", roles: ["FACILITIES", "FINANCE", "CORPORATE_CARD", "ADMINISTRATION"], accent: "border-l-teal-500", avatar: "border-teal-200 bg-teal-50 text-teal-700", badge: "bg-teal-50 text-teal-700" },
-  { label: "Specialist Functions", roles: ["QUALITY", "PRODUCT_STEWARDSHIP"], accent: "border-l-amber-500", avatar: "border-amber-200 bg-amber-50 text-amber-700", badge: "bg-amber-50 text-amber-700" },
 ];
 
 function destination(user: User) {

@@ -115,8 +115,6 @@ function assertAuthorized(req: WorkflowEmailRequest): string | null {
     role === "FACILITIES" ||
     role === "FINANCE" ||
     role === "ONSITE_IT" ||
-    role === "QUALITY" ||
-    role === "PRODUCT_STEWARDSHIP" ||
     role === "CORPORATE_CARD" ||
     role === "ADMINISTRATION";
   if (!allowed) {
