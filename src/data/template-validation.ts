@@ -143,8 +143,6 @@ export function defaultFixedEmailForTeam(team: ResponsibleTeam): string {
     "Finance / Administration": "noorliana.bashari@ppg-demo.com",
     "Corporate Card Admin": "corporatecard@ppg-demo.com",
     Administration: "admin@ppg-demo.com",
-    Quality: "quality@ppg-demo.com",
-    "Product Stewardship": "productstewardship@ppg-demo.com",
   };
   return map[team] ?? "";
 }

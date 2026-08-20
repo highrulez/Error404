@@ -38,6 +38,7 @@ import {
 } from "./alicia-types";
 import { buildAliciaLaptopSeed } from "./laptop-request-workflow";
 import type { LaptopRequest } from "./laptop-request-types";
+import { HIRING_MANAGER_PROFILE } from "./demo-profiles";
 
 function nowIso(): string {
   return new Date().toISOString();
@@ -64,7 +65,7 @@ export function createAliciaEmployee(now = nowIso()): Employee {
     department: "GCSS - RPA • GCSS, Delivery Management",
     role: "Application Developer Specialist",
     location: "Malaysia – UOA Business Park",
-    managerName: "Hiring Manager",
+    managerName: HIRING_MANAGER_PROFILE.name,
     managerEmail: "manager@ppg-demo.com",
     employeeType: "Permanent",
     employmentStatus: "Preboarding",
@@ -145,7 +146,7 @@ function generateDeptTasks(
     } else {
       assignedEmail = tmpl.fixedAssignedEmail || ruleMatch?.assignedEmail || "";
       assignedPersonName =
-        ruleMatch?.assignedPersonName || tmpl.responsibleTeam;
+        ruleMatch?.assignedPersonName || "Unassigned";
     }
     const reminder = initReminderFieldsFromTemplate(
       {
