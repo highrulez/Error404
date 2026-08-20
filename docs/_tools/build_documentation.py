@@ -940,6 +940,13 @@ def build():
     d.p(
         "The prototype also includes Finance, Corporate Card, Quality and Product Stewardship because those teams own real setup or clearance work in the seeded journeys. That is an extension of the challenge’s cross-functional intent, not a claim that payroll-specific functionality is already implemented."
     )
+    d.h2("Responsible Team vs Assignee")
+    d.p("Responsible Team identifies the functional owner of a task; Assignee identifies the actual person responsible for completing it. For example, an IT Security task may have Responsible Team IT Security and Assignee Mohd Azli, Amirul Mukhlis. A manager-owned task may have Responsible Team Manager and Assignee the employee’s current reporting manager.")
+    d.h2("Dynamic Manager Assignment in Production")
+    d.callout("Proposed Production Behavior — Not Implemented in Hackathon Prototype", "The hackathon prototype uses the fixed synthetic Hiring Manager Suib, Ammar Zahiruddin to demonstrate manager-owned lifecycle work. In production, OneFlow would resolve the appropriate manager for each employee from the authoritative Workday worker relationship; Suib is not intended to be the manager for every production employee.")
+    d.p("Workday employee record → manager / supervisory relationship → lifecycle event → OneFlow case → manager-owned task template → resolve actual manager → assign task.")
+    d.p("For onboarding, the incoming employee or hire event supplies the relevant manager relationship and OneFlow assigns manager-owned onboarding tasks to that individual. For offboarding, OneFlow retrieves the employee’s applicable reporting manager and assigns handover or transition tasks accordingly. Where the business distinguishes a Hiring Manager from a Reporting Manager, the relevant business-process relationship should determine routing.")
+    d.p("If Workday reports a manager change while work remains open, incomplete manager-owned tasks should be reassigned and the audit history retained. If no valid manager is available, OneFlow should route the exception to an agreed fallback, such as HR or OneFlow Admin, and surface it for resolution. The final routing policy belongs in enterprise process design.")
 
     d.h1("User Manual")
     d.p("Use this section to operate the demonstration. Open https://oneflow.highrulez.com. Sign in with the on-screen quick-login account cards.")
@@ -1085,10 +1092,10 @@ def build():
     d.table(
         ["Technology", "Role if OneFlow becomes production"],
         [
-            ["Workday / approved Workday API", "Authoritative employee, hire and termination events"],
-            ["Microsoft Entra ID", "Authentication, SSO, groups and RBAC"],
-            ["Dataverse", "Governed store for cases, tasks, forms and audit-grade operational data"],
-            ["Power Automate", "Workflow, reminders, integrations and notifications"],
+            ["Workday / approved Workday API", "Authoritative employee, hire, termination and manager/supervisory relationships"],
+            ["Microsoft Entra ID", "Authentication, SSO, groups, RBAC and enterprise-user resolution"],
+            ["Dataverse", "Governed store for cases, tasks, employee relationships and audit-grade operational data"],
+            ["Power Automate", "Workflow, reminders, dynamic manager routing and reassignment handling"],
             ["Power Apps", "Proposed production UI: model-driven application shell, Custom Pages for richer OneFlow dashboards and employee lifecycle experiences, and PCF controls where additional UI capability is required"],
             ["OneFlow", "Employee and role experience for the connected lifecycle, delivered through Power Apps in a production implementation"],
             ["Microsoft 365 / Outlook / Teams", "Production messaging and collaboration"],
@@ -1117,6 +1124,7 @@ def build():
             ["Automation", "Simulated runs", "Power Automate"],
             ["Email", "Mock Inbox + optional AWS SES", "Microsoft 365 / Outlook"],
             ["Reporting", "In-app operational snapshot", "Power BI"],
+            ["Manager task assignment", "Fixed synthetic Hiring Manager used for demonstration", "Dynamic assignment using the employee’s Workday manager/supervisory relationship, resolved to the corresponding enterprise identity"],
             ["Secrets / monitoring", "Server-side prototype configuration / logs", "Key Vault / Azure Monitor / Application Insights"],
             ["Access governance", "IT Security workflow tasks", "Entra ID, governed IAM/IGA integrations, audit"],
         ],
@@ -1140,6 +1148,7 @@ def build():
             "Replace demo login with Microsoft Entra ID and role mapping.",
             "Move operational data to Dataverse or another approved store, with retention and audit.",
             "Implement Power Automate for assignment, reminders and system hand-offs.",
+            "Implement dynamic manager resolution so manager-owned lifecycle work is assigned to the employee’s actual Workday reporting/hiring manager rather than a fixed demo role account.",
             "Replace AWS SES with Microsoft 365 / Outlook.",
             "Integrate identity and security systems so access removal is executed, not only tasked.",
             "Add Power BI for the success-criteria KPIs.",
@@ -1264,6 +1273,7 @@ def build():
             "Establish Microsoft Entra ID authentication and role mapping.",
             "Create the governed lifecycle data model in Dataverse or another approved store.",
             "Implement workflow orchestration in Power Automate.",
+            "Define manager-routing policy and implement dynamic manager resolution from Workday relationships.",
             "Integrate Microsoft 365 / Outlook notifications.",
             "Integrate identity/access systems for real provisioning and removal.",
             "Implement Power BI success-criteria reporting.",

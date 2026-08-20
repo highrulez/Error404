@@ -350,6 +350,21 @@ Challenge 4 explicitly names HR, IT, payroll, facilities, managers and employees
 
 The prototype also includes Finance, Corporate Card, Quality and Product Stewardship because those teams own real setup or clearance work in the seeded journeys. That is an extension of the challenge’s cross-functional intent, not a claim that payroll-specific functionality is already implemented.
 
+### Responsible Team vs Assignee
+
+Responsible Team identifies the functional owner of a task; Assignee identifies the actual person responsible for completing it. For example, an IT Security task may have Responsible Team IT Security and Assignee Mohd Azli, Amirul Mukhlis. A manager-owned task may have Responsible Team Manager and Assignee the employee’s current reporting manager.
+
+### Dynamic Manager Assignment in Production
+
+> **Proposed Production Behavior — Not Implemented in Hackathon Prototype**
+> The hackathon prototype uses the fixed synthetic Hiring Manager Suib, Ammar Zahiruddin to demonstrate manager-owned lifecycle work. In production, OneFlow would resolve the appropriate manager for each employee from the authoritative Workday worker relationship; Suib is not intended to be the manager for every production employee.
+
+Workday employee record → manager / supervisory relationship → lifecycle event → OneFlow case → manager-owned task template → resolve actual manager → assign task.
+
+For onboarding, the incoming employee or hire event supplies the relevant manager relationship and OneFlow assigns manager-owned onboarding tasks to that individual. For offboarding, OneFlow retrieves the employee’s applicable reporting manager and assigns handover or transition tasks accordingly. Where the business distinguishes a Hiring Manager from a Reporting Manager, the relevant business-process relationship should determine routing.
+
+If Workday reports a manager change while work remains open, incomplete manager-owned tasks should be reassigned and the audit history retained. If no valid manager is available, OneFlow should route the exception to an agreed fallback, such as HR or OneFlow Admin, and surface it for resolution. The final routing policy belongs in enterprise process design.
+
 ## User Manual
 
 Use this section to operate the demonstration. Open https://oneflow.highrulez.com. Sign in with the on-screen quick-login account cards.
@@ -492,10 +507,10 @@ If OneFlow progresses beyond the hackathon, the recommended direction is Microso
 
 | Technology | Role if OneFlow becomes production |
 | --- | --- |
-| Workday / approved Workday API | Authoritative employee, hire and termination events |
-| Microsoft Entra ID | Authentication, SSO, groups and RBAC |
-| Dataverse | Governed store for cases, tasks, forms and audit-grade operational data |
-| Power Automate | Workflow, reminders, integrations and notifications |
+| Workday / approved Workday API | Authoritative employee, hire, termination and manager/supervisory relationships |
+| Microsoft Entra ID | Authentication, SSO, groups, RBAC and enterprise-user resolution |
+| Dataverse | Governed store for cases, tasks, employee relationships and audit-grade operational data |
+| Power Automate | Workflow, reminders, dynamic manager routing and reassignment handling |
 | Power Apps | Proposed production UI: model-driven application shell, Custom Pages for richer OneFlow dashboards and employee lifecycle experiences, and PCF controls where additional UI capability is required |
 | OneFlow | Employee and role experience for the connected lifecycle, delivered through Power Apps in a production implementation |
 | Microsoft 365 / Outlook / Teams | Production messaging and collaboration |
@@ -521,6 +536,7 @@ Challenge 4 constraints include technology and security. A Microsoft-first path 
 | Automation | Simulated runs | Power Automate |
 | Email | Mock Inbox + optional AWS SES | Microsoft 365 / Outlook |
 | Reporting | In-app operational snapshot | Power BI |
+| Manager task assignment | Fixed synthetic Hiring Manager used for demonstration | Dynamic assignment using the employee’s Workday manager/supervisory relationship, resolved to the corresponding enterprise identity |
 | Secrets / monitoring | Server-side prototype configuration / logs | Key Vault / Azure Monitor / Application Insights |
 | Access governance | IT Security workflow tasks | Entra ID, governed IAM/IGA integrations, audit |
 
@@ -540,6 +556,7 @@ Do not read the production column as already implemented. The prototype proves t
 - Replace demo login with Microsoft Entra ID and role mapping.
 - Move operational data to Dataverse or another approved store, with retention and audit.
 - Implement Power Automate for assignment, reminders and system hand-offs.
+- Implement dynamic manager resolution so manager-owned lifecycle work is assigned to the employee’s actual Workday reporting/hiring manager rather than a fixed demo role account.
 - Replace AWS SES with Microsoft 365 / Outlook.
 - Integrate identity and security systems so access removal is executed, not only tasked.
 - Add Power BI for the success-criteria KPIs.
@@ -654,12 +671,13 @@ PPG should consider progressing OneFlow because the business problem is real, th
 4. Establish Microsoft Entra ID authentication and role mapping.
 5. Create the governed lifecycle data model in Dataverse or another approved store.
 6. Implement workflow orchestration in Power Automate.
-7. Integrate Microsoft 365 / Outlook notifications.
-8. Integrate identity/access systems for real provisioning and removal.
-9. Implement Power BI success-criteria reporting.
-10. Run a controlled Malaysia pilot.
-11. Measure lead time, readiness, clearance, overdue work, security gaps and employee satisfaction.
-12. Scale only if pilot KPIs demonstrate value.
+7. Define manager-routing policy and implement dynamic manager resolution from Workday relationships.
+8. Integrate Microsoft 365 / Outlook notifications.
+9. Integrate identity/access systems for real provisioning and removal.
+10. Implement Power BI success-criteria reporting.
+11. Run a controlled Malaysia pilot.
+12. Measure lead time, readiness, clearance, overdue work, security gaps and employee satisfaction.
+13. Scale only if pilot KPIs demonstrate value.
 
 ## Appendix
 
