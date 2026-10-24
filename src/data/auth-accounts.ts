@@ -1,6 +1,6 @@
 import type { User, UserRole } from "./auth-types";
 import type { ResponsibleTeam } from "./types";
-import { DEMO_PROFILES } from "./demo-profiles";
+import { DEMO_PROFILES, profileForTeam } from "./demo-profiles";
 import { migrateEmailAddress } from "./email-domain";
 
 const ROLE_TO_TEAM_LOOKUP: Partial<Record<UserRole, ResponsibleTeam>> = {
@@ -12,8 +12,6 @@ const ROLE_TO_TEAM_LOOKUP: Partial<Record<UserRole, ResponsibleTeam>> = {
   FINANCE: "Finance / Administration",
   CORPORATE_CARD: "Corporate Card Admin",
   ADMINISTRATION: "Administration",
-  QUALITY: "Quality",
-  PRODUCT_STEWARDSHIP: "Product Stewardship",
 };
 
 export const ROLE_TO_TEAM = ROLE_TO_TEAM_LOOKUP;
@@ -35,18 +33,12 @@ export const DEMO_USERS: User[] = DEMO_PROFILES.map((p) => ({
 }));
 
 /** Maps responsible team → inbox recipient (login email). */
-export const TEAM_INBOX_EMAIL: Record<ResponsibleTeam, string> = {
-  "HR Operations": "sherry.soh@ppg-demo.com",
-  "IT Security": "amirul.azli@ppg-demo.com",
-  "Onsite IT Support": "nuqman.zulfikar@ppg-demo.com",
-  "Facilities / Building Management": "facilities@ppg-demo.com",
-  "Hiring Manager": "manager@ppg-demo.com",
-  "Finance / Administration": "noorliana.bashari@ppg-demo.com",
-  "Corporate Card Admin": "corporatecard@ppg-demo.com",
-  Administration: "admin@ppg-demo.com",
-  Quality: "quality@ppg-demo.com",
-  "Product Stewardship": "productstewardship@ppg-demo.com",
-};
+export const TEAM_INBOX_EMAIL = Object.fromEntries(
+  (Object.keys(ROLE_TO_TEAM_LOOKUP) as UserRole[])
+    .map((role) => ROLE_TO_TEAM_LOOKUP[role])
+    .filter((team): team is ResponsibleTeam => Boolean(team))
+    .map((team) => [team, profileForTeam(team)?.email || ""])
+) as Record<ResponsibleTeam, string>;
 
 /** Task routing assigned emails — same as login mailboxes (@ppg-demo.com). */
 export const TEAM_ASSIGNED_EMAIL: Record<ResponsibleTeam, string> = {

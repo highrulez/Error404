@@ -57,7 +57,7 @@ export function generateOffboardingChecklistTasks(
     } else {
       assignedEmail = tmpl.fixedAssignedEmail || ruleMatch?.assignedEmail || "";
       assignedPersonName =
-        ruleMatch?.assignedPersonName || tmpl.responsibleTeam;
+        ruleMatch?.assignedPersonName || "Unassigned";
     }
 
     const securityCritical = Boolean(tmpl.securityCritical);

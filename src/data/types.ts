@@ -25,9 +25,7 @@ export type ResponsibleTeam =
   | "Hiring Manager"
   | "Finance / Administration"
   | "Corporate Card Admin"
-  | "Administration"
-  | "Quality"
-  | "Product Stewardship";
+  | "Administration";
 
 /** Payload group label for Facilities (short form). */
 export type PayloadResponsibleTeam =
@@ -38,9 +36,7 @@ export type PayloadResponsibleTeam =
   | "Hiring Manager"
   | "Finance / Administration"
   | "Corporate Card Admin"
-  | "Administration"
-  | "Quality"
-  | "Product Stewardship";
+  | "Administration";
 
 export type TaskStatus =
   | "Pending"

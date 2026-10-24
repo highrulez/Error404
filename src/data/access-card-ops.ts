@@ -17,6 +17,7 @@ import {
   fileNameForAccessCard,
 } from "./access-card-seed";
 import { migrateEmailAddress } from "./email-domain";
+import { ADMIN_PROFILE } from "./demo-profiles";
 import {
   initReminderFieldsFromTemplate,
   stopAllReminders,
@@ -174,11 +175,11 @@ function buildReviewTask(args: {
       "Verify details, enter office-use fields, approve or issue card.",
     status: "Pending",
     priority: "High",
-    assignedOwner: "Admin",
+    assignedOwner: ADMIN_PROFILE.name,
     responsibleTeam: "Administration",
-    assignedPersonName: "OneFlow Admin",
+    assignedPersonName: ADMIN_PROFILE.name,
     assignedEmail: "admin@ppg-demo.com",
-    assignedUserName: "Admin",
+    assignedUserName: ADMIN_PROFILE.name,
     employeeName: args.employee.fullName,
     employeeEmail: args.employee.email,
     department: args.employee.department,

@@ -27,6 +27,7 @@ import {
   ensureOnsiteEquipmentHandoff,
 } from "./equipment-handoff-ops";
 import { ONSITE_IT_SUPPORT_EMAIL } from "./automation/sailpoint-handoff";
+import { ADMIN_PROFILE, HIRING_MANAGER_PROFILE } from "./demo-profiles";
 
 function nowIso(): string {
   return new Date().toISOString();
@@ -1058,11 +1059,11 @@ function buildProcurementTask(
       "Review manager request details and enter vendor, PO number and delivery estimate.",
     status: "Pending",
     priority: "High",
-    assignedOwner: "OneFlow Admin",
+    assignedOwner: ADMIN_PROFILE.name,
     responsibleTeam: "Administration",
-    assignedPersonName: "OneFlow Admin",
+    assignedPersonName: ADMIN_PROFILE.name,
     assignedEmail: "admin@ppg-demo.com",
-    assignedUserName: "OneFlow Admin",
+    assignedUserName: ADMIN_PROFILE.name,
     employeeName: employee.fullName,
     employeeEmail: employee.email,
     department: employee.department,
@@ -1791,7 +1792,7 @@ export function simulateMissingCreditNumber(
     ...session,
     role: "HIRING_MANAGER" as const,
     email: "manager@ppg-demo.com",
-    name: "Sarah Tan",
+    name: HIRING_MANAGER_PROFILE.name,
   };
   const employee = uow.employees.getById(ALICIA_EMPLOYEE_ID);
   const delivery = employee

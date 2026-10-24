@@ -7,6 +7,7 @@ import { buildDanielDemoPackage } from "./daniel-seed";
 import { buildAliciaDemoPackage } from "./alicia-seed";
 import { DANIEL_EMPLOYEE_ID } from "./exit-clearance-types";
 import { ALICIA_EMPLOYEE_ID } from "./alicia-types";
+import { HIRING_MANAGER_PROFILE } from "./demo-profiles";
 
 const now = "2026-07-20T09:00:00.000Z";
 
@@ -22,7 +23,7 @@ export const SAMPLE_EMPLOYEES: Employee[] = [
     department: "GCSS - RPA • GCSS, Delivery Management",
     role: "Application Developer Specialist",
     location: "Malaysia – UOA Business Park",
-    managerName: "Hiring Manager",
+    managerName: HIRING_MANAGER_PROFILE.name,
     managerEmail: "manager@ppg-demo.com",
     employeeType: "Permanent",
     employmentStatus: "Active",
@@ -41,7 +42,7 @@ export const SAMPLE_EMPLOYEES: Employee[] = [
     department: "GCSS, Delivery Management",
     role: "Business Analysis Specialist II",
     location: "Malaysia – UOA Business Park",
-    managerName: "Hiring Manager",
+    managerName: HIRING_MANAGER_PROFILE.name,
     managerEmail: "manager@ppg-demo.com",
     employeeType: "Permanent",
     employmentStatus: "Active",
@@ -60,7 +61,7 @@ export const SAMPLE_EMPLOYEES: Employee[] = [
     department: "Req Bus Sup MY Fin MDM",
     role: "Data Management Steward I",
     location: "Malaysia – UOA Business Park",
-    managerName: "Hiring Manager",
+    managerName: HIRING_MANAGER_PROFILE.name,
     managerEmail: "manager@ppg-demo.com",
     employeeType: "Permanent",
     employmentStatus: "Active",
@@ -97,7 +98,7 @@ export function createSeedStore(): AppStore {
   ];
 
   return {
-    version: 7,
+    version: 8,
     employees,
     onboardingCases: [alicia.onboardingCase],
     offboardingCases: [daniel.offboardingCase],

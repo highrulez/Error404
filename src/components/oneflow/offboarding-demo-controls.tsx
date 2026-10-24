@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useData } from "@/components/shared/data-provider";
 import { useAuth } from "@/components/shared/auth-provider";
+import { HIRING_MANAGER_PROFILE } from "@/data/demo-profiles";
 import {
   DANIEL_EXIT_FORM_ID,
   DANIEL_OFFBOARDING_CASE_ID,
@@ -212,8 +213,8 @@ export function OffboardingDemoControls({
                   formId: form.id,
                   itemId: item.id,
                   action: "Confirm",
-                  name: "Sarah Tan",
-                  initial: "ST",
+                  name: HIRING_MANAGER_PROFILE.name,
+                  initial: HIRING_MANAGER_PROFILE.initials,
                   remarks: "Demo confirm",
                 });
               }

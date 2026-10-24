@@ -45,10 +45,19 @@ Thamotharan, Renuka Malar · Ramachandran, Yuganeswary · Hairul Afizee · Basha
 - Production Readiness, Security, Cost and Roadmap
 - 5–10 Minute Demo Guide
 - FAQ, Conclusion and Appendix
+- How OneFlow Could Be Adopted
+- Solution Links & Submission Materials
 
 
 
 ## Executive Summary
+
+> **Start Here**  
+> - Live demo: https://oneflow.highrulez.com  
+> - Challenge: Hackathon Challenge 4 — Connected Employee Lifecycle  
+> - Team: Error 404  
+> - Documentation: this dossier  
+> - Final presentation: accompanying PowerPoint
 
 Hackathon Challenge 4, issued by Admin & MYSCC, asks teams to create a more connected and efficient employee journey while improving collaboration among HR, IT, payroll, facilities, managers and employees. The current process is fragmented: onboarding, offboarding, workplace administration, access provisioning and resource management rely on disconnected systems and manual communication. The result is delay, poor visibility, compliance risk and an inconsistent employee experience.
 
@@ -56,7 +65,7 @@ Team Error 404 built OneFlow — an employee lifecycle orchestration prototype. 
 
 The prototype demonstrates the operating model requested by Challenge 4: a connected employee journey, role-based collaboration, lifecycle visibility, onboarding and offboarding orchestration, access and security responsibilities, and an employee-facing experience. It does not yet prove reduced real-world lead times, measured satisfaction improvement, or enterprise-scale compliance outcomes. Those require production integrations and a governed pilot.
 
-> **Did OneFlow solve Challenge 4?**  
+> **Did OneFlow solve Challenge 4?**
 > Yes — at prototype level. The prototype validates the proposed solution approach. A production pilot would validate measurable business impact. OneFlow is demonstrated and validated at prototype level; it is not a fully solved production deployment.
 
 | Reader question | OneFlow answer |
@@ -174,7 +183,7 @@ The table below uses the official Challenge 4 objectives. Status labels are deli
 
 ## Did OneFlow Solve Hackathon Challenge 4?
 
-> **Yes — at prototype level.**  
+> **Yes — at prototype level.**
 > OneFlow is demonstrated and validated at prototype level. It is not a claim that the challenge is fully solved in production.
 
 OneFlow successfully demonstrates the central concept requested by Challenge 4: a connected employee journey; cross-functional collaboration; clear ownership; visibility; onboarding and offboarding orchestration; access and security responsibilities; and an employee-facing experience.
@@ -339,7 +348,22 @@ Challenge 4 explicitly names HR, IT, payroll, facilities, managers and employees
 | Managers | Hiring Manager | Knowledge transfer, new-hire and transition actions |
 | Employees | Onboarding and offboarding employee journeys | Tasks, forms, inbox, profile, readiness or clearance |
 
-The prototype also includes Finance, Corporate Card, Quality and Product Stewardship because those teams own real setup or clearance work in the seeded journeys. That is an extension of the challenge’s cross-functional intent, not a claim that payroll-specific functionality is already implemented.
+The prototype also includes Finance and Corporate Card because those teams own real setup or clearance work in the seeded journeys. That is an extension of the challenge’s cross-functional intent, not a claim that payroll-specific functionality is already implemented.
+
+### Responsible Team vs Assignee
+
+Responsible Team identifies the functional owner of a task; Assignee identifies the actual person responsible for completing it. For example, an IT Security task may have Responsible Team IT Security and Assignee Mohd Azli, Amirul Mukhlis. A manager-owned task may have Responsible Team Manager and Assignee the employee’s current reporting manager.
+
+### Dynamic Manager Assignment in Production
+
+> **Proposed Production Behavior — Not Implemented in Hackathon Prototype**
+> The hackathon prototype uses the fixed synthetic Hiring Manager Suib, Ammar Zahiruddin to demonstrate manager-owned lifecycle work. In production, OneFlow would resolve the appropriate manager for each employee from the authoritative Workday worker relationship; Suib is not intended to be the manager for every production employee.
+
+Workday employee record → manager / supervisory relationship → lifecycle event → OneFlow case → manager-owned task template → resolve actual manager → assign task.
+
+For onboarding, the incoming employee or hire event supplies the relevant manager relationship and OneFlow assigns manager-owned onboarding tasks to that individual. For offboarding, OneFlow retrieves the employee’s applicable reporting manager and assigns handover or transition tasks accordingly. Where the business distinguishes a Hiring Manager from a Reporting Manager, the relevant business-process relationship should determine routing.
+
+If Workday reports a manager change while work remains open, incomplete manager-owned tasks should be reassigned and the audit history retained. If no valid manager is available, OneFlow should route the exception to an agreed fallback, such as HR or OneFlow Admin, and surface it for resolution. The final routing policy belongs in enterprise process design.
 
 ## User Manual
 
@@ -419,7 +443,7 @@ Sign in as Hamdan, Muhamad Asyraf Naqiyuddin. Use My Offboarding to show last-wo
 
 ## How to Send a Prototype Test Email
 
-> **AWS SES is already configured server-side.**  
+> **AWS SES is already configured server-side.**
 > The administrator does not enter AWS credentials in the application. Never publish a real mapped destination, password, token or access key. AWS SES is a hackathon prototype convenience. It is not the proposed PPG production email solution.
 
 1. Login as OneFlow Admin.
@@ -483,10 +507,10 @@ If OneFlow progresses beyond the hackathon, the recommended direction is Microso
 
 | Technology | Role if OneFlow becomes production |
 | --- | --- |
-| Workday / approved Workday API | Authoritative employee, hire and termination events |
-| Microsoft Entra ID | Authentication, SSO, groups and RBAC |
-| Dataverse | Governed store for cases, tasks, forms and audit-grade operational data |
-| Power Automate | Workflow, reminders, integrations and notifications |
+| Workday / approved Workday API | Authoritative employee, hire, termination and manager/supervisory relationships |
+| Microsoft Entra ID | Authentication, SSO, groups, RBAC and enterprise-user resolution |
+| Dataverse | Governed store for cases, tasks, employee relationships and audit-grade operational data |
+| Power Automate | Workflow, reminders, dynamic manager routing and reassignment handling |
 | Power Apps | Proposed production UI: model-driven application shell, Custom Pages for richer OneFlow dashboards and employee lifecycle experiences, and PCF controls where additional UI capability is required |
 | OneFlow | Employee and role experience for the connected lifecycle, delivered through Power Apps in a production implementation |
 | Microsoft 365 / Outlook / Teams | Production messaging and collaboration |
@@ -512,6 +536,7 @@ Challenge 4 constraints include technology and security. A Microsoft-first path 
 | Automation | Simulated runs | Power Automate |
 | Email | Mock Inbox + optional AWS SES | Microsoft 365 / Outlook |
 | Reporting | In-app operational snapshot | Power BI |
+| Manager task assignment | Fixed synthetic Hiring Manager used for demonstration | Dynamic assignment using the employee’s Workday manager/supervisory relationship, resolved to the corresponding enterprise identity |
 | Secrets / monitoring | Server-side prototype configuration / logs | Key Vault / Azure Monitor / Application Insights |
 | Access governance | IT Security workflow tasks | Entra ID, governed IAM/IGA integrations, audit |
 
@@ -531,6 +556,7 @@ Do not read the production column as already implemented. The prototype proves t
 - Replace demo login with Microsoft Entra ID and role mapping.
 - Move operational data to Dataverse or another approved store, with retention and audit.
 - Implement Power Automate for assignment, reminders and system hand-offs.
+- Implement dynamic manager resolution so manager-owned lifecycle work is assigned to the employee’s actual Workday reporting/hiring manager rather than a fixed demo role account.
 - Replace AWS SES with Microsoft 365 / Outlook.
 - Integrate identity and security systems so access removal is executed, not only tasked.
 - Add Power BI for the success-criteria KPIs.
@@ -631,8 +657,27 @@ Challenge 4 asks for a more connected employee journey and better collaboration 
 
 PPG should consider progressing OneFlow because the business problem is real, the prototype is usable, the production path fits the Microsoft and Workday estate, and the success criteria can be measured in a contained pilot. The next value is not another mock-up. It is a governed production foundation and a Malaysia pilot that proves lead time, accountability and access-control outcomes.
 
-> **Why OneFlow should progress beyond the hackathon**  
+> **Why OneFlow should progress beyond the hackathon**
 > The prototype has already reduced the largest risk in a lifecycle programme: ambiguity about the operating model. What remains is integration, security and measurement — work that is now well bounded.
+
+## How OneFlow Could Be Adopted
+
+> **Proposed adoption path — not implemented in the hackathon prototype.**
+> This is a business and implementation sequence for a production pilot. It is not a deployment runbook, and none of these production steps are built in the hackathon prototype.
+
+1. Validate the OneFlow operating model with HR, IT, Facilities, Finance and managers.
+2. Confirm the Workday lifecycle events and data required.
+3. Confirm enterprise architecture and security requirements.
+4. Establish Microsoft Entra ID authentication and role mapping.
+5. Create the governed lifecycle data model in Dataverse or another approved store.
+6. Implement workflow orchestration in Power Automate.
+7. Define manager-routing policy and implement dynamic manager resolution from Workday relationships.
+8. Integrate Microsoft 365 / Outlook notifications.
+9. Integrate identity/access systems for real provisioning and removal.
+10. Implement Power BI success-criteria reporting.
+11. Run a controlled Malaysia pilot.
+12. Measure lead time, readiness, clearance, overdue work, security gaps and employee satisfaction.
+13. Scale only if pilot KPIs demonstrate value.
 
 ## Appendix
 
@@ -645,11 +690,18 @@ Team Error 404
 - Hairul Afizee
 - Bashari, Noorliana
 
+### Solution Links & Submission Materials
+
+| Item | Reference |
+| --- | --- |
+| Live Demonstration | https://oneflow.highrulez.com |
+| Solution Documentation | OneFlow_Project_Documentation.docx |
+| Final Presentation Deck | See the accompanying final-presentation PowerPoint in the submission folder. |
+| Supporting Materials | Screenshots, architecture diagrams, Challenge 4 mapping, user manual, test-email guide, production architecture and adoption roadmap are included in this dossier and supporting assets. |
+
 ### Demonstration
 
 https://oneflow.highrulez.com
-
-Repository: https://github.com/highrulez/Error404
 
 ### Status labels used in this dossier
 
@@ -658,6 +710,8 @@ Repository: https://github.com/highrulez/Error404
 | Demonstrated | A judge can see and use the capability in the prototype. |
 | Partially demonstrated / simulated | The concept is shown; the production mechanism or measured result is not. |
 | Proposed / not implemented | Recommended for production; absent from the prototype. |
+
+
 
 ### Screenshot and diagram index
 

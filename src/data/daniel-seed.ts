@@ -26,6 +26,7 @@ import type {
 import type { AutomationRun, MockEmail } from "./auth-types";
 import { generateOffboardingChecklistTasks } from "./offboarding-engine";
 import type { UnitOfWork } from "./repositories/interfaces";
+import { HIRING_MANAGER_PROFILE } from "./demo-profiles";
 
 function nowIso(): string {
   return new Date().toISOString();
@@ -43,7 +44,7 @@ export function createDanielEmployee(now = nowIso()): Employee {
     department: "Req Sup IT IT BFS EAD",
     role: "SAP COE EDI Analyst",
     location: "Malaysia – UOA Business Park",
-    managerName: "Hiring Manager",
+    managerName: HIRING_MANAGER_PROFILE.name,
     managerEmail: "manager@ppg-demo.com",
     employeeType: "Permanent",
     employmentStatus: "Offboarding",

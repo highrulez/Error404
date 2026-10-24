@@ -10,8 +10,6 @@ const ROLE_LABELS: Record<UserRole, string> = {
   FINANCE: "Finance",
   CORPORATE_CARD: "Corporate Card",
   ADMINISTRATION: "Administration",
-  QUALITY: "Quality",
-  PRODUCT_STEWARDSHIP: "Product Stewardship",
   ONBOARDING_EMPLOYEE: "Onboarding Employee",
   OFFBOARDING_EMPLOYEE: "Offboarding Employee",
 };

@@ -41,6 +41,7 @@ import {
   recordExitAutomationRun,
 } from "./exit-clearance-engine";
 import { emailMatchesAssignee } from "./auth-session";
+import { ADMIN_PROFILE } from "./demo-profiles";
 import type {
   OffboardingCase,
   TerminationType,
@@ -223,7 +224,7 @@ function generateChecklistTasks(
     } else {
       assignedEmail = tmpl.fixedAssignedEmail || ruleMatch?.assignedEmail || "";
       assignedPersonName =
-        ruleMatch?.assignedPersonName || tmpl.responsibleTeam;
+        ruleMatch?.assignedPersonName || "Unassigned";
     }
 
     return {
@@ -472,7 +473,7 @@ export class AppDataService implements DataService {
     const adminSession = {
       userId: "user-admin",
       email: "admin@ppg-demo.com",
-      name: "OneFlow Admin",
+      name: ADMIN_PROFILE.name,
       role: "Admin" as const,
       loggedInAt: nowIso(),
     };
@@ -739,7 +740,7 @@ export class AppDataService implements DataService {
     return this.uow.tasks.getById(id);
   }
 
-  updateTaskStatus(taskId: string, status: TaskStatus, actor = "OneFlow Admin") {
+  updateTaskStatus(taskId: string, status: TaskStatus, actor = ADMIN_PROFILE.name) {
     this.reload();
     const prev = this.uow.tasks.getById(taskId);
     if (!prev) return undefined;
@@ -1274,7 +1275,7 @@ export class AppDataService implements DataService {
     return this.uow.mockEmails.getById(onb.accountCreatedEmailId);
   }
 
-  updateTaskNotes(taskId: string, notes: string, actor = "OneFlow Admin") {
+  updateTaskNotes(taskId: string, notes: string, actor = ADMIN_PROFILE.name) {
     this.reload();
     const prev = this.uow.tasks.getById(taskId);
     if (!prev) return undefined;

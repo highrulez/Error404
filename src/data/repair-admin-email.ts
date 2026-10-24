@@ -9,6 +9,7 @@ import {
   LEGACY_ADMINISTRATION_EMAIL,
   migrateEmailAddress,
 } from "./email-domain";
+import { ADMIN_PROFILE } from "./demo-profiles";
 
 const LEGACY = LEGACY_ADMINISTRATION_EMAIL.toLowerCase();
 const CANONICAL = ADMIN_MOCK_EMAIL;
@@ -163,9 +164,9 @@ export function repairAdministrationRecipientRecords(
       assignedEmail: emailChanged ? CANONICAL : t.assignedEmail,
       ...(ownerWasPriya
         ? {
-            assignedOwner: "Admin",
-            assignedPersonName: "OneFlow Admin",
-            assignedUserName: "Admin",
+            assignedOwner: ADMIN_PROFILE.name,
+            assignedPersonName: ADMIN_PROFILE.name,
+            assignedUserName: ADMIN_PROFILE.name,
           }
         : {}),
     });

@@ -145,11 +145,9 @@ def collaboration():
         (660, 340, "IT Security", "Access create / remove"),
         (960, 340, "Onsite IT", "Equipment and local setup"),
         (1260, 340, "Facilities", "Workplace access / return"),
-        (60, 560, "Finance", "Operational / finance checks"),
-        (360, 560, "Corporate Card", "Card setup and recovery"),
-        (660, 560, "Quality", "Specialist clearance"),
-        (960, 560, "Product Stewardship", "Specialist clearance"),
-        (1260, 560, "Employee", "Journey, forms, inbox"),
+        (360, 560, "Finance", "Operational / finance checks"),
+        (720, 560, "Corporate Card", "Card setup and recovery"),
+        (1080, 560, "Employee", "Journey, forms, inbox"),
     ]
     for x, y, title, sub in roles:
         node(draw, (x, y, x + 260, y + 120), title, sub, fill=CARD, outline=(186, 230, 253))
@@ -171,7 +169,7 @@ def collaboration():
     )
     draw.text(
         (80, 866),
-        "Corporate Card, Quality and Product Stewardship are included because they own real clearance and setup work in the prototype journeys.",
+        "Finance and Corporate Card support the operational checks represented in the prototype journeys.",
         font=font(16),
         fill=INK,
     )

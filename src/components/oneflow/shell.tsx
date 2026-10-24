@@ -1,11 +1,101 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { BarChart3, ClipboardList, FileText, Home, Settings, Users } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import {
+  BarChart3,
+  ChevronDown,
+  CircleUserRound,
+  ClipboardList,
+  FileText,
+  Home,
+  LogOut,
+  Repeat2,
+  Settings,
+  Users,
+} from "lucide-react";
 import { PhaseBanner } from "@/components/shared/phase-banner";
 import { useAuth } from "@/components/shared/auth-provider";
 import { roleLabel } from "@/data/role-labels";
+
+function MobileAccountMenu() {
+  const { session, logout } = useAuth();
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const closeOnOutsideClick = (event: MouseEvent) => {
+      if (!menuRef.current?.contains(event.target as Node)) setOpen(false);
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("mousedown", closeOnOutsideClick);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("mousedown", closeOnOutsideClick);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, []);
+
+  if (!session) return null;
+
+  const navigate = (href: string) => {
+    setOpen(false);
+    router.push(href);
+  };
+  const handleLogout = () => {
+    setOpen(false);
+    logout();
+    router.replace("/login");
+  };
+  const handleSwitchAccount = () => {
+    setOpen(false);
+    logout();
+    router.replace("/login");
+  };
+
+  return (
+    <div ref={menuRef} className="relative lg:hidden">
+      <button
+        type="button"
+        aria-label="Open account menu"
+        aria-expanded={open}
+        aria-haspopup="menu"
+        onClick={() => setOpen((value) => !value)}
+        className="flex min-h-11 min-w-11 items-center justify-center gap-1 rounded-xl border border-slate-200 bg-white px-2 text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-flow-accent focus:ring-offset-2"
+      >
+        <CircleUserRound className="h-5 w-5 text-flow-accent" aria-hidden />
+        <ChevronDown className={`h-3.5 w-3.5 transition ${open ? "rotate-180" : ""}`} aria-hidden />
+      </button>
+      {open && (
+        <div
+          role="menu"
+          aria-label="Account navigation"
+          className="absolute right-0 z-50 mt-2 w-72 overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 shadow-xl shadow-slate-900/15"
+        >
+          <div className="border-b border-slate-100 px-3 py-2.5">
+            <p className="truncate text-sm font-semibold text-slate-900">{session.name}</p>
+            <p className="mt-0.5 text-xs text-slate-500">{roleLabel(session.role)}</p>
+          </div>
+          <div className="pt-1">
+            <button type="button" role="menuitem" onClick={() => navigate("/")} className="flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-flow-accent">
+              <Home className="h-4 w-4 text-slate-500" aria-hidden /> Back to OneFlow
+            </button>
+            <button type="button" role="menuitem" onClick={handleSwitchAccount} className="flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-flow-accent">
+              <Repeat2 className="h-4 w-4 text-slate-500" aria-hidden /> Switch Demo Account
+            </button>
+            <button type="button" role="menuitem" onClick={handleLogout} className="flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-medium text-rose-700 transition hover:bg-rose-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-flow-accent">
+              <LogOut className="h-4 w-4" aria-hidden /> Logout
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function OneFlowShell({
   children,
@@ -105,16 +195,19 @@ export function OneFlowShell({
                   </p>
                 )}
               </div>
-              <div className="flex flex-wrap gap-2 lg:hidden">
+              <div className="flex min-w-0 items-center gap-2 lg:hidden">
+                <div className="flex min-w-0 flex-1 gap-2 overflow-x-auto pb-0.5">
                 {navItems.slice(0, 3).map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="rounded-md bg-flow-accentSoft px-3 py-1.5 text-xs font-medium text-flow-accent"
+                    className="shrink-0 rounded-md bg-flow-accentSoft px-3 py-1.5 text-xs font-medium text-flow-accent"
                   >
                     {item.label}
                   </Link>
                 ))}
+                </div>
+                <MobileAccountMenu />
               </div>
             </div>
           </header>
